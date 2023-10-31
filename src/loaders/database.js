@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 
 module.exports = () => {
     try {
-        mongoose.connect('mongodb://127.0.0.1:27017/clothwari')
+        mongoose.connect(process.env.MONGODB_URL)
             .then(() => console.log('Database Connected!'));
+        mongoose.set('debug', true)
     } catch (error) {
         console.log("error in database connection");
     }
