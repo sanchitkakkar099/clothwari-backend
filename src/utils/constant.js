@@ -23,8 +23,13 @@ const FileDirectoryType = Object.freeze({
     1: '/design'
 })
 
+const DefaultConstantType = Object.freeze({
+    MasterPassword: "Clothwari@12345",
+})
+
 module.exports = {
     HttpStatus,
     UserRoleConstant,
-    FileDirectoryType
+    FileDirectoryType,
+    DefaultConstantType,
 }

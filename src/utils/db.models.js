@@ -1,3 +1,7 @@
 module.exports = Object.freeze({
-    User: "User"
+    Category: "Category",
+    DesignUpload: "DesignUpload",
+    FileUpload: "FileUpload",
+    Tag: "Tag",
+    User: "User",
 })
