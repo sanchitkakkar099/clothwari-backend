@@ -23,6 +23,7 @@ const DesignUploadSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
+    designNo: { type: Number }
 }, { timestamps: true });
 
 DesignUploadSchema.plugin(mongoosepaginate);
