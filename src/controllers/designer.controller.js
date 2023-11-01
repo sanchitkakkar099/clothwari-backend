@@ -55,7 +55,7 @@ exports.designerById = async (req, res) => {
         let category = await dbMethods.findOne({
             collection: dbModels.User,
             query: { _id: req.params.id },
-            project: { firstName: 1, lastName: 1, email: 1, phone: 1 }
+            project: { firstName: 1, lastName: 1, email: 1, phone: 1, onlyUpload: 1 }
         })
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get designer", category));
@@ -96,7 +96,7 @@ exports.designerList = async (req, res) => {
             collection: dbModels.User,
             query: query,
             options: {
-                select: { firstName: 1, lastName: 1, email: 1, phone: 1 },
+                select: { firstName: 1, lastName: 1, email: 1, phone: 1, onlyUpload: 1 },
                 sort: { _id: -1 },
                 page,
                 limit
