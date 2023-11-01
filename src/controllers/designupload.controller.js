@@ -22,11 +22,19 @@ exports.designuploadCreate = async (req, res) => {
             })
         }
         else {
-            let fields = req.body
-            delete fields._id
+            let _id = req.body._id
+            delete req.body._id
+            let checkAlreadyUploaded = await dbMethods.findOne({
+                collection: dbModels.DesignUpload,
+                query: { name: req.body.name, _id: { $ne: _id } }
+            });
+            if (checkAlreadyUploaded) {
+                return res.status(HttpStatus.BAD_REQUEST)
+                    .send(helperUtils.errorRes("Already uploaded", {}));
+            }
             await dbMethods.updateOne({
                 collection: dbModels.DesignUpload,
-                query: { _id: req.body._id },
+                query: { _id: _id },
                 update: fields
             })
         }
@@ -46,12 +54,27 @@ exports.designuploadById = async (req, res) => {
             query: { _id: req.params.id },
             populate: [
                 { path: "image" },
-                { path: "thumbnail" }
+                { path: "thumbnail" },
+                { path: "category", select: "_id name" },
+                { path: "tag", select: "_id name" },
             ]
         })
+        if (designupload.category) {
+            designupload.category = {
+                label: designupload.category.name,
+                value: designupload.category._id
+            }
+        }
+        if (designupload.tag) {
+            designupload.tag = {
+                label: designupload.tag.name,
+                value: designupload.tag._id
+            }
+        }
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get designupload", designupload));
     } catch (error) {
+        console.log(error)
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
