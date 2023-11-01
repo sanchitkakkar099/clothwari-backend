@@ -25,6 +25,16 @@ exports.designerCreateEdit = async (req, res) => {
         } else {
             let _id = req.body._id
             delete req.body._id
+
+            //lets check email already  exists
+            let emailcheck = await dbMethods.findOne({
+                collection: dbModels.User,
+                query: { email: req.body.email.toLowerCase(), _id: { $ne: _id } }
+            })
+            if (emailcheck) {
+                return res.status(HttpStatus.BAD_REQUEST)
+                    .send(helperUtils.errorRes("Email Already Exists", {}));
+            }
             await dbMethods.updateOne({
                 collection: dbModels.User,
                 query: { _id: _id },
