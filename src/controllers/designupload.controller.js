@@ -87,10 +87,32 @@ exports.designuploadList = async (req, res) => {
                 sort: { _id: -1 },
                 populate: [
                     { path: "image" },
-                    { path: "thumbnail" }
+                    { path: "thumbnail" },
+                    { path: "category", select: "name" },
+                    { path: "tag", select: "name" },
                 ],
+                lean: true
             }
         })
+        let data = [];
+        for (let i = 0; i < result.docs.length; i++) {
+            const element = result.docs[i];
+
+            if (element.category) {
+                result.docs[i].category = {
+                    label: result.docs[i].name,
+                    value: result.docs[i]._id
+                }
+            }
+
+            if (element.tag) {
+                result.docs[i].tag = {
+                    label: result.docs[i].name,
+                    value: result.docs[i]._id
+                }
+            }
+
+        }
 
         return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));
     } catch (error) {
