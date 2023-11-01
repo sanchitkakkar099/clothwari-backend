@@ -35,7 +35,7 @@ exports.designuploadCreate = async (req, res) => {
             await dbMethods.updateOne({
                 collection: dbModels.DesignUpload,
                 query: { _id: _id },
-                update: fields
+                update: req.body
             })
         }
         return res.status(HttpStatus.OK)
