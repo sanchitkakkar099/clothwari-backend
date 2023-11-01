@@ -23,12 +23,12 @@ exports.designerCreateEdit = async (req, res) => {
                 document: req.body
             })
         } else {
-            let fields = req.body
-            delete fields._id
+            let _id = req.body._id
+            delete req.body._id
             await dbMethods.updateOne({
                 collection: dbModels.User,
-                query: { _id: req.body._id },
-                update: fields
+                query: { _id: _id },
+                update: req.body
             })
         }
         return res.status(HttpStatus.OK)
@@ -44,7 +44,8 @@ exports.designerById = async (req, res) => {
     try {
         let category = await dbMethods.findOne({
             collection: dbModels.User,
-            query: { _id: req.params.id }
+            query: { _id: req.params.id },
+            project: { firstName: 1, lastName: 1, email: 1, phone: 1 }
         })
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get designer", category));

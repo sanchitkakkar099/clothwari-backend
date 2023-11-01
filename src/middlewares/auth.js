@@ -10,6 +10,6 @@ exports.auth = async (req, res, next) => {
         next()
     } catch (error) {
         console.log(error);
-        returnres.status(HttpStatus.UNAUTHORIZED).send(helperUtils.errorRes("Invalid Token", {}, 401))
+        return res.status(HttpStatus.UNAUTHORIZED).send(helperUtils.errorRes("Invalid Token", {}, 401))
     }
 }
