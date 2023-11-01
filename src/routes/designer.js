@@ -13,6 +13,7 @@ const { auth } = require("../middlewares").auth;
  * @property {string} email
  * @property {string} phone
  * @property {string} password
+ * @property {boolean} onlyUpload
  */
 /**
  * create admin role user
