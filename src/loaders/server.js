@@ -1,6 +1,6 @@
 const cors = require("cors");
 const fs = require("fs");
-
+const morganBody = require("morgan-body");
 
 //import helper utils
 const { FileDirectoryType } = require("../utils").constant
@@ -17,6 +17,7 @@ module.exports = (express, app) => {
     }
     app.use('/uploads', fileAttachment, express.static('uploads'))
 
+    morganBody(app);
 
     app.get('/', (req, res) => {
         const ip =
