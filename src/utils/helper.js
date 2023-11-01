@@ -22,6 +22,7 @@ exports.errorRes = (msg, error, code = 400) => {
 
 
 exports.jwtSign = async (payload) => {
+    console.log(process.env.jwt_secret, process.env.jwt_expiry)
     return await jwt.sign(payload,
         process.env.jwt_secret,
         { expiresIn: process.env.jwt_expiry })
