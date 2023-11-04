@@ -17,7 +17,7 @@ module.exports = (express, app) => {
     }
     app.use('/uploads', fileAttachment, express.static('uploads'))
 
-    morganBody(app);
+    // morganBody(app);
 
     app.get('/', (req, res) => {
         const ip =
