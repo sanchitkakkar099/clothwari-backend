@@ -65,12 +65,6 @@ exports.designuploadById = async (req, res) => {
                 value: designupload.category._id
             }
         }
-        if (designupload.tag) {
-            designupload.tag = {
-                label: designupload.tag.name,
-                value: designupload.tag._id
-            }
-        }
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get designupload", designupload));
     } catch (error) {
@@ -123,13 +117,6 @@ exports.designuploadList = async (req, res) => {
 
             if (element.category) {
                 result.docs[i].category = {
-                    label: result.docs[i].name,
-                    value: result.docs[i]._id
-                }
-            }
-
-            if (element.tag) {
-                result.docs[i].tag = {
                     label: result.docs[i].name,
                     value: result.docs[i]._id
                 }
