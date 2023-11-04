@@ -7,10 +7,13 @@ const DesignUploadSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category'
     },
-    tag: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Tag'
-    },
+    tag: [
+        {
+            customOption: { type: Boolean },
+            label: { type: String },
+            id: { type: String }
+        }
+    ],
     image: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "FileUpload"
