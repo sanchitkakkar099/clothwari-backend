@@ -1,6 +1,6 @@
 //import helper utils
 const { dbMethods, dbModels, helperUtils } = require("../utils");
-const { HttpStatus } = require("../utils/constant");
+const { HttpStatus, UserRoleConstant } = require("../utils/constant");
 
 
 exports.designuploadCreate = async (req, res) => {
@@ -92,6 +92,9 @@ exports.designuploadDelete = async (req, res) => {
 exports.designuploadList = async (req, res) => {
     try {
         let query = {}
+        if (req?.user?.role == UserRoleConstant.Designer) {
+            query.uploadedBy = req.user._id;
+        }
         if (req.body.search) {
             query['$or'] = []
             query['$or'].push({ name: new RegExp(req.body.search, "i") });
