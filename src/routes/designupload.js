@@ -14,8 +14,8 @@ const { auth } = require("../middlewares").auth
  * @property {string} name - name of category
  * @property {string} category - name of category
  * @property {string} tag - name of category
- * @property {Array.<string>} image - name of category
- * @property {Array.<string>} thumbnail - name of category
+ * @property {string} image - name of category
+ * @property {string} thumbnail - name of category
  * @property {number} designNo - name of category
  */
 /**

@@ -11,14 +11,14 @@ const DesignUploadSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Tag'
     },
-    image: [{
+    image: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "FileUpload"
-    }],
-    thumbnail: [{
+    },
+    thumbnail: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "FileUpload"
-    }],
+    },
     uploadedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

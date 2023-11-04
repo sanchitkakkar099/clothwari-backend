@@ -12,6 +12,7 @@ const HttpStatus = Object.freeze({
 
 const UserRoleConstant = Object.freeze({
     Admin: "Admin",
+    Client: "Client",
     Designer: "Designer",
     User: "User",
     SuperAdmin: "Super Admin"
