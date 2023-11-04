@@ -17,7 +17,7 @@ exports.clientCreateEdit = async (req, res) => {
             }
             req.body.password = await helperUtils.bcryptHash(req.body.password);
             req.body.createdBy = req.user._id
-            req.body.role = UserRoleConstant.Clien
+            req.body.role = UserRoleConstant.Client
             await dbMethods.insertOne({
                 collection: dbModels.User,
                 document: req.body
@@ -44,6 +44,7 @@ exports.clientCreateEdit = async (req, res) => {
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully created Designer"))
     } catch (error) {
+        console.log(error)
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
