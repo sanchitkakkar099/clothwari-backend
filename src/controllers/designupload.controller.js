@@ -92,7 +92,16 @@ exports.designuploadDelete = async (req, res) => {
 exports.designuploadList = async (req, res) => {
     try {
         let query = {}
-        if (req.body.search) query['name'] = new RegExp(req.body.search, "i");
+        if (req.body.search) {
+            query['$or'] = []
+            query['$or'].push({ name: new RegExp(req.body.search, "i") });
+            query['$or'].push({
+                "tag": {
+                    $elemMatch: { "label": new RegExp(req.body.search, 'i') }
+                }
+            })
+
+        }
         let page = 1, limit = 10;
         if (req.body.page) page = req.body.page;
         if (req.body.limit) limit = req.body.limit;
