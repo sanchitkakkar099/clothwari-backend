@@ -92,11 +92,9 @@ router.post("/list",
  * @returns {object} 200
  *      Return JSON object
  *
- * @security User 
  * @returns {Error}  Error - Unexpected error
  */
 router.post("/login/byadmin",
-    auth,
     designerController.designerLogin
 );
 
