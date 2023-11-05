@@ -55,7 +55,7 @@ exports.designerById = async (req, res) => {
         let category = await dbMethods.findOne({
             collection: dbModels.User,
             query: { _id: req.params.id },
-            project: { firstName: 1, lastName: 1, email: 1, phone: 1, onlyUpload: 1 }
+            project: { name: 1, email: 1, phone: 1, onlyUpload: 1 }
         })
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get designer", category));
@@ -84,8 +84,7 @@ exports.designerList = async (req, res) => {
         let query = { role: UserRoleConstant.Designer }
         if (req.body.search) {
             query['$or'] = [];
-            query['$or'].push({ firstName: new RegExp(req.body.search, "i") });
-            query['$or'].push({ lastName: new RegExp(req.body.search, "i") });
+            query['$or'].push({ name: new RegExp(req.body.search, "i") });
             query['$or'].push({ email: new RegExp(req.body.search, "i") });
         }
         let page = 1, limit = 10;
@@ -121,8 +120,7 @@ exports.designerLogin = async (req, res) => {
         let payload = {
             _id: designer._id,
             email: designer.email,
-            firstName: designer.firstName,
-            lastName: designer.lastName,
+            name: designer.name,
             phone: designer.phone,
             role: designer.role
         }

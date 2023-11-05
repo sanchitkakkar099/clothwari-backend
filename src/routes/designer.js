@@ -8,8 +8,7 @@ const { auth } = require("../middlewares").auth;
 
 /**
  * @typedef designermodel
- * @property {string} firstName
- * @property {string} lastName
+ * @property {string} name
  * @property {string} email
  * @property {string} phone
  * @property {string} password
