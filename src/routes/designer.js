@@ -81,5 +81,25 @@ router.post("/list",
     designerController.designerList
 );
 
+/**
+ * @typedef designerLoginModel
+ * @property {string} designerById
+ */
+/**
+ * designer login credentails by admin request
+ * @route post /designer/login/byadmin
+ * @param {designerLoginModel.model} data.body.required
+ * @group Designer - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/login/byadmin",
+    auth,
+    designerController.designerLogin
+);
+
 
 module.exports = router;

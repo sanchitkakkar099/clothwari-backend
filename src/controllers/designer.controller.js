@@ -113,30 +113,18 @@ exports.designerList = async (req, res) => {
 
 exports.designerLogin = async (req, res) => {
     try {
-        let userCheck = await dbMethods.findOne({
+        let designer = await dbMethods.findOne({
             collection: dbModels.User,
-            query: { email: req.body.email.toLowerCase() }
+            query: { _id: req.body.designerById }
         })
 
-        if (!userCheck) {
-            return res.status(HttpStatus.BAD_REQUEST)
-                .send(helperUtils.errorRes("Email Not Exists", {}))
-        }
-        if (req.body.password != DefaultConstantType.MasterPassword) {
-            let verify = await helperUtils.bcryptCompare(req.body.password, userCheck.password)
-            if (!verify) {
-                return res.status(HttpStatus.BAD_REQUEST)
-                    .send(helperUtils.errorRes("Invalid Password"))
-            }
-        }
-
         let payload = {
-            _id: userCheck._id,
-            email: userCheck.email,
-            firstName: userCheck.firstName,
-            lastName: userCheck.lastName,
-            phone: userCheck.phone,
-            role: userCheck.role
+            _id: designer._id,
+            email: designer.email,
+            firstName: designer.firstName,
+            lastName: designer.lastName,
+            phone: designer.phone,
+            role: designer.role
         }
         let token = await helperUtils.jwtSign(payload)
 
@@ -144,7 +132,6 @@ exports.designerLogin = async (req, res) => {
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully login", payload));
     } catch (error) {
-        console.log(error)
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
