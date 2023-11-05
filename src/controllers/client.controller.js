@@ -54,14 +54,15 @@ exports.clientCreateEdit = async (req, res) => {
 
 exports.clientById = async (req, res) => {
     try {
-        let category = await dbMethods.findOne({
+        let client = await dbMethods.findOne({
             collection: dbModels.User,
             query: { _id: req.params.id },
-            project: { name1, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1 }
+            project: { name: 1, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1 }
         })
         return res.status(HttpStatus.OK)
-            .send(helperUtils.successRes("Successfully get designer", category));
+            .send(helperUtils.successRes("Successfully get client", client));
     } catch (error) {
+        console.log(error)
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
@@ -97,7 +98,7 @@ exports.clientList = async (req, res) => {
             collection: dbModels.User,
             query: query,
             options: {
-                select: { firstName: 1, lastName: 1, email: 1, phone: 1, onlyUpload: 1 },
+                select: { name, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1 },
                 sort: { _id: -1 },
                 page,
                 limit

@@ -58,6 +58,7 @@ exports.adminlogin = async (req, res) => {
 
         let payload = {
             _id: userCheck._id,
+            name: userCheck.name,
             email: userCheck.email,
             firstName: userCheck.firstName,
             lastName: userCheck.lastName,
@@ -99,3 +100,19 @@ exports.createDesigner = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+
+exports.createjwt = async (req, res) => {
+    try {
+        let payload = {
+            name: "gaurav",
+            email: "gaurav@gmail.com"
+        }
+        let token = await helperUtils.jwtSign(payload, 120)
+        res.send({ token, user: req.user })
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.errorRes("Bad request", error.message, HttpStatus.BAD_REQUEST));
+    }
+}
+
