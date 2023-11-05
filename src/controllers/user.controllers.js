@@ -60,8 +60,6 @@ exports.adminlogin = async (req, res) => {
             _id: userCheck._id,
             name: userCheck.name,
             email: userCheck.email,
-            firstName: userCheck.firstName,
-            lastName: userCheck.lastName,
             phone: userCheck.phone,
             role: userCheck.role
         }

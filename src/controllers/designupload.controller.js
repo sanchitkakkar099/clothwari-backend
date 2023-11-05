@@ -56,7 +56,7 @@ exports.designuploadById = async (req, res) => {
                 { path: "image" },
                 { path: "thumbnail" },
                 { path: "category", select: "_id name" },
-                { path: "uploadedBy", select: "firstName lastName email" },
+                { path: "uploadedBy", select: "name email" },
             ]
         })
         if (designupload.category) {
@@ -118,7 +118,7 @@ exports.designuploadList = async (req, res) => {
                     { path: "image" },
                     { path: "thumbnail" },
                     { path: "category", select: "name" },
-                    { path: "uploadedBy", select: "firstName lastName email" },
+                    { path: "uploadedBy", select: "name email" },
                 ],
                 lean: true
             }
