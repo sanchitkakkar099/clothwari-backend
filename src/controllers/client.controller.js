@@ -98,7 +98,7 @@ exports.clientList = async (req, res) => {
             collection: dbModels.User,
             query: query,
             options: {
-                select: { name, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1 },
+                select: { name: 1, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1 },
                 sort: { _id: -1 },
                 page,
                 limit
