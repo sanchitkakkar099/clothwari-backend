@@ -95,7 +95,7 @@ exports.designerList = async (req, res) => {
             collection: dbModels.User,
             query: query,
             options: {
-                select: { firstName: 1, lastName: 1, email: 1, phone: 1, onlyUpload: 1 },
+                select: { name: 1, email: 1, phone: 1, onlyUpload: 1 },
                 sort: { _id: -1 },
                 page,
                 limit
