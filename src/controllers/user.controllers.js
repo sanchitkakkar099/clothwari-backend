@@ -61,7 +61,8 @@ exports.adminlogin = async (req, res) => {
             name: userCheck.name,
             email: userCheck.email,
             phone: userCheck.phone,
-            role: userCheck.role
+            role: userCheck.role,
+            onlyUpload: userCheck.onlyUpload,
         }
         let token = await helperUtils.jwtSign(payload)
 

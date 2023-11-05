@@ -122,7 +122,8 @@ exports.designerLogin = async (req, res) => {
             email: designer.email,
             name: designer.name,
             phone: designer.phone,
-            role: designer.role
+            role: designer.role,
+            onlyUpload: designer.onlyUpload,
         }
         let token = await helperUtils.jwtSign(payload)
 
