@@ -2,6 +2,7 @@ const router = require("express").Router()
 
 
 //sub-base path for other routes
+router.use("/admin", require("./admin"));
 router.use("/category", require("./category"));
 router.use("/client", require("./client"));
 router.use("/designupload", require("./designupload"));

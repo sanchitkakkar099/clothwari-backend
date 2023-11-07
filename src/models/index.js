@@ -5,6 +5,7 @@ const { userSchema } = require("./user.model")
 const { CategorySchema, TagSchema } = require("./category.model");
 const { FileuploadSchema } = require("./fileupload");
 const { DesignUploadSchema } = require("./designupload.model");
+const { PermissionSchema } = require("./permission.model");
 
 
 const db = {
@@ -13,6 +14,7 @@ const db = {
     Category: mongoose.model(dbModels.Category, CategorySchema),
     DesignUpload: mongoose.model(dbModels.DesignUpload, DesignUploadSchema),
     FileUpload: mongoose.model(dbModels.FileUpload, FileuploadSchema),
+    Permission: mongoose.model(dbModels.Permission, PermissionSchema),
     Tag: mongoose.model(dbModels.Tag, TagSchema),
     User: mongoose.model(dbModels.User, userSchema),
 }

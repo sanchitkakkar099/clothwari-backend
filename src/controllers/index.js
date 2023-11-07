@@ -1,3 +1,4 @@
+exports.adminController = require("./admin.controller");
 exports.categoryController = require("./category.controller");
 exports.clientController = require("./client.controller");
 exports.DesignUploadController = require("./designupload.controller");

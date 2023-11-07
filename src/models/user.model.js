@@ -14,7 +14,12 @@ const userSchema = new mongoose.Schema({
     Persmission: [{ type: String, default: "" }],
     isActive: { type: Boolean, default: false },
     allowLoginTime: { type: Date },   //only for cleint role
-    allowLoginSec: { type: Number }   // only for client uer role
+    allowLoginSec: { type: Number },   // only for client uer role
+    status: { type: Number, default: 0 },   // used for designer 0:Pending 1:Approved 2:Rejected
+    permissions: [{
+        type: mongoose.Types.ObjectId,
+        ref: "Permission"
+    }]
 
 }, { timestamps: true })
 userSchema.plugin(mongoosepaginate);
