@@ -129,8 +129,8 @@ exports.designuploadList = async (req, res) => {
 
             if (element.category) {
                 result.docs[i].category = {
-                    label: result.docs[i].name,
-                    value: result.docs[i]._id
+                    label: result.docs[i].category.name,
+                    value: result.docs[i].category._id
                 }
             }
 
