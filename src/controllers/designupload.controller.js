@@ -143,3 +143,49 @@ exports.designuploadList = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+
+exports.designuploadCreateBulk = async (req, res) => {
+    try {
+        for (let i = 0; i < req.body[i].length; i++) {
+            const element = req.body[i];
+
+            if (!req.body._id) {
+                let checkAlreadyUploaded = await dbMethods.findOne({
+                    collection: dbModels.DesignUpload,
+                    query: { name: element.name }
+                });
+                if (!checkAlreadyUploaded) {
+                    let fields = element
+                    fields.uploadedBy = req.user._id
+                    await dbMethods.insertOne({
+                        collection: dbModels.DesignUpload,
+                        document: fields
+                    })
+                }
+
+            }
+            else {
+                let _id = element._id
+                delete element._id
+                let checkAlreadyUploaded = await dbMethods.findOne({
+                    collection: dbModels.DesignUpload,
+                    query: { name: element.name, _id: { $ne: _id } }
+                });
+                if (!checkAlreadyUploaded) {
+                    await dbMethods.updateOne({
+                        collection: dbModels.DesignUpload,
+                        query: { _id: _id },
+                        update: element
+                    })
+                }
+
+            }
+        }
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully created", {}));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}

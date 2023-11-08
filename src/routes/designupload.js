@@ -90,4 +90,20 @@ router.post("/list",
     DesignUploadController.designuploadList
 );
 
+/**
+ * create or edit the category by id
+ * @route POST /designupload/create/bulk
+ * @param {Array<designuploadCreateModel>} data.body.required
+ * @group DesignUpload - oprations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/create/bulk",
+    auth,
+    DesignUploadController.designuploadCreateBulk
+);
+
 module.exports = router;
