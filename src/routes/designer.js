@@ -13,6 +13,7 @@ const { auth } = require("../middlewares").auth;
  * @property {string} phone
  * @property {string} password
  * @property {boolean} onlyUpload
+ * @property {Array<string>} permissions
  */
 /**
  * create admin role user
@@ -96,6 +97,21 @@ router.post("/list",
  */
 router.post("/login/byadmin",
     designerController.designerLogin
+);
+
+/**
+ * get permission list
+ * @route GET /designer/permissions/list
+ * @group Designer - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.get("/permissions/list",
+
+    designerController.designerPermissionslist
 );
 
 

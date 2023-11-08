@@ -12,6 +12,7 @@ const { auth } = require("../middlewares").auth
  * @property {string} name
  * @property {string} email
  * @property {string} password
+ * @property {Array<string>} permissions
  */
 /**
  * create admin role user

@@ -52,13 +52,24 @@ exports.designerCreateEdit = async (req, res) => {
 
 exports.designerById = async (req, res) => {
     try {
-        let category = await dbMethods.findOne({
+        let designer = await dbMethods.findOne({
             collection: dbModels.User,
             query: { _id: req.params.id },
             project: { name: 1, email: 1, phone: 1, onlyUpload: 1 }
         })
+        if (designer.permissions) {
+            designer.permissions = designer.map(e => {
+                return {
+                    _id: e._id,
+                    label: e.title,
+                    module: e.module,
+                    value: e.code
+                }
+            })
+        }
+
         return res.status(HttpStatus.OK)
-            .send(helperUtils.successRes("Successfully get designer", category));
+            .send(helperUtils.successRes("Successfully get designer", designer));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
@@ -95,6 +106,8 @@ exports.designerList = async (req, res) => {
             collection: dbModels.User,
             query: query,
             options: {
+                populate: [{ path: "permissions" }],
+                lean: true,
                 select: { name: 1, email: 1, phone: 1, onlyUpload: 1 },
                 sort: { _id: -1 },
                 page,
@@ -102,7 +115,35 @@ exports.designerList = async (req, res) => {
             },
         })
 
+        for (let i = 0; i < result.docs.length; i++) {
+            if (result.docs[i] && result.docs[i].permissions) {
+                result.docs[i].permissions = result.docs[i].permissions.map(e => {
+                    return {
+                        _id: e._id,
+                        label: e.title,
+                        module: e.module,
+                        value: e.code
+                    }
+                })
+            }
+        }
+
         return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.designerPermissionslist = async (req, res) => {
+    try {
+        let permissions = await dbMethods.find({
+            collection: dbModels.Permission,
+            query: { module: "UploadDesign" },
+            project: { title: 1, code: 1, module: 1 }
+        })
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully get permissions", permissions));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));

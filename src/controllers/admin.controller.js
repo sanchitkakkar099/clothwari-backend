@@ -55,13 +55,25 @@ exports.adminCreateEdit = async (req, res) => {
 
 exports.adminById = async (req, res) => {
     try {
-        let client = await dbMethods.findOne({
+        let admin = await dbMethods.findOne({
             collection: dbModels.User,
             query: { _id: req.params.id },
-            project: { name: 1, email: 1, phone: 1 }
+            project: { name: 1, email: 1, phone: 1 },
+            populate: [{ path: "permissions", select: "title module code" }]
         })
+
+        if (admin.permissions) {
+            admin.permissions = admin.permissions.map(e => {
+                return {
+                    _id: e._id,
+                    label: e.title,
+                    module: e.module,
+                    value: e.code
+                }
+            })
+        }
         return res.status(HttpStatus.OK)
-            .send(helperUtils.successRes("Successfully get client", client));
+            .send(helperUtils.successRes("Successfully get admin", admin));
     } catch (error) {
         console.log(error)
         return res.status(HttpStatus.BAD_REQUEST)
@@ -100,6 +112,8 @@ exports.adminList = async (req, res) => {
             collection: dbModels.User,
             query: query,
             options: {
+                populate: [{ path: "permissions", select: "title module code" }],
+                lean: true,
                 select: { name: 1, email: 1, phone: 1 },
                 sort: { _id: -1 },
                 page,
@@ -107,6 +121,19 @@ exports.adminList = async (req, res) => {
             },
         })
 
+
+        for (let i = 0; i < result.docs.length; i++) {
+            if (result.docs[i] && result.docs[i].permissions) {
+                result.docs[i].permissions = result.docs[i].permissions.map(e => {
+                    return {
+                        _id: e._id,
+                        label: e.title,
+                        module: e.module,
+                        value: e.code
+                    }
+                })
+            }
+        }
         return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)

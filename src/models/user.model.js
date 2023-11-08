@@ -11,7 +11,6 @@ const userSchema = new mongoose.Schema({
     role: { type: String },
     createdBy: { type: mongoose.Types.ObjectId, ref: "User" },
     onlyUpload: { type: Boolean, default: false, },
-    Persmission: [{ type: String, default: "" }],
     isActive: { type: Boolean, default: false },
     allowLoginTime: { type: Date },   //only for cleint role
     allowLoginSec: { type: Number },   // only for client uer role

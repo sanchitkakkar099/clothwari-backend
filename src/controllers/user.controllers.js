@@ -41,7 +41,8 @@ exports.adminlogin = async (req, res) => {
     try {
         let userCheck = await dbMethods.findOne({
             collection: dbModels.User,
-            query: { email: req.body.email.toLowerCase() }
+            query: { email: req.body.email.toLowerCase() },
+            populate: [{ path: "permissions" }]
         })
 
         if (!userCheck) {
@@ -55,6 +56,7 @@ exports.adminlogin = async (req, res) => {
                     .send(helperUtils.errorRes("Invalid Password"))
             }
         }
+        let permissions = userCheck?.permissions?.map(e => e.title)
 
         let payload = {
             _id: userCheck._id,
@@ -63,6 +65,7 @@ exports.adminlogin = async (req, res) => {
             phone: userCheck.phone,
             role: userCheck.role,
             onlyUpload: userCheck.onlyUpload,
+            permissions: permissions,
         }
         let token = await helperUtils.jwtSign(payload)
 
