@@ -137,10 +137,34 @@ exports.designerList = async (req, res) => {
 
 exports.designerPermissionslist = async (req, res) => {
     try {
-        let permissions = await dbMethods.find({
+        // let permissions = await dbMethods.find({
+        //     collection: dbModels.Permission,
+        //     query: { module: "UploadDesign" },
+        //     project: { title: 1, code: 1, module: 1 }
+        // })
+        let pipeline = []
+        pipeline.push({
+            $match: {
+                module: "UploadDesign"
+            }
+        })
+        pipeline.push({
+            $project: {
+                _id: 1,
+                label: "$title",
+                module: 1,
+                value: "$code"
+            }
+        })
+        // let permissions = await dbMethods.find({
+        //     collection: dbModels.Permission,
+        //     query: {},
+        //     project: { title: 1, code: 1, module: 1 }
+        // })
+        let permissions = await dbMethods.aggregate({
             collection: dbModels.Permission,
-            query: { module: "UploadDesign" },
-            project: { title: 1, code: 1, module: 1 }
+            pipeline: pipeline,
+            options: { lean: true }
         })
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get permissions", permissions));
