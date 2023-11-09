@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String, default: "" },
     role: { type: String },
     createdBy: { type: mongoose.Types.ObjectId, ref: "User" },
-    onlyUpload: { type: Boolean, default: false, },
+    // onlyUpload: { type: Boolean, default: false, },
     isActive: { type: Boolean, default: false },
     allowLoginTime: { type: Date },   //only for cleint role
     allowLoginSec: { type: Number },   // only for client uer role
