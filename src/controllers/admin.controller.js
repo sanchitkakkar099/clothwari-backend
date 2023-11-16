@@ -156,8 +156,16 @@ exports.getDashboardData = async (req, res) => {
             collection: dbModels.User,
             query: { role: UserRoleConstant.Designer, status: 0 }
         })
+        let client = await dbMethods.countDocuments({
+            collection: dbModels.User,
+            query: { role: UserRoleConstant.Client }
+        })
+        let admin = await dbMethods.countDocuments({
+            collection: dbModels.User,
+            query: { role: UserRoleConstant.Admin }
+        })
         return res.status(HttpStatus.OK)
-            .send(helperUtils.successRes("Successfully get data", { staff, uploaddesign, newStaff }));
+            .send(helperUtils.successRes("Successfully get data", { staff, uploaddesign, newStaff, client, admin }));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
