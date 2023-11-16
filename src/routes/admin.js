@@ -118,7 +118,8 @@ router.post("/staff/approval/list",
 /**
  * @typedef staffapproved
  * @property {string} staffId
- * @property {number} status -
+ * @property {number} status-
+ * @property {Array<string>} permissions
  */
 /**
  * get admin dashboard

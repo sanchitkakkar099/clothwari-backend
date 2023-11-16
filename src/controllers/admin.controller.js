@@ -201,7 +201,7 @@ exports.approvedStaff = async (req, res) => {
         await dbMethods.updateOne({
             collection: dbModels.User,
             query: { _id: req.body.staffId },
-            update: { status: req.body.status }
+            update: { status: req.body.status, permissions: req.body.permissions }
         })
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully updated", {}));
