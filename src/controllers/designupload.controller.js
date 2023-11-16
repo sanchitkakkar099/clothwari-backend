@@ -205,7 +205,7 @@ exports.designuploadList = async (req, res) => {
 
 exports.designuploadCreateBulk = async (req, res) => {
     try {
-        for (let i = 0; i < req.body[i].length; i++) {
+        for (let i = 0; i < req.body.length; i++) {
             const element = req.body[i];
 
             if (!req.body._id) {
@@ -215,7 +215,11 @@ exports.designuploadCreateBulk = async (req, res) => {
                 });
                 if (!checkAlreadyUploaded) {
                     let fields = element
+                    delete fields.id
                     fields.uploadedBy = req.user._id
+                    if (fields.color && fields.color.length) {
+                        fields.color = fields.color.map(e => e._id)
+                    }
                     await dbMethods.insertOne({
                         collection: dbModels.DesignUpload,
                         document: fields
