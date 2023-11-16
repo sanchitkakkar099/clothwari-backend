@@ -23,7 +23,7 @@ exports.colorCreateEdit = async (req, res) => {
             await dbMethods.updateOne({
                 collection: dbModels.Color,
                 query: { _id: req.body._id },
-                update: { name: req.body.name }
+                update: { name: req.body.name, code: req.body.code }
             })
         }
         return res.status(HttpStatus.OK)
