@@ -7,6 +7,10 @@ const DesignUploadSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category'
     },
+    color: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Color'
+    }],
     tag: [
         {
             customOption: { type: Boolean },

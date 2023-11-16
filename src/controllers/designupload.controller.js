@@ -16,6 +16,9 @@ exports.designuploadCreate = async (req, res) => {
             }
             let fields = req.body
             fields.uploadedBy = req.user._id
+            if (fields.color && fields.color.length) {
+                fields.color = fields.color.map(e => e._id)
+            }
             await dbMethods.insertOne({
                 collection: dbModels.DesignUpload,
                 document: fields
@@ -32,6 +35,9 @@ exports.designuploadCreate = async (req, res) => {
                 return res.status(HttpStatus.BAD_REQUEST)
                     .send(helperUtils.errorRes("Already uploaded", {}));
             }
+            if (req.body.color && req.body.color.length) {
+                req.body.color = req.body.color.map(e => e._id)
+            }
             await dbMethods.updateOne({
                 collection: dbModels.DesignUpload,
                 query: { _id: _id },
@@ -41,6 +47,7 @@ exports.designuploadCreate = async (req, res) => {
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully created", {}));
     } catch (error) {
+        console.log(error);
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
@@ -65,6 +72,30 @@ exports.designuploadById = async (req, res) => {
                 value: designupload.category._id
             }
         }
+        let pipeline = [
+            {
+                $match: {
+                    _id: { $in: designupload.color }
+                }
+            },
+            {
+                $project: {
+                    _id: "$_id",
+                    label: "$name",
+                    value: "$code"
+                }
+            },
+            {
+                $sort: {
+                    _id: -1
+                }
+            }
+        ]
+        let result = await dbMethods.aggregate({
+            collection: dbModels.Color,
+            pipeline: pipeline
+        })
+        designupload.color = result
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get designupload", designupload));
     } catch (error) {
@@ -133,7 +164,34 @@ exports.designuploadList = async (req, res) => {
                     value: result.docs[i].category._id
                 }
             }
-
+            if (element.color && element.color.length) {
+                let pipeline = [
+                    {
+                        $match: {
+                            _id: { $in: element.color }
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: "$_id",
+                            label: "$name",
+                            value: "$code"
+                        }
+                    },
+                    {
+                        $sort: {
+                            _id: -1
+                        }
+                    }
+                ]
+                let colors = await dbMethods.aggregate({
+                    collection: dbModels.Color,
+                    pipeline: pipeline
+                })
+                result.docs[i].color = colors
+            } else {
+                result.docs[i].color = []
+            }
         }
 
         return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));
