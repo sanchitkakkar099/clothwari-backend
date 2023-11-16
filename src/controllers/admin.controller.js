@@ -148,9 +148,13 @@ exports.getDashboardData = async (req, res) => {
             collection: dbModels.User,
             query: { role: UserRoleConstant.Designer }
         })
+        let query = {}
+        if (req.user.role != UserRoleConstant.SuperAdmin) {
+            query.uploadedBy = req.user._id
+        }
         let uploaddesign = await dbMethods.countDocuments({
             collection: dbModels.DesignUpload,
-            query: {}
+            query: query
         })
         let newStaff = await dbMethods.countDocuments({
             collection: dbModels.User,
