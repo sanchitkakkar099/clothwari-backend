@@ -56,6 +56,10 @@ exports.adminlogin = async (req, res) => {
                     .send(helperUtils.errorRes("Invalid Password"))
             }
         }
+        if (userCheck.role == UserRoleConstant.Designer && userCheck.status == 0) {
+            return res.status(HttpStatus.BAD_REQUEST)
+                .send(helperUtils.errorRes("Account not Accepted"))
+        }
         let permissions = userCheck?.permissions?.map(e => e.title)
 
         let payload = {
