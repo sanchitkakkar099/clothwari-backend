@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const path = require("path");
 const uploadad = require("../middlewares").uploadad;
+const sharp = require('sharp');
 
 //import uti;s functions
 const { dbMethods, dbModels, helperUtils } = require("../utils")
@@ -12,6 +13,7 @@ const { dbMethods, dbModels, helperUtils } = require("../utils")
  * @consumes multipart/form-data
  * @param {file} file.formData
  * @param {number} type.query.required - file type
+ * @param {boolean} watermark.query.required - file type
  *
  *  1:design,
  *  99: default
@@ -21,11 +23,56 @@ const { dbMethods, dbModels, helperUtils } = require("../utils")
  */
 router.post("/", uploadad.single('file'), async (req, res) => {
     try {
-        req.file.filepath = req.file.path.replace(/\\/g, '/')
-        req.file.filepath = 'http://' + process.env.HOST + "/" + req.file.filepath
-        req.file.originalname = req.file.originalname
-        req.file.mimetype = req.file.mimetype
-        req.file.size = req.file.size
+        if (req.query.watermark == 'true') {
+            // Input and output file paths
+            req.file.filepath = req.file.path.replace(/\\/g, '/');
+            const inputImagePath = path.join(__dirname, "../../" + req.file.filepath);
+            const outputImagePath = path.join(__dirname, "../../uploads/watermark/" + req.file.filename);
+
+            // Watermark text and style
+            const watermarkText = 'Clothwari';
+            const watermarkOptions = {
+                font: 'Arial',
+                fontSize: 30,
+                fontColor: 'rgba(255, 255, 255, 0.8)',
+                background: 'rgba(0, 0, 0, 0.5)',
+                rotate: 0,
+            };
+
+            // Read the input image
+            const image = sharp(inputImagePath);
+            // Get image metadata (width and height)
+            const metadata = await image.metadata();
+
+            // Calculate the center position for the watermark
+            const centerX = Math.floor(metadata.width / 2);
+            const centerY = Math.floor(metadata.height / 2);
+
+            // Create an SVG string with explicit width and height matching the image
+            const svgText = `<svg width="${metadata.width}" height="${metadata.height}" xmlns="http://www.w3.org/2000/svg"><text x="${centerX}" y="${centerY}" font-family="${watermarkOptions.font}" font-size="${watermarkOptions.fontSize}" fill="${watermarkOptions.fontColor}" transform="rotate(${watermarkOptions.rotate},${centerX},${centerY})" text-anchor="middle" alignment-baseline="middle">${watermarkText}</text></svg>`;
+
+            // Add the watermark text to the image
+            const result = await image
+                .clone()
+                .composite([
+                    {
+                        input: Buffer.from(svgText),
+                        left: 0,
+                        top: 0,
+                    },
+                ])
+                .toFile(outputImagePath);
+            req.file.originalname = req.file.originalname
+            req.file.mimetype = req.file.mimetype
+            req.file.size = req.file.size
+            req.file.filepath = 'http://' + process.env.HOST + "/uploads/watermark/" + req.file.filename
+        } else {
+            req.file.filepath = req.file.path.replace(/\\/g, '/')
+            req.file.filepath = 'http://' + process.env.HOST + "/" + req.file.filepath
+            req.file.originalname = req.file.originalname
+            req.file.mimetype = req.file.mimetype
+            req.file.size = req.file.size
+        }
 
         let file = await dbMethods.insertOne({
             collection: dbModels.FileUpload,
@@ -49,6 +96,7 @@ router.post("/", uploadad.single('file'), async (req, res) => {
  * @consumes multipart/form-data
  * @param {file} file.formData
  * @param {number} type.query.required - file type
+ * @param {boolean} watermark.query.required - file type
  *
  *  1:design,
  *  99: default

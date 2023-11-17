@@ -21,7 +21,8 @@ const UserRoleConstant = Object.freeze({
 const FileDirectoryType = Object.freeze({
     99: '/default',
     100: '/csvfiles',
-    1: '/design'
+    1: '/design',
+    2: '/watermark',
 })
 
 const DefaultConstantType = Object.freeze({
