@@ -107,12 +107,18 @@ exports.colorDropDown = async (req, res) => {
                 }
             },
             {
+                $unwind: { path: "$image", preserveNullAndEmptyArrays: true }
+            },
+            {
                 $lookup: {
                     from: 'fileuploads',
                     localField: 'thumbnail',
                     foreignField: '_id',
                     as: 'thumbnail',
                 }
+            },
+            {
+                $unwind: { path: "$thumbnail", preserveNullAndEmptyArrays: true }
             },
             {
                 $project: {
