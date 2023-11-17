@@ -55,24 +55,18 @@ exports.designerById = async (req, res) => {
         let designer = await dbMethods.findOne({
             collection: dbModels.User,
             query: { _id: req.params.id },
-            project: { name: 1, email: 1, phone: 1, onlyUpload: 1 }
+            populate: [{ path: "permissions" }],
+            project: { name: 1, email: 1, phone: 1, onlyUpload: 1, permissions: 1 }
         })
-        if (designer.permissions) {
-            designer.permissions = designer.map(e => {
-                return {
-                    _id: e._id,
-                    label: e.title,
-                    module: e.module,
-                    value: e.code
-                }
-            })
+        if (designer.permissions.length) {
+            designer.permissions = designer?.permissions?.map(e => e.title)
         }
 
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get designer", designer));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
-            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+            .send(helperUtils.successRes("Bad Request", error.message, HttpStatus.BAD_REQUEST));
     }
 }
 
@@ -190,7 +184,7 @@ exports.designerLogin = async (req, res) => {
             phone: designer.phone,
             role: designer.role,
             onlyUpload: designer.onlyUpload,
-            permissions: designer.permissions,
+            permissions: designer?.permissions?.map(e => e.title),
         }
         let token = await helperUtils.jwtSign(payload)
 
