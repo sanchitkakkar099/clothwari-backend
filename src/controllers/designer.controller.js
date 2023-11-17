@@ -179,7 +179,8 @@ exports.designerLogin = async (req, res) => {
     try {
         let designer = await dbMethods.findOne({
             collection: dbModels.User,
-            query: { _id: req.body.designerById }
+            query: { _id: req.body.designerById },
+            populate: [{ path: "permissions" }],
         })
 
         let payload = {
@@ -189,6 +190,7 @@ exports.designerLogin = async (req, res) => {
             phone: designer.phone,
             role: designer.role,
             onlyUpload: designer.onlyUpload,
+            permissions: designer.permissions,
         }
         let token = await helperUtils.jwtSign(payload)
 
