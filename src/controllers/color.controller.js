@@ -99,10 +99,30 @@ exports.colorDropDown = async (req, res) => {
     try {
         let pipeline = [
             {
+                $lookup: {
+                    from: 'fileuploads',
+                    localField: 'image',
+                    foreignField: '_id',
+                    as: 'image',
+                }
+            },
+            {
+                $lookup: {
+                    from: 'fileuploads',
+                    localField: 'thumbnail',
+                    foreignField: '_id',
+                    as: 'thumbnail',
+                }
+            },
+            {
                 $project: {
                     _id: "$_id",
                     label: "$name",
-                    value: "$code"
+                    value: "$code",
+                    thumbnail: '$thumbnail',
+                    image: '$image',
+                    designNo: "designNo"
+
                 }
             },
             {
