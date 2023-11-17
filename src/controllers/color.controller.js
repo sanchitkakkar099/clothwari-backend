@@ -39,7 +39,11 @@ exports.colorById = async (req, res) => {
     try {
         let color = await dbMethods.findOne({
             collection: dbModels.Color,
-            query: { _id: req.params.id }
+            query: { _id: req.params.id },
+            populate: [
+                { path: "image" },
+                { path: "thumbnail" },
+            ]
         })
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get color", color));
@@ -74,7 +78,13 @@ exports.colorList = async (req, res) => {
         let result = await dbMethods.paginate({
             collection: dbModels.Color,
             query: query,
-            options: { sort: { _id: -1 }, limit, page }
+            options: {
+                sort: { _id: -1 }, limit, page,
+                populate: [
+                    { path: "image" },
+                    { path: "thumbnail" },
+                ]
+            }
         })
 
         return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));

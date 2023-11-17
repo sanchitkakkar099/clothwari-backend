@@ -11,6 +11,9 @@ const { auth } = require("../middlewares").auth
  * @property {string} _id - id of category
  * @property {string} name - name of category
  * @property {string} code - name of category
+ * @property {string} designNo - name of category
+ * @property {string} image - image of color
+ * @property {string} thumbnail - image of color
  */
 /**
  * create or edit the category by id
