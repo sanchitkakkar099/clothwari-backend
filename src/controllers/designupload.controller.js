@@ -79,10 +79,36 @@ exports.designuploadById = async (req, res) => {
                 }
             },
             {
+                $lookup: {
+                    from: 'fileuploads',
+                    localField: 'image',
+                    foreignField: '_id',
+                    as: 'image',
+                }
+            },
+            {
+                $unwind: { path: "$image", preserveNullAndEmptyArrays: true }
+            },
+            {
+                $lookup: {
+                    from: 'fileuploads',
+                    localField: 'thumbnail',
+                    foreignField: '_id',
+                    as: 'thumbnail',
+                }
+            },
+            {
+                $unwind: { path: "$thumbnail", preserveNullAndEmptyArrays: true }
+            },
+            {
                 $project: {
                     _id: "$_id",
                     label: "$name",
-                    value: "$code"
+                    value: "$code",
+                    thumbnail: '$thumbnail',
+                    image: '$image',
+                    designNo: "designNo"
+
                 }
             },
             {
