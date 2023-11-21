@@ -86,7 +86,7 @@ exports.designuploadCreate = async (req, res) => {
             }
             await dbMethods.deleteMany({
                 collection: dbModels.Variation,
-                query: { _id: { $nin: currentids } }
+                query: { _id: { $nin: currentids }, designId: _id }
             })
         }
         return res.status(HttpStatus.OK)
