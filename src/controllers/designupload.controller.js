@@ -53,6 +53,41 @@ exports.designuploadCreate = async (req, res) => {
                 query: { _id: _id },
                 update: req.body
             })
+
+            let oldids = await dbMethods.distinct({
+                collection: dbModels.Variation,
+                field: "_id",
+                query: { designId: _id }
+            })
+            let currentids = []
+            for (let i = 0; i < req.body.variations.length; i++) {
+                let e = req.body.variations[i];
+                if (!e._id) {
+                    e.designId = _id
+                    let variant = await dbMethods.insertOne({
+                        collection: dbModels.Variation,
+                        document: e
+                    })
+                    currentids.push(variant._id)
+                } else {
+                    await dbMethods.updateOne({
+                        collection: dbModels.Variation,
+                        query: { _id: e._id },
+                        update: {
+                            color: e.color,
+                            variation_name: e.variation_name,
+                            variation_designNo: e.variation_designNo,
+                            variation_image: e?.variation_image,
+                            variation_thumbnail: e?.variation_thumbnail
+                        }
+                    })
+                    currentids.push(e._id);
+                }
+            }
+            await dbMethods.deleteMany({
+                collection: dbModels.Variation,
+                query: { _id: { $nin: currentids } }
+            })
         }
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully created", {}));
