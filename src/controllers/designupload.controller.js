@@ -19,10 +19,20 @@ exports.designuploadCreate = async (req, res) => {
             if (fields.color && fields.color.length) {
                 fields.color = fields.color.map(e => e._id)
             }
-            await dbMethods.insertOne({
+            let design = await dbMethods.insertOne({
                 collection: dbModels.DesignUpload,
                 document: fields
             })
+
+            for (let i = 0; i < req.body.variations.length; i++) {
+                let ele = req.body.variations[i];
+                ele.designId = design._id
+                await dbMethods.insertOne({
+                    collection: dbModels.Variation,
+                    document: ele
+                })
+
+            }
         }
         else {
             let _id = req.body._id
@@ -122,6 +132,16 @@ exports.designuploadById = async (req, res) => {
             pipeline: pipeline
         })
         designupload.color = result
+        designupload.variations = await dbMethods.find({
+            collection: dbModels.Variation,
+            query: { designId: designupload._id },
+            populate: [{
+                path: "variation_image",
+            },
+            {
+                path: "variation_thumbnail"
+            }]
+        })
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get designupload", designupload));
     } catch (error) {
@@ -244,6 +264,16 @@ exports.designuploadList = async (req, res) => {
             } else {
                 result.docs[i].color = []
             }
+            result.docs[i].variations = await dbMethods.find({
+                collection: dbModels.Variation,
+                query: { designId: result.docs[i]._id },
+                populate: [{
+                    path: "variation_image",
+                },
+                {
+                    path: "variation_thumbnail"
+                }]
+            })
         }
 
         return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));

@@ -6,4 +6,5 @@ module.exports = Object.freeze({
     Permission: "Permission",
     Tag: "Tag",
     User: "User",
+    Variation: "Variation",
 })

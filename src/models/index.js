@@ -7,6 +7,7 @@ const { ColorSchema } = require("./color.model");
 const { FileuploadSchema } = require("./fileupload");
 const { DesignUploadSchema } = require("./designupload.model");
 const { PermissionSchema } = require("./permission.model");
+const { VariationSchema } = require("./variation.model");
 
 
 const db = {
@@ -19,6 +20,7 @@ const db = {
     Permission: mongoose.model(dbModels.Permission, PermissionSchema),
     Tag: mongoose.model(dbModels.Tag, TagSchema),
     User: mongoose.model(dbModels.User, userSchema),
+    Variation: mongoose.model(dbModels.Variation, VariationSchema),
 }
 
 
