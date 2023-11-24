@@ -5,14 +5,14 @@ const VariationSchema = new mongoose.Schema({
     color: { type: String },
     variation_name: { type: String },
     variation_designNo: { type: String },
-    variation_image: {
+    variation_image: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "FileUpload"
-    },
-    variation_thumbnail: {
+    }],
+    variation_thumbnail: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "FileUpload"
-    },
+    }],
     designId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "DesignUpload"
