@@ -2,7 +2,7 @@ const router = require("express").Router();
 const path = require("path");
 const uploadad = require("../middlewares").uploadad;
 const sharp = require('sharp');
-const pdfPoppler = require('pdf-poppler');
+// const pdfPoppler = require('pdf-poppler');
 const fs = require("fs");
 
 //import uti;s functions
@@ -35,18 +35,18 @@ router.post("/", uploadad.single('file'), async (req, res) => {
         if (req.file.mimetype == 'application/pdf') {
             const pdfPath = path.join(__dirname, "../../" + filepath);
             const outputDirectory = path.join(__dirname, "../../uploads/pdf_img");
-            await extractImagesFromPDF(pdfPath, outputDirectory); // Adjusted output directory
+            // await extractImagesFromPDF(pdfPath, outputDirectory); // Adjusted output directory
             let extractfile = path.join(__dirname, "../../uploads/pdf_img/" + path.basename(pdfPath, path.extname(pdfPath)) + "-1.png")
-            if (fs.existsSync(extractfile)) {
-                if (req.query.watermark == 'true') {
-                    let thumbnail = await createThumbnail(extractfile)
-                    if (thumbnail) {
-                        req.file.pdf_extract_img = thumbnail
-                        req.file.thumbnail = thumbnail
-                    }
-                }
-                req.file.pdf_extract_img = 'http://' + process.env.HOST + "/uploads/pdf_img/" + path.basename(req.file.filepath, path.extname(req.file.filename)) + "-1.png"
-            }
+            // if (fs.existsSync(extractfile)) {
+            //     if (req.query.watermark == 'true') {
+            //         let thumbnail = await createThumbnail(extractfile)
+            //         if (thumbnail) {
+            //             req.file.pdf_extract_img = thumbnail
+            //             req.file.thumbnail = thumbnail
+            //         }
+            //     }
+            //     req.file.pdf_extract_img = 'http://' + process.env.HOST + "/uploads/pdf_img/" + path.basename(req.file.filepath, path.extname(req.file.filename)) + "-1.png"
+            // }
         }
 
         let file = await dbMethods.insertOne({
