@@ -23,6 +23,7 @@ const FileDirectoryType = Object.freeze({
     100: '/csvfiles',
     1: '/design',
     2: '/watermark',
+    3: '/pdf_img'
 })
 
 const DefaultConstantType = Object.freeze({

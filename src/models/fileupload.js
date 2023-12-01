@@ -10,6 +10,8 @@ const FileuploadSchema = new mongoose.Schema({
     path: { type: String },
     size: { type: String },
     filepath: { type: String },
+    pdf_extract_img: { type: String },
+    thumbnail: { type: String },
 }, { timestamps: true })
 
 exports.FileuploadSchema = FileuploadSchema;
