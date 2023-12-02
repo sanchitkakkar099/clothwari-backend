@@ -30,7 +30,9 @@ const DesignUploadSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    designNo: { type: String }
+    designNo: { type: String },
+    primary_color_name: { type: String },
+    primary_color_code: { type: String },
 }, { timestamps: true });
 
 DesignUploadSchema.plugin(mongoosepaginate);
