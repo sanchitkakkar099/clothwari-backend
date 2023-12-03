@@ -27,6 +27,7 @@ exports.designuploadCreate = async (req, res) => {
             for (let i = 0; i < req.body.variations.length; i++) {
                 let ele = req.body.variations[i];
                 ele.designId = design._id
+                delete ele.id
                 await dbMethods.insertOne({
                     collection: dbModels.Variation,
                     document: ele
