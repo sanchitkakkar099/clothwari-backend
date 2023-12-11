@@ -83,7 +83,9 @@ exports.colorList = async (req, res) => {
                 populate: [
                     { path: "image" },
                     { path: "thumbnail" },
-                ]
+                ],
+                page: page,
+                limit: limit,
             }
         })
 

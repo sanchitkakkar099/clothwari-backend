@@ -233,6 +233,8 @@ exports.designuploadList = async (req, res) => {
                     { path: "category", select: "name" },
                     { path: "uploadedBy", select: "name email" },
                 ],
+                page: page,
+                limit: limit,
                 lean: true
             }
         })

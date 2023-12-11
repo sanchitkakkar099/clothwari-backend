@@ -74,7 +74,11 @@ exports.categoryList = async (req, res) => {
         let result = await dbMethods.paginate({
             collection: dbModels.Category,
             query: query,
-            options: { sort: { _id: -1 } }
+            options: {
+                sort: { _id: -1 },
+                page: page,
+                limit: limit,
+            }
         })
 
         return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));
