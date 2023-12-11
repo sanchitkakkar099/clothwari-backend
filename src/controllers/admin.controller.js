@@ -166,6 +166,17 @@ exports.getDashboardData = async (req, res) => {
             collection: dbModels.DesignUpload,
             query: query
         })
+        let uploaddesignIds = await dbMethods.distinct({
+            collection: dbModels.DesignUpload,
+            field: "_id",
+            query: {}
+        })
+        let variantIds = await dbMethods.distinct({
+            collection: dbModels.Variation,
+            field: "_id",
+            query: { designId: { $in: uploaddesignIds } },
+        })
+        let uploaddesignwithvariant = uploaddesignIds.length + variantIds.length
         let newStaff = await dbMethods.countDocuments({
             collection: dbModels.User,
             query: { role: UserRoleConstant.Designer, status: 0 }
@@ -179,7 +190,7 @@ exports.getDashboardData = async (req, res) => {
             query: { role: UserRoleConstant.Admin }
         })
         return res.status(HttpStatus.OK)
-            .send(helperUtils.successRes("Successfully get data", { staff, uploaddesign, newStaff, client, admin }));
+            .send(helperUtils.successRes("Successfully get data", { staff, uploaddesign, newStaff, client, admin, uploaddesignwithvariant }));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
