@@ -59,7 +59,14 @@ exports.designerById = async (req, res) => {
             project: { name: 1, email: 1, phone: 1, onlyUpload: 1, permissions: 1 }
         })
         if (designer.permissions.length) {
-            designer.permissions = designer?.permissions?.map(e => e.title)
+            designer.permissions = designer?.permissions?.map(e => {
+                return {
+                    _id: e._id,
+                    label: e.title,
+                    module: e.module,
+                    value: e.code
+                }
+            })
         }
 
         return res.status(HttpStatus.OK)
