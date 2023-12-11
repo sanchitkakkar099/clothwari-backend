@@ -222,23 +222,30 @@ exports.designuploadList = async (req, res) => {
         if (req.body.page) page = req.body.page;
         if (req.body.limit) limit = req.body.limit;
 
-        let result = await dbMethods.paginate({
+        let result = {
+            docs: [],
+            hasNextPage: true,
+            hasPrevPage: false,
+            limit: 10,
+            nextPage: 2,
+            page: 1,
+            pagingCounter: 1,
+            prevPage: null,
+            totalDocs: 24,
+            totalPages: 3,
+        };
+
+        result.docs = await dbMethods.find({
             collection: dbModels.DesignUpload,
             query: query,
-            options: {
-                sort: { _id: -1 },
-                populate: [
-                    { path: "image" },
-                    { path: "thumbnail" },
-                    { path: "category", select: "name" },
-                    { path: "uploadedBy", select: "name email" },
-                ],
-                page: page,
-                limit: limit,
-                lean: true
-            }
+            populate: [
+                { path: "image" },
+                { path: "thumbnail" },
+                { path: "category", select: "name" },
+                { path: "uploadedBy", select: "name email" },
+            ],
+            sort: { _id: -1 },
         })
-        let data = [];
         for (let i = 0; i < result.docs.length; i++) {
             const element = result.docs[i];
 
