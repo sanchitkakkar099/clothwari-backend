@@ -96,18 +96,26 @@ exports.designerList = async (req, res) => {
         if (req.body.page) page = req.body.page;
         if (req.body.limit) limit = req.body.limit;
 
-        let result = await dbMethods.paginate({
+        let result = {
+            docs: [],
+            hasNextPage: true,
+            hasPrevPage: false,
+            limit: 10,
+            nextPage: 1,
+            page: 1,
+            pagingCounter: 1,
+            prevPage: null,
+            totalDocs: 0,
+            totalPages: 1,
+        };
+        result.docs = await dbMethods.find({
             collection: dbModels.User,
             query: query,
-            options: {
-                populate: [{ path: "permissions" }],
-                lean: true,
-                select: { name: 1, email: 1, phone: 1, onlyUpload: 1 },
-                sort: { _id: -1 },
-                page,
-                limit
-            },
+            populate: [{ path: "permissions" }],
+            project: { name: 1, email: 1, phone: 1, onlyUpload: 1 },
+            sort: { _id: -1 },
         })
+        result.totalDocs = result.docs.length
 
         for (let i = 0; i < result.docs.length; i++) {
             if (result.docs[i] && result.docs[i].permissions) {

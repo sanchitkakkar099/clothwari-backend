@@ -71,16 +71,25 @@ exports.categoryList = async (req, res) => {
         if (req.body.page) page = req.body.page;
         if (req.body.limit) limit = req.body.limit;
 
-        let result = await dbMethods.paginate({
+        let result = {
+            docs: [],
+            hasNextPage: true,
+            hasPrevPage: false,
+            limit: 10,
+            nextPage: 1,
+            page: 1,
+            pagingCounter: 1,
+            prevPage: null,
+            totalDocs: 0,
+            totalPages: 1,
+        };
+        result.docs = await dbMethods.find({
             collection: dbModels.Category,
             query: query,
-            options: {
-                sort: { _id: -1 },
-                page: page,
-                limit: limit,
-            }
+            sort: { _id: -1 },
         })
 
+        result.totalDocs = result.docs.length;
         return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)

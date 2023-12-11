@@ -246,6 +246,7 @@ exports.designuploadList = async (req, res) => {
             ],
             sort: { _id: -1 },
         })
+        result.totalDocs = result.docs.length
         for (let i = 0; i < result.docs.length; i++) {
             const element = result.docs[i];
 
