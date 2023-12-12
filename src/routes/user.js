@@ -1,3 +1,5 @@
+const { auth } = require("../middlewares");
+
 const router = require("express").Router()
 
 //import userController
@@ -62,5 +64,23 @@ router.post("/designer/create",
     adminAuth,
     userController.createDesigner
 )
+
+/**
+ * @typedef logoutusermodel
+ * @property {string} userId
+ * @property {string} lastInActiveTime
+ */
+/**
+ * create admin role user
+ * @route POST /user/logoout
+ * @param {logoutusermodel.model} data.body.required
+ * @group User - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ * @security User
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/logout",
+    userController.logoutuser)
 
 module.exports = router;

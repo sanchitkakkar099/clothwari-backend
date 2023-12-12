@@ -123,3 +123,18 @@ exports.createjwt = async (req, res) => {
     }
 }
 
+
+exports.logoutuser = async (req, res) => {
+    try {
+        await dbMethods.updateOne({
+            collection: dbModels.User,
+            query: { _id: req.body.userId },
+            update: { lastInActiveTime: req.body.lastInActiveTime }
+        })
+        res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully logout", {}))
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.errorRes("Bad request", error.message, HttpStatus.BAD_REQUEST));
+    }
+}

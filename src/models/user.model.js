@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema({
         ref: "Permission"
     }],
     client_allow_time: mongoose.Schema.Types.Mixed,
+    lastInActiveTime: { type: String },
 
 }, { timestamps: true })
 userSchema.plugin(mongoosepaginate);
