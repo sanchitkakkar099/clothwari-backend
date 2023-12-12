@@ -18,7 +18,8 @@ const userSchema = new mongoose.Schema({
     permissions: [{
         type: mongoose.Types.ObjectId,
         ref: "Permission"
-    }]
+    }],
+    client_allow_time: mongoose.Schema.Types.Mixed,
 
 }, { timestamps: true })
 userSchema.plugin(mongoosepaginate);
