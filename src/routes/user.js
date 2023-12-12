@@ -72,7 +72,7 @@ router.post("/designer/create",
  */
 /**
  * create admin role user
- * @route POST /user/logoout
+ * @route POST /user/logout
  * @param {logoutusermodel.model} data.body.required
  * @group User - Operations
  * @returns {object} 200
@@ -82,5 +82,19 @@ router.post("/designer/create",
  */
 router.post("/logout",
     userController.logoutuser)
+
+/**
+ * create admin role user
+ * @route POST /user/lastactivetime
+ * @param {logoutusermodel.model} data.body.required
+ * @group User - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ * @security User
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/lastactivetime",
+ userController.logoutuser)
+
 
 module.exports = router;
