@@ -57,7 +57,7 @@ exports.clientById = async (req, res) => {
         let client = await dbMethods.findOne({
             collection: dbModels.User,
             query: { _id: req.params.id },
-            project: { name: 1, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1 }
+            project: { name: 1, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1, client_allow_time: 1 }
         })
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get client", client));
