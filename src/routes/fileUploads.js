@@ -4,7 +4,7 @@ const uploadad = require("../middlewares").uploadad;
 const sharp = require('sharp');
 // const pdfPoppler = require('pdf-poppler');
 const fs = require("fs");
-const pdf = require('pdf-poppler');
+// const pdf = require('pdf-poppler');
 
 //import uti;s functions
 const { dbMethods, dbModels, helperUtils } = require("../utils")
@@ -34,17 +34,17 @@ router.post("/", uploadad.single('file'), async (req, res) => {
         req.file.size = req.file.size
 
         if (req.file.mimetype == 'application/pdf') {
-            const pdfPath = path.join(__dirname, "../../" + filepath);
-            let extracted = await extractImagesFromPDF(pdfPath)
+            // const pdfPath = path.join(__dirname, "../../" + filepath);
+            // let extracted = await extractImagesFromPDF(pdfPath)
 
-            if (extracted) {
-                let extractedImage = path.dirname(filepath) + "/" + path.basename(pdfPath, path.extname(pdfPath)) + "-1.jpg"
-                let createdImagePath = path.join(__dirname, "../../" + extractedImage)
-                if (fs.existsSync(createdImagePath)) {
-                    console.log("successfully created file", createdImagePath)
-                    req.file.pdf_extract_img = 'http://' + process.env.HOST + "/" + extractedImage
-                }
-            }
+            // if (extracted) {
+            //     let extractedImage = path.dirname(filepath) + "/" + path.basename(pdfPath, path.extname(pdfPath)) + "-1.jpg"
+            //     let createdImagePath = path.join(__dirname, "../../" + extractedImage)
+            //     if (fs.existsSync(createdImagePath)) {
+            //         console.log("successfully created file", createdImagePath)
+            //         req.file.pdf_extract_img = 'http://' + process.env.HOST + "/" + extractedImage
+            //     }
+            // }
         }
 
         let file = await dbMethods.insertOne({
