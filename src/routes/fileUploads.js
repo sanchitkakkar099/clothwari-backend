@@ -4,6 +4,7 @@ const uploadad = require("../middlewares").uploadad;
 const sharp = require('sharp');
 // const pdfPoppler = require('pdf-poppler');
 const fs = require("fs");
+const pdf = require('pdf-poppler');
 
 //import uti;s functions
 const { dbMethods, dbModels, helperUtils } = require("../utils")
@@ -34,19 +35,16 @@ router.post("/", uploadad.single('file'), async (req, res) => {
 
         if (req.file.mimetype == 'application/pdf') {
             const pdfPath = path.join(__dirname, "../../" + filepath);
-            const outputDirectory = path.join(__dirname, "../../uploads/pdf_img");
-            // await extractImagesFromPDF(pdfPath, outputDirectory); // Adjusted output directory
-            let extractfile = path.join(__dirname, "../../uploads/pdf_img/" + path.basename(pdfPath, path.extname(pdfPath)) + "-1.png")
-            // if (fs.existsSync(extractfile)) {
-            //     if (req.query.watermark == 'true') {
-            //         let thumbnail = await createThumbnail(extractfile)
-            //         if (thumbnail) {
-            //             req.file.pdf_extract_img = thumbnail
-            //             req.file.thumbnail = thumbnail
-            //         }
-            //     }
-            //     req.file.pdf_extract_img = 'http://' + process.env.HOST + "/uploads/pdf_img/" + path.basename(req.file.filepath, path.extname(req.file.filename)) + "-1.png"
-            // }
+            let extracted = await extractImagesFromPDF(pdfPath)
+
+            if (extracted) {
+                let extractedImage = path.dirname(filepath) + "/" + path.basename(pdfPath, path.extname(pdfPath)) + "-1.jpg"
+                let createdImagePath = path.join(__dirname, "../../" + extractedImage)
+                if (fs.existsSync(createdImagePath)) {
+                    console.log("successfully created file", createdImagePath)
+                    req.file.pdf_extract_img = 'http://' + process.env.HOST + "/" + extractedImage
+                }
+            }
         }
 
         let file = await dbMethods.insertOne({
@@ -64,17 +62,17 @@ router.post("/", uploadad.single('file'), async (req, res) => {
 
 })
 
-async function extractImagesFromPDF(pdfPath, outputPath) {
+async function extractImagesFromPDF(file) {
     try {
-        const options = {
-            format: 'png',
-            out_dir: outputPath,// path.dirname(outputPath),
-            out_prefix: path.basename(pdfPath, path.extname(pdfPath)),
+        let opts = {
+            format: 'jpg',
+            out_dir: path.dirname(file),
+            out_prefix: path.basename(file, path.extname(file)),
             page: null
-        };
-        let img = await pdfPoppler.convert(pdfPath, options);
+        }
+        await pdf.convert(file, opts)
         console.log('Images extracted successfully.');
-        return img;
+        return true;
     } catch (error) {
         console.log("extractImagesFromPDF ===========", error);
         return false;
