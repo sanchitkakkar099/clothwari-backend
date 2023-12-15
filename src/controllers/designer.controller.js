@@ -154,7 +154,7 @@ exports.designerPermissionslist = async (req, res) => {
         let pipeline = []
         pipeline.push({
             $match: {
-                module: "UploadDesign"
+                module: { $in: ["UploadDesign", "ColorVariation"] }
             }
         })
         pipeline.push({
