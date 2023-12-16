@@ -35,25 +35,17 @@ router.post("/", uploadad.single('file'), async (req, res) => {
         req.file.mimetype = req.file.mimetype
         req.file.size = req.file.size
 
-        if (req.file.mimetype == 'application/pdf') {
-            const pdfPath = path.join(__dirname, "../../" + filepath);
-            let extracted = await extractImagesFromPDF(pdfPath)
-            console.log(extracted)
-
-            // if (extracted) {
-            //     let extractedImage = path.dirname(filepath) + "/" + path.basename(pdfPath, path.extname(pdfPath)) + "-1.jpg"
-            //     let createdImagePath = path.join(__dirname, "../../" + extractedImage)
-            //     if (fs.existsSync(createdImagePath)) {
-            //         console.log("successfully created file", createdImagePath)
-            //         req.file.pdf_extract_img = 'http://' + process.env.HOST + "/" + extractedImage
-            //     }
-            // }
-        }
-
         let file = await dbMethods.insertOne({
             collection: dbModels.FileUpload,
             document: req.file
         })
+
+        if (req.file.mimetype == 'application/pdf') {
+            const pdfPath = path.join(__dirname, "../../" + filepath);
+            let extracted = await extractImagesFromPDF(pdfPath, file._id)
+            console.log(extracted)
+        }
+
         res.send(helperUtils.successRes("Successfully uploaded file", file));
         return;
 
@@ -65,7 +57,7 @@ router.post("/", uploadad.single('file'), async (req, res) => {
 
 })
 
-async function extractImagesFromPDF(file) {
+async function extractImagesFromPDF(file, fileId) {
     try {
 
         let outputpath = path.join(__dirname + '../../uploads/pdf_img')
@@ -89,7 +81,7 @@ async function extractImagesFromPDF(file) {
 
 
         console.log(options)
-        pdf2img.convert(file, function (err, info) {
+        pdf2img.convert(file, async function (err, info) {
             if (err) {
                 console.log(err)
                 return false
@@ -102,6 +94,13 @@ async function extractImagesFromPDF(file) {
                     const content = fs.readFileSync(filepath);
                     fs.writeFileSync(outputpath, content)
                     console.log(outputpath, "filepath", filepath)
+                    await dbMethods.updateOne({
+                        collection: dbModels.FileUpload,
+                        query: { _id: fileId },
+                        update: {
+                            pdf_extract_img: 'http://' + process.env.HOST + "/uploads/pdf_img/" + element.name
+                        }
+                    })
 
                 }
                 return info
