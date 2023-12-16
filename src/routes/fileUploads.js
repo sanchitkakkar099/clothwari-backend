@@ -178,6 +178,7 @@ router.post("/multiple", uploadad.array('file', 10), async (req, res) => {
         for (let i = 0; i < req.files.length; i++) {
             const element = req.files[i];
             element.filepath = element.path.replace(/\\/g, '/')
+            let filepath = element.filepath
             element.filepath = 'http://' + process.env.HOST + "/" + element.filepath
             element.originalname = element.originalname
             element.mimetype = element.mimetype
@@ -188,6 +189,11 @@ router.post("/multiple", uploadad.array('file', 10), async (req, res) => {
                 document: element
             })
             files.push(file);
+            if (req.file.mimetype == 'application/pdf') {
+                const pdfPath = path.join(__dirname, "../../" + filepath);
+                let extracted = await extractImagesFromPDF(pdfPath, file._id)
+                console.log(extracted)
+            }
         }
         res.status(200).send(helperUtils.successRes("Successfully upload file", files));
         return;
