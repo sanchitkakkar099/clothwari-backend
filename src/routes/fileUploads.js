@@ -77,7 +77,7 @@ async function extractImagesFromPDF(file) {
             page: null
         };
 
-        const info = await convertPromise(input, options);
+        const info = await convertPromise(file, options);
         console.log(info);
         return info;
 
