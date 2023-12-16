@@ -9,6 +9,8 @@ const fs = require("fs");
 //import uti;s functions
 const { dbMethods, dbModels, helperUtils } = require("../utils")
 
+var pdf2img = require('pdf2img');
+const util = require('util');
 
 /**
  * Upload Single File for System
@@ -34,8 +36,9 @@ router.post("/", uploadad.single('file'), async (req, res) => {
         req.file.size = req.file.size
 
         if (req.file.mimetype == 'application/pdf') {
-            // const pdfPath = path.join(__dirname, "../../" + filepath);
-            // let extracted = await extractImagesFromPDF(pdfPath)
+            const pdfPath = path.join(__dirname, "../../" + filepath);
+            let extracted = await extractImagesFromPDF(pdfPath)
+            console.log(extracted)
 
             // if (extracted) {
             //     let extractedImage = path.dirname(filepath) + "/" + path.basename(pdfPath, path.extname(pdfPath)) + "-1.jpg"
@@ -64,15 +67,20 @@ router.post("/", uploadad.single('file'), async (req, res) => {
 
 async function extractImagesFromPDF(file) {
     try {
-        let opts = {
-            format: 'jpg',
-            out_dir: path.dirname(file),
-            out_prefix: path.basename(file, path.extname(file)),
+        const convertPromise = util.promisify(pdf2img.convert);
+        const options = {
+            type: 'png',
+            size: 1024,
+            density: 600,
+            outputdir: '../../uploads/pdf_img',
+            outputname: path.basename(file, path.extname(file)),
             page: null
-        }
-        await pdf.convert(file, opts)
-        console.log('Images extracted successfully.');
-        return true;
+        };
+
+        const info = await convertPromise(input, options);
+        console.log(info);
+        return info;
+
     } catch (error) {
         console.log("extractImagesFromPDF ===========", error);
         return false;
