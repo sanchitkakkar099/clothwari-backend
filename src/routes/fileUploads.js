@@ -68,11 +68,13 @@ router.post("/", uploadad.single('file'), async (req, res) => {
 async function extractImagesFromPDF(file) {
     try {
 
+        let outputpath = path.join(__dirname + '../../uploads/pdf_img')
+        console.log(outputpath)
         const options = {
             type: 'png',
             size: 1024,
             density: 600,
-            outputdir: __dirname + '../../uploads/pdf_img',
+            outputdir: outputpath,
             outputname: path.basename(file, path.extname(file)),
             page: null
         };
