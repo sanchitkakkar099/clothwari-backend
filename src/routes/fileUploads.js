@@ -81,6 +81,8 @@ async function extractImagesFromPDF(file) {
         };
 
 
+
+        console.log(options)
         pdf2img.convert(file, function (err, info) {
             if (err) {
                 console.log(err)
