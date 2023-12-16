@@ -189,8 +189,9 @@ router.post("/multiple", uploadad.array('file', 10), async (req, res) => {
                 document: element
             })
             files.push(file);
-            if (req.file.mimetype == 'application/pdf') {
+            if (element.mimetype == 'application/pdf') {
                 const pdfPath = path.join(__dirname, "../../" + filepath);
+                console.log("-------------")
                 let extracted = await extractImagesFromPDF(pdfPath, file._id)
                 console.log(extracted)
             }
