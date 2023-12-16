@@ -68,16 +68,24 @@ router.post("/", uploadad.single('file'), async (req, res) => {
 async function extractImagesFromPDF(file) {
     try {
 
-        // let outputpath = path.join(__dirname + '../../uploads/pdf_img')
-        let outputpath = path.dirname(file)
+        let outputpath = path.join(__dirname + '../../uploads/pdf_img')
+        // let outputpath = path.dirname(file) 
         console.log("input file path", file)
         console.log(outputpath, path.basename(file, path.extname(file)),)
+
+        // Ensure the output subdirectory exists
+        let outputFileName = path.basename(file, path.extname(file))
+        const outputSubDirPath = path.join(outputpath, outputFileName);
+        console.log("outputSubDirPath", outputSubDirPath)
+        if (!fs.existsSync(outputSubDirPath)) {
+            fs.mkdirSync(outputSubDirPath, { recursive: true });
+        }
         const options = {
             type: 'jpg',
             size: 1024,
             density: 600,
-            outputdir: outputpath + path.sep + "pdf_img",
-            outputname: path.basename(file, path.extname(file)),
+            outputdir: outputSubDirPath,
+            outputname: null, // Set to null so that pdf2img doesn't add outputname as a subdirectory
             page: null
         };
 
