@@ -70,6 +70,7 @@ async function extractImagesFromPDF(file) {
 
         // let outputpath = path.join(__dirname + '../../uploads/pdf_img')
         let outputpath = path.dirname(file)
+        console.log("input file path", file)
         console.log(outputpath, path.basename(file, path.extname(file)),)
         const options = {
             type: 'jpg',
