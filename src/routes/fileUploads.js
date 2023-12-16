@@ -96,7 +96,7 @@ async function extractImagesFromPDF(file) {
             }
             else {
                 for (let i = 0; i < 1; i++) {
-                    const element = array[i];
+                    const element = info[i];
                     let filepath = path.join(__dirname, "../../" + element.path)
                     let outputpath = path.join(__dirname + '../../uploads/pdf_img' + element.name)
                     const content = fs.readFileSync(filepath);
