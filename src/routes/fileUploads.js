@@ -67,7 +67,7 @@ router.post("/", uploadad.single('file'), async (req, res) => {
 
 async function extractImagesFromPDF(file) {
     try {
-        const convertPromise = util.promisify(pdf2img.convert);
+
         const options = {
             type: 'png',
             size: 1024,
@@ -77,9 +77,17 @@ async function extractImagesFromPDF(file) {
             page: null
         };
 
-        const info = await convertPromise(file, options);
-        console.log(info);
-        return info;
+
+        pdf2img.convert(file, function (err, info) {
+            if (err) {
+                console.log(err)
+                return false
+            }
+            else {
+                console.log(info);
+                return info
+            }
+        });
 
     } catch (error) {
         console.log("extractImagesFromPDF ===========", error);
