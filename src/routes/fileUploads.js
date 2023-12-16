@@ -77,9 +77,6 @@ async function extractImagesFromPDF(file) {
         let outputFileName = path.basename(file, path.extname(file))
         const outputSubDirPath = path.join(outputpath, outputFileName);
         console.log("outputSubDirPath", outputSubDirPath)
-        if (!fs.existsSync(outputSubDirPath)) {
-            fs.mkdirSync(outputSubDirPath, { recursive: true });
-        }
         const options = {
             type: 'jpg',
             size: 1024,
@@ -98,7 +95,15 @@ async function extractImagesFromPDF(file) {
                 return false
             }
             else {
-                console.log(info);
+                for (let i = 0; i < 1; i++) {
+                    const element = array[i];
+                    let filepath = path.join(__dirname, "../../" + element.path)
+                    let outputpath = path.join(__dirname + '../../uploads/pdf_img' + element.name)
+                    const content = fs.readFileSync(filepath);
+                    fs.writeFileSync(outputpath, content)
+                    console.log(outputpath, "filepath", filepath)
+
+                }
                 return info
             }
         });
