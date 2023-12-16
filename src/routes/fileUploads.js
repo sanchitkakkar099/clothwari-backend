@@ -75,7 +75,7 @@ async function extractImagesFromPDF(file) {
             type: 'jpg',
             size: 1024,
             density: 600,
-            outputdir: "./../../uploads/pdf_img",
+            outputdir: outputpath + path.sep + "pdf_img",
             outputname: path.basename(file, path.extname(file)),
             page: null
         };
