@@ -6,7 +6,7 @@ const server = http.createServer(app);
 
 //load dotenv module
 require("dotenv").config()
-const port =   3300// process.env.PORT
+const port = process.env.PORT
 
 
 require("./loaders/database")()
