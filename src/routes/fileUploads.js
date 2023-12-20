@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const path = require("path");
 const uploadad = require("../middlewares").uploadad;
+const { uploadS3 } = require("../middlewares")
 const sharp = require('sharp');
 // const pdfPoppler = require('pdf-poppler');
 const fs = require("fs");
@@ -26,11 +27,13 @@ const util = require('util');
  * @returns {object} 200 - file path object
  * @returns {Error}  Error - Unexpected error
  */
-router.post("/", uploadad.single('file'), async (req, res) => {
+// router.post("/", uploadad.single('file'), async (req, res) => {
+router.post("/", uploadS3.single('file'), async (req, res) => {
     try {
-        let filepath = req.file.path.replace(/\\/g, '/')
-        req.file.filepath = req.file.path.replace(/\\/g, '/')
-        req.file.filepath = 'http://' + process.env.HOST + "/" + req.file.filepath
+        // let filepath = req.file.path.replace(/\\/g, '/')
+        // req.file.filepath = req.file.path.replace(/\\/g, '/')
+        // req.file.filepath = 'http://' + process.env.HOST + "/" + req.file.filepath
+        req.file.filepath = req.file.location;
         req.file.originalname = req.file.originalname
         req.file.mimetype = req.file.mimetype
         req.file.size = req.file.size
@@ -40,11 +43,11 @@ router.post("/", uploadad.single('file'), async (req, res) => {
             document: req.file
         })
 
-        if (req.file.mimetype == 'application/pdf') {
-            const pdfPath = path.join(__dirname, "../../" + filepath);
-            let extracted = await extractImagesFromPDF(pdfPath, file._id)
-            console.log(extracted)
-        }
+        // if (req.file.mimetype == 'application/pdf') {
+        //     const pdfPath = path.join(__dirname, "../../" + filepath);
+        //     let extracted = await extractImagesFromPDF(pdfPath, file._id)
+        //     console.log(extracted)
+        // }
 
         res.send(helperUtils.successRes("Successfully uploaded file", file));
         return;
@@ -172,14 +175,15 @@ async function createThumbnail(filepath) {
  * @returns {object} 200 - file path object
  * @returns {Error}  Error - Unexpected error
  */
-router.post("/multiple", uploadad.array('file', 10), async (req, res) => {
+router.post("/multiple", uploadS3.array('file', 10), async (req, res) => {
     try {
         let files = [];
         for (let i = 0; i < req.files.length; i++) {
             const element = req.files[i];
-            element.filepath = element.path.replace(/\\/g, '/')
-            let filepath = element.filepath
-            element.filepath = 'http://' + process.env.HOST + "/" + element.filepath
+            // element.filepath = element.path.replace(/\\/g, '/')
+            // let filepath = element.filepath
+            // element.filepath = 'http://' + process.env.HOST + "/" + element.filepath
+            element.filepath = element.location
             element.originalname = element.originalname
             element.mimetype = element.mimetype
             element.size = element.size
@@ -189,12 +193,12 @@ router.post("/multiple", uploadad.array('file', 10), async (req, res) => {
                 document: element
             })
             files.push(file);
-            if (element.mimetype == 'application/pdf') {
-                const pdfPath = path.join(__dirname, "../../" + filepath);
-                console.log("-------------")
-                let extracted = await extractImagesFromPDF(pdfPath, file._id)
-                console.log(extracted)
-            }
+            // if (element.mimetype == 'application/pdf') {
+            //     const pdfPath = path.join(__dirname, "../../" + filepath);
+            //     console.log("-------------")
+            //     let extracted = await extractImagesFromPDF(pdfPath, file._id)
+            //     console.log(extracted)
+            // }
         }
         res.status(200).send(helperUtils.successRes("Successfully upload file", files));
         return;
