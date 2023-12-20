@@ -4,6 +4,10 @@ const multer = require("multer")
 const path = require("path")
 const { FileDirectoryType, AllowedFileType } = require('../utils/constant')
 
+const AWS_ACCESSKEY = 'AKIAUIYCDOLIPKTDDUAK'
+const AWS_SECRETKEY = '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'
+const AWS_BUCKET = 'clothwaris3'
+
 const s3 = new aws.S3({
     accessKeyId: process.env.AWS_ACCESSKEY,
     secretAccessKey: process.env.AWS_SECRETKEY,
