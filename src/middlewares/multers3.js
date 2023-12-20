@@ -9,8 +9,8 @@ const AWS_SECRETKEY = 'FN8f1Vw5HuUWL2ztY8O0yy765B0xz7Lo+FoiodwN'
 const AWS_BUCKET = 'clothwaris3'
 
 const s3 = new aws.S3({
-    accessKeyId: process.env.AWS_ACCESSKEY,
-    secretAccessKey: process.env.AWS_SECRETKEY,
+    accessKeyId: AWS_ACCESSKEY,
+    secretAccessKey: AWS_SECRETKEY,
 })
 
 const bucketPolicy = {
@@ -20,27 +20,27 @@ const bucketPolicy = {
             Effect: "Allow",
             Principal: "*",
             Action: ["s3:GetObject"],
-            Resource: `arn:aws:s3:::${process.env.AWS_BUCKET}/*`
+            Resource: `arn:aws:s3:::${AWS_BUCKET}/*`
         }
     ]
 };
 
 const params = {
-    Bucket: process.env.AWS_BUCKET,
+    Bucket: AWS_BUCKET,
     Policy: JSON.stringify(bucketPolicy),
 };
 
-s3.putBucketPolicy(params, (err, data) => {
-    if (err) {
-        console.error('Error setting bucket policy:', err);
-    } else {
-        console.log('Bucket policy updated:', data);
-    }
-});
+// s3.putBucketPolicy(params, (err, data) => {
+//     if (err) {
+//         console.error('Error setting bucket policy:', err);
+//     } else {
+//         console.log('Bucket policy updated:', data);
+//     }
+// });
 
 const s3Storge = multerS3({
     s3: s3,
-    bucket: process.env.AWS_BUCKET,
+    bucket: AWS_BUCKET,
     //acl: 'public-read',
     contentType: (req, file, cb) => {
         cb(null, file.mimetype);
