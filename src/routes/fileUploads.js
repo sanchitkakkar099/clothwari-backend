@@ -90,22 +90,23 @@ async function extractImagesFromPDF(file, fileId) {
                 return false
             }
             else {
-                for (let i = 0; i < 1; i++) {
-                    const element = info.message[i];
-                    let filepath = path.join(__dirname, "../../" + element.path)
-                    let outputpath = path.join(__dirname + '../../../uploads/pdf_img/' + element.name)
-                    const content = fs.readFileSync(filepath);
-                    fs.writeFileSync(outputpath, content)
-                    console.log(outputpath, "filepath", filepath)
-                    await dbMethods.updateOne({
-                        collection: dbModels.FileUpload,
-                        query: { _id: fileId },
-                        update: {
-                            pdf_extract_img: 'http://' + process.env.HOST + "/uploads/pdf_img/" + element.name
-                        }
-                    })
+                console.log(info.message)
+                // for (let i = 0; i < 1; i++) {
+                //     const element = info.message[i];
+                //     let filepath = path.join(__dirname, "../../" + element.path)
+                //     let outputpath = path.join(__dirname + '../../../uploads/pdf_img/' + element.name)
+                //     const content = fs.readFileSync(filepath);
+                //     fs.writeFileSync(outputpath, content)
+                //     console.log(outputpath, "filepath", filepath)
+                //     await dbMethods.updateOne({
+                //         collection: dbModels.FileUpload,
+                //         query: { _id: fileId },
+                //         update: {
+                //             pdf_extract_img: 'http://' + process.env.HOST + "/uploads/pdf_img/" + element.name
+                //         }
+                //     })
 
-                }
+                // }
                 return info
             }
         });
@@ -199,6 +200,58 @@ router.post("/multiple", uploadS3.array('file', 10), async (req, res) => {
             //     let extracted = await extractImagesFromPDF(pdfPath, file._id)
             //     console.log(extracted)
             // }
+        }
+        res.status(200).send(helperUtils.successRes("Successfully upload file", files));
+        return;
+    } catch (error) {
+        res.send(helperUtils.errorRes("Bad Request", error.message));
+        return;
+    }
+})
+
+
+/**
+ * Upload Single File for System
+ * @route POST /uploads/multiple/pdf
+ * @consumes multipart/form-data
+ * @param {file} file.formData
+ * @param {number} type.query.required - file type
+ * @param {boolean} watermark.query.required - file type
+ *
+ *  1:design,
+ *  99: default
+ * @group FileUpload - File Upload operation
+ * @returns {object} 200 - file path object
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/multiple/pdf", uploadad.array('file', 10), async (req, res) => {
+    try {
+        let files = [];
+        for (let i = 0; i < req.files.length; i++) {
+            const element = req.files[i];
+            element.filepath = element.path.replace(/\\/g, '/')
+            let filepath = element.filepath
+            element.filepath = 'http://' + process.env.HOST + "/" + element.filepath
+            element.filepath = await helperUtils.uploadfileToS3(
+                path.join(__dirname, "../../" + filepath),
+                element.filename,
+                element.mimetype
+            )
+            element.originalname = element.originalname
+            element.mimetype = element.mimetype
+            element.size = element.size
+
+            let file = await dbMethods.insertOne({
+                collection: dbModels.FileUpload,
+                document: element
+            })
+            files.push(file);
+            if (element.mimetype == 'application/pdf') {
+                const pdfPath = path.join(__dirname, "../../" + filepath);
+                console.log("-------------", pdfPath)
+                let extracted = await extractImagesFromPDF(pdfPath, file._id)
+                console.log(extracted)
+            }
         }
         res.status(200).send(helperUtils.successRes("Successfully upload file", files));
         return;
