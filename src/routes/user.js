@@ -112,5 +112,6 @@ router.post("/lastactivetime",
  * @returns {Error}  Error - Unexpected error
  */
 router.post("/password/change",
+    adminAuth,
     userController.userpasswordchaange)
 module.exports = router;
