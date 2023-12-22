@@ -76,7 +76,7 @@ async function extractImagesFromPDF(file, fileId) {
             type: 'jpg',
             size: 1024,
             density: 600,
-            outputdir: outputSubDirPath,
+            // outputdir: outputSubDirPath,
             outputname: outputFileName, // Set to null so that pdf2img doesn't add outputname as a subdirectory
             page: null
         };
