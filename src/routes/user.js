@@ -1,4 +1,4 @@
-const { auth } = require("../middlewares");
+const { auth } = require("../middlewares").auth;
 
 const router = require("express").Router()
 
@@ -112,6 +112,6 @@ router.post("/lastactivetime",
  * @returns {Error}  Error - Unexpected error
  */
 router.post("/password/change",
-    adminAuth,
+    auth,
     userController.userpasswordchaange)
 module.exports = router;
