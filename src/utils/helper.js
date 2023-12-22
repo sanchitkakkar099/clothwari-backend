@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken")
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const aws = require('aws-sdk');
+const fs = require("fs");
 
 exports.successRes = (msg, data, code = 200) => {
     return {
@@ -39,4 +41,27 @@ exports.bcryptHash = (password) => {
 
 exports.bcryptCompare = (password, hash) => {
     return bcrypt.compareSync(password, hash)
+}
+
+
+
+
+exports.uploadfileToS3 = async (filepath, filename, mimetype, key = 28) => {
+    try {
+        const s3 = new aws.S3({
+            accessKeyId: process.env.AWS_ACCESSKEY,
+            secretAccessKey: process.env.AWS_SECRETKEY,
+        })
+        let stored = await s3.upload({
+            ContentDisposition: 'inline',
+            ContentType: mimetype,
+            Bucket: process.env.AWS_BUCKET,
+            Body: fs.readFileSync(filepath),
+            Key: key + '/' + filename
+        }).promise()
+        return stored.Location
+    } catch (error) {
+        console.log(error);
+        return false
+    }
 }
