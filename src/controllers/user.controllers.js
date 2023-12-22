@@ -139,3 +139,21 @@ exports.logoutuser = async (req, res) => {
             .send(helperUtils.errorRes("Bad request", error.message, HttpStatus.BAD_REQUEST));
     }
 }
+
+
+exports.userpasswordchaange = async (req, res) => {
+    try {
+        req.body.password = await helperUtils.bcryptHash(req.body.password)
+        await dbMethods.updateOne({
+            collection: dbModels.User,
+            query: { _id: req.user._id },
+            update: { password: req.body.password }
+        })
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("successfully changed password", {}));
+    } catch (error) {
+        console.log(error);
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.errorRes("Bad request", error.message, HttpStatus.BAD_REQUEST));
+    }
+}

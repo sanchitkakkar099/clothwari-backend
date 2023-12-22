@@ -94,7 +94,23 @@ router.post("/logout",
  * @returns {Error}  Error - Unexpected error
  */
 router.post("/lastactivetime",
- userController.logoutuser)
+    userController.logoutuser)
 
 
+/**
+ * @typedef passwordchange
+ * @property {string} password
+ */
+/**
+ * create admin role user
+ * @route POST /user/password/change
+ * @param {passwordchange.model} data.body.required
+ * @group User - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ * @security User
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/password/change",
+    userController.userpasswordchaange)
 module.exports = router;
