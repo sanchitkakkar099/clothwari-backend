@@ -70,7 +70,7 @@ async function extractImagesFromPDF(file, fileId) {
 
         // Ensure the output subdirectory exists
         let outputFileName = path.basename(file, path.extname(file))
-        const outputSubDirPath = path.join(outputpath, outputFileName);
+        const outputSubDirPath = path.join(outputpath);
         console.log("outputSubDirPath", outputSubDirPath)
         const options = {
             type: 'jpg',
