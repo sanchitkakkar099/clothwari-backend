@@ -13,7 +13,7 @@ router.get("/uploadfile/s3", async (req, res) => {
             query: { "mimetype": "image/tiff" }
         })
         let ids = [];
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < file; i++) {
             const element = file[i];
             if (element.path) {
                 let file_dir = path.join(__dirname, "../../" + element.path)
