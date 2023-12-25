@@ -10,7 +10,7 @@ router.get("/uploadfile/s3", async (req, res) => {
     try {
         let file = await dbMethods.find({
             collection: dbModels.FileUpload,
-            query: { "mimetype": "image/tiff" }
+            query: { "mimetype": "image/tiff", filepath: new RegExp("http://13.233.130.34:3300/", "i") }
         })
         let ids = [];
         for (let i = 0; i < file.length; i++) {
