@@ -72,6 +72,7 @@ router.get("/object", async (req, res) => {
             const bucketName = urlParts.hostname.split('.')[0];
             const objectKey = urlParts.pathname.slice(1); // Remove the leading "/"
 
+            console.log(bucketName, objectKey)
             // Create a parameters object for the getObject operation
             const params = {
                 Bucket: bucketName,
