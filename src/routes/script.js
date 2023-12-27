@@ -78,7 +78,7 @@ router.get("/object", async (req, res) => {
                 Bucket: bucketName,
                 Key: objectKey,
             };
-            const fileStream = fs.createWriteStream(path.join(__dirname, "../../uploads/design" + path.basename(s3Url)));
+            const fileStream = fs.createWriteStream(path.join(__dirname, "../../uploads/design/" + path.basename(s3Url)));
             // Use the getObject method to read the object from S3
             s3.getObject(params)
                 .createReadStream()
