@@ -58,31 +58,38 @@ router.get("/uploadfile/s3", async (req, res) => {
 router.get("/object", async (req, res) => {
     try {
 
-        // Specify the S3 URL
-        const s3Url = 'https://clothwaris3.s3.ap-south-1.amazonaws.com/design/file_1703509513781.pdf';
+        let files = await dbMethods.find({
+            collection: dbModels.FileUpload,
+            query: { mimetype: "application/pdf", filepath: new RegExp("https://", "i") }
+        })
+        for (let i = 0; i < files.length; i++) {
+            const element = files[i];
+            // Specify the S3 URL
+            const s3Url = element.filepath;
 
-        // Extract the bucket name and object key from the URL
-        const urlParts = new URL(s3Url);
-        const bucketName = urlParts.hostname.split('.')[0];
-        const objectKey = urlParts.pathname.slice(1); // Remove the leading "/"
+            // Extract the bucket name and object key from the URL
+            const urlParts = new URL(s3Url);
+            const bucketName = urlParts.hostname.split('.')[0];
+            const objectKey = urlParts.pathname.slice(1); // Remove the leading "/"
 
-        // Create a parameters object for the getObject operation
-        const params = {
-            Bucket: bucketName,
-            Key: objectKey,
-        };
-        const fileStream = fs.createWriteStream(path.join(__dirname, "../../uploads/" + path.basename(s3Url)));
-        // Use the getObject method to read the object from S3
-        s3.getObject(params)
-            .createReadStream()
-            .pipe(fileStream)
-            .on('error', function (err) {
-                console.error('Error downloading S3 object:', err);
-            })
-            .on('close', function () {
-                console.log('File downloaded successfully!');
-            });
-        res.send("success")
+            // Create a parameters object for the getObject operation
+            const params = {
+                Bucket: bucketName,
+                Key: objectKey,
+            };
+            const fileStream = fs.createWriteStream(path.join(__dirname, "../../uploads/design" + path.basename(s3Url)));
+            // Use the getObject method to read the object from S3
+            s3.getObject(params)
+                .createReadStream()
+                .pipe(fileStream)
+                .on('error', function (err) {
+                    console.error('Error downloading S3 object:', err);
+                })
+                .on('close', function () {
+                    console.log('File downloaded successfully!');
+                });
+        }
+        res.send("success" + files.length)
     } catch (error) {
         console.log(error);
         res.send(error.message);
