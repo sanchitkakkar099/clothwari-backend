@@ -61,7 +61,7 @@ router.get("/object", async (req, res) => {
         let files = await dbMethods.find({
             collection: dbModels.FileUpload,
             query: { mimetype: "application/pdf", filepath: new RegExp("https://", "i") },
-            limit: 50,
+            limit: 1,
         })
         for (let i = 0; i < files.length; i++) {
             const element = files[i];
