@@ -21,7 +21,8 @@ router.get("/uploadfile/s3", async (req, res) => {
     try {
         let file = await dbMethods.find({
             collection: dbModels.FileUpload,
-            query: { mimetype: "application/pdf", filepath: new RegExp("http://13.233.130.34:3300/", "i") }
+            // query: { mimetype: "application/pdf", filepath: new RegExp("http://13.233.130.34:3300/", "i") }
+            query: { mimetype: "application/pdf", path: { $exists: true }, filename: { $exists: true } }
         })
         let ids = [];
         for (let i = 0; i < file.length; i++) {
@@ -60,8 +61,17 @@ router.get("/object", async (req, res) => {
 
         let files = await dbMethods.find({
             collection: dbModels.FileUpload,
-            query: { mimetype: "application/pdf", filepath: new RegExp("https://", "i") },
-            limit: 1,
+            // query: {
+            //     mimetype: "application/pdf"
+            //     , $and: [{ filepath: /https:/i },
+            //     { filepath: { $nin: [/%20%/i] } }
+
+            //     ]
+            // },
+            query: {
+                mimetype: "application/pdf", path: { $exists: true }, filename: { $exists: true }
+            },
+            sort: { _id: -1 }
         })
         for (let i = 0; i < files.length; i++) {
             const element = files[i];
@@ -80,7 +90,7 @@ router.get("/object", async (req, res) => {
                 Bucket: bucketName,
                 Key: objectKey,
             };
-            const fileStream = fs.createWriteStream(path.join(__dirname, "../../uploads/design/" + path.basename(s3Url)));
+            const fileStream = fs.createWriteStream(path.join(__dirname, "../../uploads/server_pdf/" + element.filename));
             // Use the getObject method to read the object from S3
             s3.getObject(params)
                 .createReadStream()
@@ -99,7 +109,32 @@ router.get("/object", async (req, res) => {
     }
 })
 
+router.get("/object/remove", async (req, res) => {
+    try {
+        // Extract the bucket name and object key from the URL
+        const urlParts = new URL("https://clothwaris3.s3.ap-south-1.amazonaws.com/design/images%20%281%29.pdf");
+        const bucketName = urlParts.hostname.split('.')[0];
+        const objectKey = urlParts.pathname.slice(1); // Remove the leading "/"
+        // Configure the parameters for deleting the object
+        const params = {
+            Bucket: bucketName,
+            Key: objectKey
+        };
 
+        // Delete the object
+        s3.deleteObject(params, (err, data) => {
+            if (err) {
+                console.error('Error deleting object:', err);
+            } else {
+                console.log('Object deleted successfully:', data);
+            }
+        });
+        res.send("successfully deleted")
+    } catch (error) {
+        console.log(error);
+        res.send(error.message);
+    }
+})
 
 module.exports = router
 
