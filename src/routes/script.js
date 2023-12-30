@@ -39,7 +39,7 @@ router.get("/uploadfile/s3", async (req, res) => {
                         await dbMethods.updateOne({
                             collection: dbModels.FileUpload,
                             query: { _id: element._id },
-                            update: { filepath: uploads3, oldpath: element.filepath }
+                            update: { filepath: uploads3, odls3: element.filepath },
                         })
                         ids.push(element._id)
                     }
