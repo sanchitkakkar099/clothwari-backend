@@ -32,7 +32,7 @@ router.get("/uploadfile/s3", async (req, res) => {
                 if (fs.existsSync(file_dir)) {
                     let uploads3 = await helperUtils.uploadfileToS3(
                         file_dir,
-                        element.originalname,
+                        element.filename,
                         element.mimetype,
                         'design')
                     if (uploads3) {
