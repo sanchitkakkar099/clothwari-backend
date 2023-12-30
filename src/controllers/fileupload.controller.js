@@ -41,7 +41,7 @@ async function runPythonScript(filepath, outputpath, fileId, filename) {
         const pdfPath = filepath;
         const outputFolder = outputpath;
 
-        const pythonProcess = spawn('python', [pythonScriptPath, pdfPath, outputFolder, filename]);
+        const pythonProcess = spawn('python3', [pythonScriptPath, pdfPath, outputFolder, filename]);
 
         const stdoutPromise = new Promise((resolve) => {
             pythonProcess.stdout.on('data', (file_path1) => {
