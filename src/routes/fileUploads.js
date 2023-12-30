@@ -13,6 +13,8 @@ const { dbMethods, dbModels, helperUtils } = require("../utils")
 var pdf2img = require('pdf2img');
 const util = require('util');
 
+const { fileuploadController } = require("../controllers")
+
 /**
  * Upload Single File for System
  * @route POST /uploads
@@ -219,6 +221,7 @@ router.post("/multiple", uploadS3.array('file', 10), async (req, res) => {
  * @param {boolean} watermark.query.required - file type
  *
  *  1:design,
+ *  5:design_pdf,
  *  99: default
  * @group FileUpload - File Upload operation
  * @returns {object} 200 - file path object
@@ -227,11 +230,12 @@ router.post("/multiple", uploadS3.array('file', 10), async (req, res) => {
 router.post("/multiple/pdf", uploadad.array('file', 10), async (req, res) => {
     try {
         let files = [];
+        let filestodeleted = [];
         for (let i = 0; i < req.files.length; i++) {
             const element = req.files[i];
             element.filepath = element.path.replace(/\\/g, '/')
             let filepath = element.filepath
-            element.filepath = 'http://' + process.env.HOST + "/" + element.filepath
+            // element.filepath = 'http://' + process.env.HOST + "/" + element.filepath
             element.filepath = await helperUtils.uploadfileToS3(
                 path.join(__dirname, "../../" + filepath),
                 element.filename,
@@ -248,14 +252,20 @@ router.post("/multiple/pdf", uploadad.array('file', 10), async (req, res) => {
             files.push(file);
             if (element.mimetype == 'application/pdf') {
                 const pdfPath = path.join(__dirname, "../../" + filepath);
+                filestodeleted.push(pdfPath);
                 console.log("-------------", pdfPath)
-                let extracted = await extractImagesFromPDF(pdfPath, file._id)
-                console.log(extracted)
+                let outputpath = path.join(__dirname + '../../../uploads/pdf_img')
+                let outputFileName = path.basename(pdfPath, path.extname(pdfPath))
+                await fileuploadController.extractimage_from_pdf_python(
+                    pdfPath, outputpath, file._id, outputFileName
+                )
+                // console.log(extracted)
             }
         }
         res.status(200).send(helperUtils.successRes("Successfully upload file", files));
         return;
     } catch (error) {
+        console.log(error);
         res.send(helperUtils.errorRes("Bad Request", error.message));
         return;
     }
