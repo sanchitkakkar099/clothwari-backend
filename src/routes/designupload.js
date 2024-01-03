@@ -106,4 +106,27 @@ router.post("/create/bulk",
     DesignUploadController.designuploadCreateBulk
 );
 
+/**
+ * @typedef designuploadpaginationmodel
+ * @property {string} name
+ * @property {string} category
+ * @property {string} uploadedBy
+ * @property {number} page
+ * @property {number} limit
+ */
+/**
+ * get category list with pagination and searching
+ * @route post /designupload/list/v2
+ * @param {designuploadpaginationmodel.model} data.body.required
+ * @group DesignUpload - oprations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/list/v2",
+    auth,
+    DesignUploadController.designuploadListwithpagination
+);
 module.exports = router;

@@ -379,3 +379,73 @@ exports.designuploadCreateBulk = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+
+exports.designuploadListwithpagination = async (req, res) => {
+    try {
+        let query = {}
+        if (req?.user?.role == UserRoleConstant.Designer) {
+            query.uploadedBy = req.user._id;
+        }
+        if (req.body.name) {
+            query.name = new RegExp(req.body.name, "i")
+        }
+
+        if (req.body.uploadedBy) {
+            let userIds = await dbMethods.distinct({
+                collection: dbModels.User,
+                field: "_id",
+                query: { firstName: new RegExp(req.body.uploadedBy, "i") }
+            })
+            if (userIds.length) {
+                query.uploadedBy = { $in: userIds }
+            }
+        }
+        if (req.body.category) {
+            let categoryIds = await dbMethods.distinct({
+                collection: dbModels.Category,
+                field: "_id",
+                query: { name: new RegExp(req.body.category, "i") }
+            })
+            if (categoryIds.length) {
+                query.category = { $in: categoryIds }
+            }
+        }
+        let page = 1, limit = 10;
+        if (req.body.page) page = req.body.page;
+        if (req.body.limit) limit = req.body.limit;
+
+
+
+        let result = await dbMethods.paginate({
+            collection: dbModels.DesignUpload,
+            query: query,
+            options: {
+                select: { category: 1, uploadedBy: 1, name: 1 },
+                populate: [
+                    { path: "category", select: "name" },
+                    { path: "uploadedBy", select: "name email" },
+                ],
+                sort: { _id: -1 },
+                page,
+                limit,
+            }
+        })
+        for (let i = 0; i < result.docs.length; i++) {
+            const element = result.docs[i];
+
+            if (element.category) {
+                result.docs[i].category = {
+                    label: result.docs[i].category.name,
+                    value: result.docs[i].category._id
+                }
+            }
+        }
+
+        return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));
+    } catch (error) {
+        console.log(error);
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
