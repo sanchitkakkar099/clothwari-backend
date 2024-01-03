@@ -400,7 +400,7 @@ exports.designuploadListwithpagination = async (req, res) => {
             let userIds = await dbMethods.distinct({
                 collection: dbModels.User,
                 field: "_id",
-                query: { firstName: new RegExp(req.body.uploadedBy, "i") }
+                query: { name: new RegExp(req.body.uploadedBy, "i") }
             })
             if (userIds.length) {
                 if (query.$and)
