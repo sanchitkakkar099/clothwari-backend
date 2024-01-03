@@ -222,20 +222,9 @@ exports.designuploadList = async (req, res) => {
         if (req.body.page) page = req.body.page;
         if (req.body.limit) limit = req.body.limit;
 
-        let result = {
-            docs: [],
-            hasNextPage: true,
-            hasPrevPage: false,
-            limit: 10,
-            nextPage: 2,
-            page: 1,
-            pagingCounter: 1,
-            prevPage: null,
-            totalDocs: 24,
-            totalPages: 3,
-        };
+        let result = {};
 
-        result.docs = await dbMethods.paginate({
+        result = await dbMethods.paginate({
             collection: dbModels.DesignUpload,
             query: query,
             options: {
