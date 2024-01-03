@@ -384,11 +384,16 @@ exports.designuploadCreateBulk = async (req, res) => {
 exports.designuploadListwithpagination = async (req, res) => {
     try {
         let query = {}
-        if (req?.user?.role == UserRoleConstant.Designer) {
-            query.uploadedBy = req.user._id;
-        }
+        // if (req?.user?.role == UserRoleConstant.Designer) {
+        //     query.uploadedBy = req.user._id;
+        // }
         if (req.body.name) {
-            query.name = new RegExp(req.body.name, "i")
+            if (query.$and)
+                query.$and.push({ name: new RegExp(req.body.name, "i") })
+            else {
+                query.$and = [];
+                query.$and.push({ name: new RegExp(req.body.name, "i") })
+            }
         }
 
         if (req.body.uploadedBy) {
@@ -398,7 +403,30 @@ exports.designuploadListwithpagination = async (req, res) => {
                 query: { firstName: new RegExp(req.body.uploadedBy, "i") }
             })
             if (userIds.length) {
-                query.uploadedBy = { $in: userIds }
+                if (query.$and)
+                    query.$and.push({ uploadedBy: { $in: userIds } })
+                else {
+                    query.$and = [];
+                    query.$and.push({ uploadedBy: { $in: userIds } })
+                }
+            } else {
+                return res.send(helperUtils.successRes("successfully get list", {
+                    docs: [],
+                    "totalDocs": 0,
+                    "limit": 10,
+                    "totalPages": 1,
+                    "page": 1,
+                    "pagingCounter": 1,
+                    "hasPrevPage": false,
+                    "hasNextPage": true,
+                    "prevPage": null,
+                    "nextPage": 1
+
+                }))
+            }
+        } else {
+            if (req?.user?.role == UserRoleConstant.Designer) {
+                query.uploadedBy = req.user._id;
             }
         }
         if (req.body.category) {
@@ -408,7 +436,27 @@ exports.designuploadListwithpagination = async (req, res) => {
                 query: { name: new RegExp(req.body.category, "i") }
             })
             if (categoryIds.length) {
-                query.category = { $in: categoryIds }
+
+                if (query.$and)
+                    query.$and.push({ category: { $in: categoryIds } })
+                else {
+                    query.$and = [];
+                    query.$and.push({ category: { $in: categoryIds } })
+                }
+            } else {
+                return res.send(helperUtils.successRes("successfully get list", {
+                    docs: [],
+                    "totalDocs": 0,
+                    "limit": 10,
+                    "totalPages": 1,
+                    "page": 1,
+                    "pagingCounter": 1,
+                    "hasPrevPage": false,
+                    "hasNextPage": true,
+                    "prevPage": null,
+                    "nextPage": 1
+
+                }))
             }
         }
         let page = 1, limit = 10;
