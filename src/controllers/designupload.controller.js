@@ -235,18 +235,23 @@ exports.designuploadList = async (req, res) => {
             totalPages: 3,
         };
 
-        result.docs = await dbMethods.find({
+        result.docs = await dbMethods.paginate({
             collection: dbModels.DesignUpload,
             query: query,
-            populate: [
-                { path: "image" },
-                { path: "thumbnail" },
-                { path: "category", select: "name" },
-                { path: "uploadedBy", select: "name email" },
-            ],
-            sort: { _id: -1 },
+            options: {
+                populate: [
+                    // { path: "image" },
+                    { path: "thumbnail", select: "pdf_extract_img" },
+                    { path: "category", select: "name" },
+                    { path: "uploadedBy", select: "name email" },
+                ],
+                sort: { _id: -1 },
+                lean: true,
+                page,
+                limit,
+            }
         })
-        result.totalDocs = result.docs.length
+
         for (let i = 0; i < result.docs.length; i++) {
             const element = result.docs[i];
 
@@ -313,12 +318,14 @@ exports.designuploadList = async (req, res) => {
             result.docs[i].variations = await dbMethods.find({
                 collection: dbModels.Variation,
                 query: { designId: result.docs[i]._id },
-                populate: [{
-                    path: "variation_image",
-                },
-                {
-                    path: "variation_thumbnail"
-                }]
+                populate: [
+                    // {
+                    //     path: "variation_image",
+                    // },
+                    {
+                        path: "variation_thumbnail",
+                        select: "pdf_extract_img"
+                    }]
             })
         }
 
