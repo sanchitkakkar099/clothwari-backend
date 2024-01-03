@@ -428,6 +428,7 @@ exports.designuploadListwithpagination = async (req, res) => {
                 ],
                 sort: { _id: -1 },
                 page,
+                lean: true,
                 limit,
             }
         })
