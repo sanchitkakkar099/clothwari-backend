@@ -91,7 +91,7 @@ exports.colorList = async (req, res) => {
         result.docs = await dbMethods.find({
             collection: dbModels.Color,
             query: query,
-            sort: { _id: -1 }, limit, page,
+            sort: { _id: -1 },
             populate: [
                 { path: "image" },
                 { path: "thumbnail" },
