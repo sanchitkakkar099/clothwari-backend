@@ -7,6 +7,15 @@ const { HttpStatus } = require("../utils/constant");
 exports.colorCreateEdit = async (req, res) => {
     try {
         if (!req.body._id) {
+            //check already avail
+            let colors = await dbMethods.findOne({
+                collection: dbModels.Color,
+                query: { "name": { $regex: new RegExp("^" + "lavend" + "$", "i") } }
+            })
+            if (colors) {
+                return res.status(HttpStatus.BAD_REQUEST)
+                    .send(helperUtils.errorRes("Color Already Availabale", {}));
+            }
             let checkAlreadyAvail = await dbMethods.findOne({
                 collection: dbModels.Color,
                 query: { code: req.body.code }
