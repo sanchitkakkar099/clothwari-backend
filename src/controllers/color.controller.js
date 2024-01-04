@@ -10,7 +10,7 @@ exports.colorCreateEdit = async (req, res) => {
             //check already avail
             let colors = await dbMethods.findOne({
                 collection: dbModels.Color,
-                query: { "name": { $regex: new RegExp("^" + "lavend" + "$", "i") } }
+                query: { "name": { $regex: new RegExp("^" + req.body.name + "$", "i") } }
             })
             if (colors) {
                 return res.status(HttpStatus.BAD_REQUEST)
