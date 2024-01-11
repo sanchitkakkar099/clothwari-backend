@@ -282,7 +282,7 @@ router.get("/pdf_s3", async (req, res) => {
                 }
             }
         })
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < pdfs.length; i++) {
             const url = pdfs[i].pdf_extract_img
             const uploadsIndex = url.indexOf("/uploads");
 
