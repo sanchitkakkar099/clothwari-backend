@@ -292,6 +292,16 @@ router.get("/pdf_s3", async (req, res) => {
                 let image = path.join(__dirname, "../../" + desiredString)
                 if (fs.existsSync(image)) {
                     console.log("----", image)
+                    let s3 = await helperUtils.uploadfileToS3(
+                        image,
+                        path.basename(image),
+                        "image/png"
+                    )
+                    await dbMethods.updateOne({
+                        collection: dbModels.FileUpload,
+                        query: { _id: pdfs[i]._id },
+                        update: { pdf_extract_img: s3 }
+                    })
                 }
             }
 
