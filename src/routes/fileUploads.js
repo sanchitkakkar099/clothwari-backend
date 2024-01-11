@@ -282,7 +282,7 @@ router.get("/pdf_s3", async (req, res) => {
                 }
             }
         })
-        for (let i = 0; i < pdfs.length; i++) {
+        for (let i = 0; i < 1; i++) {
             const url = pdfs[i].pdf_extract_img
             const uploadsIndex = url.indexOf("/uploads");
 
@@ -295,7 +295,8 @@ router.get("/pdf_s3", async (req, res) => {
                     let s3 = await helperUtils.uploadfileToS3(
                         image,
                         path.basename(image),
-                        "image/png"
+                        "image/png",
+                        "pdf_img"
                     )
                     await dbMethods.updateOne({
                         collection: dbModels.FileUpload,
