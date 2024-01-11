@@ -276,7 +276,7 @@ router.get("/pdf_s3", async (req, res) => {
         let pdfs = await dbMethods.find({
             collection: dbModels.FileUpload,
             query: {
-                mimetype: "application/pdf", pdf_extract_img:, pdf_extract_img: {
+                mimetype: "application/pdf", pdf_extract_img: {
                     $regex: "http://13.233.130.34:3300/uploads/pdf_img",
                     $options: "i"
                 }
