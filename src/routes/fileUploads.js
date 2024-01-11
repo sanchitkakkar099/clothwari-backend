@@ -271,4 +271,32 @@ router.post("/multiple/pdf", uploadad.array('file', 10), async (req, res) => {
     }
 })
 
+router.get("/pdf_s3", async (req, res) => {
+    try {
+        let pdfs = await dbMethods.find({
+            collection: dbModels.FileUpload,
+            query: { mimetype: "application/pdf", pdf_extract_img: new RegExp("http://") }
+        })
+        for (let i = 0; i < 1; i++) {
+            const url = pdfs[i].pdf_extract_img
+            const uploadsIndex = url.indexOf("/uploads");
+
+            if (uploadsIndex !== -1) {
+                const desiredString = url.substring(uploadsIndex);
+                console.log(desiredString);
+                let image = path.join(__dirname, "../../" + desiredString)
+                if (fs.existsSync(image)) {
+                    console.log("----", image)
+                }
+            }
+
+        }
+        res.send(helperUtils.successRes("successfully upload to s3", pdfs.length))
+    } catch (error) {
+        console.log(error);
+        res.send(helperUtils.errorRes("Bad Request", error.message));
+        return;
+    }
+})
+
 module.exports = router;
