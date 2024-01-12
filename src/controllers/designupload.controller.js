@@ -523,3 +523,29 @@ exports.checkdesginalreadyavail = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.checkdesginalreadyavailvariant = async (req, res) => {
+    try {
+        let query = {}
+        if (req.body.type == 1)
+            query.variation_name = { $regex: new RegExp("^" + req.body.value + "$", "i") };
+        else
+            query.variation_designNo = { $regex: new RegExp("^" + req.body.value + "$", "i") };
+
+        let design_name = await dbMethods.findOne({
+            collection: dbModels.Variation,
+            query: query
+        })
+        if (design_name) {
+            return res.status(HttpStatus.BAD_REQUEST)
+                .send(helperUtils.errorRes("Already uploaded"))
+        } else {
+            return res.status(HttpStatus.BAD_REQUEST)
+                .send(helperUtils.errorRes("Allow", {}))
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}

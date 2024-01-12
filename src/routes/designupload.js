@@ -151,4 +151,19 @@ router.post("/check",
     auth,
     DesignUploadController.checkdesginalreadyavail
 );
+/**
+ *
+ * @route post /designupload/variant/check
+ * @param {categoryCheckmodel.model} data.body.required
+ * @group DesignUpload - oprations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/variant/check",
+    auth,
+    DesignUploadController.checkdesginalreadyavailvariant
+);
 module.exports = router;

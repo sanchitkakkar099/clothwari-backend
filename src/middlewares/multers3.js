@@ -11,30 +11,7 @@ const s3 = new aws.S3({
     secretAccessKey: process.env.AWS_SECRETKEY,
 })
 
-const bucketPolicy = {
-    Version: "2012-10-17",
-    Statement: [
-        {
-            Effect: "Allow",
-            Principal: "*",
-            Action: ["s3:GetObject"],
-            Resource: `arn:aws:s3:::${process.env.AWS_BUCKET}/*`
-        }
-    ]
-};
 
-const params = {
-    Bucket: process.env.AWS_BUCKET,
-    Policy: JSON.stringify(bucketPolicy),
-};
-
-// s3.putBucketPolicy(params, (err, data) => {
-//     if (err) {
-//         console.error('Error setting bucket policy:', err);
-//     } else {
-//         console.log('Bucket policy updated:', data);
-//     }
-// });
 
 const s3Storge = multerS3({
     s3: s3,
