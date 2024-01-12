@@ -129,4 +129,26 @@ router.post("/list/v2",
     auth,
     DesignUploadController.designuploadListwithpagination
 );
+
+
+/**
+ * @typedef categoryCheckmodel
+ * @property {string} value
+ * @property {number} type
+ */
+/**
+ *
+ * @route post /designupload/check
+ * @param {categoryCheckmodel.model} data.body.required
+ * @group DesignUpload - oprations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/check",
+    auth,
+    DesignUploadController.checkdesginalreadyavail
+);
 module.exports = router;
