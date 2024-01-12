@@ -134,11 +134,10 @@ router.post("/list/v2",
 /**
  * @typedef categoryCheckmodel
  * @property {string} value
- * @property {number} type
  */
 /**
  *
- * @route post /designupload/check
+ * @route post /designupload/name/check
  * @param {categoryCheckmodel.model} data.body.required
  * @group DesignUpload - oprations
  * @returns {object} 200
@@ -147,7 +146,22 @@ router.post("/list/v2",
  * @security User 
  * @returns {Error}  Error - Unexpected error
  */
-router.post("/check",
+router.post("/name/check",
+    auth,
+    DesignUploadController.checkdesginalreadyavail
+);
+/**
+ *
+ * @route post /designupload/designNo/check
+ * @param {categoryCheckmodel.model} data.body.required
+ * @group DesignUpload - oprations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/designNo/check",
     auth,
     DesignUploadController.checkdesginalreadyavail
 );
