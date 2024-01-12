@@ -512,9 +512,8 @@ exports.checkdesginalreadyavail = async (req, res) => {
             return res.status(HttpStatus.BAD_REQUEST)
                 .send(helperUtils.errorRes("Already uploaded"))
         } else {
-            return res.status(HttpStatus.BAD_REQUEST)
-                .send(helperUtils.errorRes("Allow", {}))
-
+            return res.status(HttpStatus.OK)
+                .send(helperUtils.successRes("Allow", {}))
 
         }
     } catch (error) {
@@ -540,8 +539,8 @@ exports.checkdesginalreadyavailvariant = async (req, res) => {
             return res.status(HttpStatus.BAD_REQUEST)
                 .send(helperUtils.errorRes("Already uploaded"))
         } else {
-            return res.status(HttpStatus.BAD_REQUEST)
-                .send(helperUtils.errorRes("Allow", {}))
+            return res.status(HttpStatus.OK)
+                .send(helperUtils.successRes("Allow", {}))
         }
     } catch (error) {
         console.log(error);
