@@ -34,6 +34,9 @@ module.exports = (express, app) => {
 
     app.use("/api", require("../routes"))
 
+    //called the cron service
+    require("../services").cronService()
+
 
     // intializeUploadFolders
     fs.existsSync('./uploads') || fs.mkdirSync('./uploads')
