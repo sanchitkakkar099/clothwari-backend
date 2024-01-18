@@ -20,13 +20,12 @@ const extractedpdf = async () => {
         let pdfs = await dbMethods.find({
             collection: dbModels.FileUpload,
             query: {
-                _id: "65a8d9d832f89a67a4211af0",
                 mimetype: "application/pdf", pdf_extract_img: {
                     $regex: "http://13.233.130.34:3300/uploads/pdf_img",
                     $options: "i"
                 }
             },
-            limit: 1,
+            limit: 10,
             sort: { _id: -1 }
         })
 
