@@ -86,7 +86,7 @@ router.post("/list",
 /**
 * get tag drop down list 
 * @route GET /tag/drop/dwon/list
-* @group TAG - Operations
+* @group Tag - Operations
 * @returns {object} 200
 *      Return JSON object
 *
@@ -99,4 +99,23 @@ router.get("/drop/dwon/list",
 
 )
 
+/**
+ * @typedef tagsearchmodel
+ * @property {string} search
+ */
+/**
+ * get tag list with pagination and searching
+ * @route post /tag/search
+ * @param {tagsearchmodel.model} data.body.required
+ * @group Tag - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/search",
+    adminAuth,
+    tagController.tagsearch
+);
 module.exports = router;

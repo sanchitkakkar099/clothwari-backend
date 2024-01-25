@@ -9,7 +9,7 @@ exports.tagCreateEdit = async (req, res) => {
         if (!req.body._id) {
             let checkAlreadyAvail = await dbMethods.findOne({
                 collection: dbModels.Tag,
-                query: { name: req.body.name }
+                query: { "name": { $regex: new RegExp("^" + req.body.name + "$", "i") } }
             })
             if (checkAlreadyAvail) {
                 return res.status(HttpStatus.BAD_REQUEST)
@@ -116,6 +116,24 @@ exports.tagDropDown = async (req, res) => {
         let result = await dbMethods.aggregate({
             collection: dbModels.Tag,
             pipeline: pipeline
+        })
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully get list", result));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+
+exports.tagsearch = async (req, res) => {
+    try {
+        let query = {}
+        if (req.body.search) query['name'] = new RegExp(req.body.search, "i");
+        await dbMethods.find({
+            collection: dbModels.Tag,
+            query: query,
+            sort: { _id: -1 },
         })
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get list", result));
