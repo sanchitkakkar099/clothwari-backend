@@ -9,7 +9,9 @@ const CategorySchema = new mongoose.Schema({
 CategorySchema.plugin(mongoosePaginate);
 
 const TagSchema = new mongoose.Schema({
-    name: { type: String }
+    label: { type: String },
+    id: { type: String },
+    customOption: { type: Boolean },
 }, { timestamps: true });
 
 TagSchema.plugin(mongoosePaginate)

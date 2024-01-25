@@ -9,7 +9,7 @@ exports.tagCreateEdit = async (req, res) => {
         if (!req.body._id) {
             let checkAlreadyAvail = await dbMethods.findOne({
                 collection: dbModels.Tag,
-                query: { "name": { $regex: new RegExp("^" + req.body.name + "$", "i") } }
+                query: { "label": { $regex: new RegExp("^" + req.body.label + "$", "i") } }
             })
             if (checkAlreadyAvail) {
                 return res.status(HttpStatus.BAD_REQUEST)
@@ -23,7 +23,7 @@ exports.tagCreateEdit = async (req, res) => {
             await dbMethods.updateOne({
                 collection: dbModels.Tag,
                 query: { _id: req.body._id },
-                update: { name: req.body.name }
+                update: req.body
             })
         }
         return res.status(HttpStatus.OK)
@@ -66,7 +66,7 @@ exports.tagdelete = async (req, res) => {
 exports.tagList = async (req, res) => {
     try {
         let query = {}
-        if (req.body.search) query['name'] = new RegExp(req.body.search, "i");
+        if (req.body.search) query['label'] = new RegExp(req.body.search, "i");
         let page = 1, limit = 10;
         if (req.body.page) page = req.body.page;
         if (req.body.limit) limit = req.body.limit;
@@ -103,7 +103,7 @@ exports.tagDropDown = async (req, res) => {
         let pipeline = [
             {
                 $project: {
-                    label: "$name",
+                    label: "$label",
                     value: "$_id"
                 }
             },
@@ -129,7 +129,7 @@ exports.tagDropDown = async (req, res) => {
 exports.tagsearch = async (req, res) => {
     try {
         let query = {}
-        if (req.body.search) query['name'] = new RegExp(req.body.search, "i");
+        if (req.body.search) query['label'] = new RegExp(req.body.search, "i");
         let result = await dbMethods.find({
             collection: dbModels.Tag,
             query: query,

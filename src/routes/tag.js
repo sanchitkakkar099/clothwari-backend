@@ -10,7 +10,9 @@ const { adminAuth } = require("../middlewares").adminAuth
 /**
  * @typedef tagCreateModel
  * @property {string} _id - id of tag
- * @property {string} name - name of tag
+ * @property {string} label - label of tag
+ * @property {string} id - label of tag
+ * @property {boolean} customOption - label of tag
  */
 /**
  * create or edit the tag by id
