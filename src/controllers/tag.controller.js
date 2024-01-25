@@ -130,7 +130,7 @@ exports.tagsearch = async (req, res) => {
     try {
         let query = {}
         if (req.body.search) query['name'] = new RegExp(req.body.search, "i");
-        await dbMethods.find({
+        let result = await dbMethods.find({
             collection: dbModels.Tag,
             query: query,
             sort: { _id: -1 },
@@ -138,6 +138,7 @@ exports.tagsearch = async (req, res) => {
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get list", result));
     } catch (error) {
+        console.log(error)
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
