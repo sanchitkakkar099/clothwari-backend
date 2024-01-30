@@ -283,3 +283,45 @@ exports.getpermissionlist = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.client_design_addtocart_notfication = async (req, res) => {
+    try {
+
+        let count = await dbMethods.countDocuments({
+            collection: dbModels.Cart,
+            query: { adminView: false }
+        })
+
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully get carts notifications", count));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.getclientcartdata = async (req, res) => {
+    try {
+        let page = (req.body.page) ? req.body.page : 0;
+        let limit = (req.body.limit) ? req.body.limit : 0;
+        let result = await dbMethods.paginate({
+            collection: dbModels.Cart,
+            query: {},
+            options: {
+                populate: [
+                    { path: "designId", populate: { path: "thumbnail", select: "pdf_extract_img" } },
+                    { path: "userId" }
+                ],
+                sort: { _id: -1 },
+                page,
+                limit
+            }
+        })
+
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully get carts notifications", result));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}

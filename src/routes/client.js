@@ -77,4 +77,24 @@ router.post("/list",
     auth,
     clientController.clientList
 );
+
+/**
+ * @typedef addtocartmodel
+ * @property {Array<string>} designId
+ */
+/**
+ * get client list with pagination and searching
+ * @route post /client/add/cart
+ * @param {addtocartmodel.model} data.body.required
+ * @group Client - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/add/cart",
+    auth,
+    clientController.clientList
+);
 module.exports = router;

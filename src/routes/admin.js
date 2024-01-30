@@ -155,4 +155,43 @@ router.get("/permissions/list",
 );
 
 
+/**
+ * get notofication count
+ * @route GET /admin/notication/count
+ * @group Admin - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.get("/notication/count",
+    auth,
+    adminController.client_design_addtocart_notfication
+);
+
+/**
+ * client add to cart model
+ * @typedef cleintaddtocartmodel
+ * @property {string} search 
+ * @property {number} page 
+ * @property {number} limit 
+ */
+/**
+ * get admin dashboard
+ * status 0:Pending 1:Approved 2:Rejected
+ * @route POST /admin/client/cart/data
+ * @param {cleintaddtocartmodel.model} data.body.required
+ * @group Admin - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/client/cart/data",
+    auth,
+    adminController.getclientcartdata
+);
+
 module.exports = router;

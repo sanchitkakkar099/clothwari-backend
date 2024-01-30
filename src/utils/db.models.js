@@ -1,4 +1,5 @@
 module.exports = Object.freeze({
+    Cart: "Cart",
     Category: "Category",
     Color: "Color",
     DesignUpload: "DesignUpload",

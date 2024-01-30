@@ -120,3 +120,21 @@ exports.clientList = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+
+exports.clientaddTocart = async (req, res) => {
+    try {
+        await dbMethods.insertOne({
+            collection: dbModels.Cart,
+            document: {
+                designId: req.body.designId,
+                userId: req.user.id
+            }
+        })
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully deleted", {}));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
