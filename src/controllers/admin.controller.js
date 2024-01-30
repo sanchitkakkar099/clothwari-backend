@@ -189,8 +189,29 @@ exports.getDashboardData = async (req, res) => {
             collection: dbModels.User,
             query: { role: UserRoleConstant.Admin }
         })
+
+        let bagCountpipeline = [
+            { $unwind: "$designId" },
+            {
+                $group: {
+                    _id: "",
+                    count: { $sum: 1 }
+                }
+            }
+        ]
+        if (req.user.rol == UserRoleConstant.Client) {
+            bagCountpipeline.unshift({ $match: { userId: dbMethods.ObjectId(req.user._id) } },)
+        }
+        let bagdata = await dbMethods.aggregate({
+            collection: dbModels.Cart,
+            pipeline: bagCountpipeline
+        })
         return res.status(HttpStatus.OK)
-            .send(helperUtils.successRes("Successfully get data", { staff, uploaddesign, newStaff, client, admin, uploaddesignwithvariant }));
+            .send(helperUtils.successRes("Successfully get data", {
+                staff, uploaddesign, newStaff, client, admin,
+                uploaddesignwithvariant,
+                clientBagCount: bagdata[0].count
+            }));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
