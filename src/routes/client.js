@@ -95,6 +95,6 @@ router.post("/list",
  */
 router.post("/add/cart",
     auth,
-    clientController.clientList
+    clientController.addtocartmodel
 );
 module.exports = router;
