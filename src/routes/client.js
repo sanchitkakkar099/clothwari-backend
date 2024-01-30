@@ -101,7 +101,7 @@ router.post("/add/cart",
 /**
  * get client list with pagination and searching
  * @route POST /client/my/design
- * @param {addtocartmodel.model} data.body.required
+ * @param {categoryListmodel.model} data.body.required
  * @group Client - Operations
  * @returns {object} 200
  *      Return JSON object
