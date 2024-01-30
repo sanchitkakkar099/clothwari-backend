@@ -2,6 +2,7 @@
 const db = require("../models");
 const { dbMethods, dbModels, helperUtils } = require("../utils");
 const { HttpStatus, UserRoleConstant } = require("../utils/constant");
+const ObjectId = require('mongoose').Types.ObjectId;
 
 
 exports.clientCreateEdit = async (req, res) => {
@@ -142,7 +143,7 @@ exports.clientaddTocart = async (req, res) => {
 exports.getmyagdesignlist = async (req, res) => {
     try {
         let query = [
-            { $match: { "userId": dbMethods.ObjectId(req.user._id) } },
+            { $match: { "userId": new ObjectId(req.user._id) } },
             {
                 $lookup: {
                     from: "designuploads",

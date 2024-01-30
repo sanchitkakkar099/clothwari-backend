@@ -2,7 +2,7 @@
 const db = require("../models");
 const { dbMethods, dbModels, helperUtils } = require("../utils");
 const { HttpStatus, UserRoleConstant } = require("../utils/constant");
-
+const ObjectId = require('mongoose').Types.ObjectId;
 
 exports.adminCreateEdit = async (req, res) => {
     try {
@@ -199,8 +199,8 @@ exports.getDashboardData = async (req, res) => {
                 }
             }
         ]
-        if (req.user.rol == UserRoleConstant.Client) {
-            bagCountpipeline.unshift({ $match: { userId: dbMethods.ObjectId(req.user._id) } },)
+        if (req.user.role == UserRoleConstant.Client) {
+            bagCountpipeline.unshift({ $match: { userId: new ObjectId(req.user._id) } },)
         }
         let bagdata = await dbMethods.aggregate({
             collection: dbModels.Cart,
@@ -213,6 +213,7 @@ exports.getDashboardData = async (req, res) => {
                 clientBagCount: bagdata[0].count
             }));
     } catch (error) {
+        console.log(error)
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
