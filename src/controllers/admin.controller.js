@@ -303,7 +303,7 @@ exports.client_design_addtocart_notfication = async (req, res) => {
 exports.getclientcartdata = async (req, res) => {
     try {
         let page = (req.body.page) ? req.body.page : 0;
-        let limit = (req.body.limit) ? req.body.limit : 0;
+        let limit = (req.body.limit) ? req.body.limit : 10;
         let result = await dbMethods.paginate({
             collection: dbModels.Cart,
             query: {},

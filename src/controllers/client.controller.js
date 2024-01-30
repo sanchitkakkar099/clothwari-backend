@@ -128,7 +128,7 @@ exports.clientaddTocart = async (req, res) => {
             collection: dbModels.Cart,
             document: {
                 designId: req.body.designId,
-                userId: req.user.id
+                userId: req.user._id
             }
         })
         return res.status(HttpStatus.OK)
