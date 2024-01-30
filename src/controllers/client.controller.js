@@ -132,7 +132,57 @@ exports.clientaddTocart = async (req, res) => {
             }
         })
         return res.status(HttpStatus.OK)
-            .send(helperUtils.successRes("Successfully deleted", {}));
+            .send(helperUtils.successRes("Successfully added to cart", {}));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.getmyagdesignlist = async (req, res) => {
+    try {
+        let query = [
+            { $match: { "userId": dbMethods.ObjectId(req.user._id) } },
+            {
+                $lookup: {
+                    from: "designuploads",
+                    localField: "designId",
+                    foreignField: "_id",
+                    as: "designId"
+                }
+            },
+            { $unwind: "$designId" },
+            {
+                $lookup: {
+                    from: "fileuploads",
+                    localField: "designId.thumbnail",
+                    foreignField: "_id",
+                    as: "designId.thumbnail"
+                }
+            },
+            {
+                $project: {
+                    userId: 1,
+                    'designId.name': "$designId.name",
+                    "designId.thumbnail": "$designId.thumbnail"
+                }
+            }
+        ]
+        let data = await dbMethods.aggregate({
+            collection: dbModels.Cart,
+            pipeline: query
+        })
+
+        let page = (req.body.page) ? req.body.page : 1;
+        let limit = (req.body.limit) ? (req.body.limit) : 10
+        let result = {
+            docs: data.slice((page - 1) * limit, page * limit),
+            page: page,
+            limit: limit,
+            pages: Math.ceil(data.length / limit),
+            total: data.length
+        }
+        return res.send(helperUtils.successRes("Successfully get my cart design list", result))
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));

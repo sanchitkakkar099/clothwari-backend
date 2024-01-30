@@ -309,8 +309,8 @@ exports.getclientcartdata = async (req, res) => {
             query: {},
             options: {
                 populate: [
-                    { path: "designId", populate: { path: "thumbnail", select: "pdf_extract_img" } },
-                    { path: "userId" }
+                    { path: "designId", select: "name thumbnail", populate: { path: "thumbnail", select: "pdf_extract_img" } },
+                    { path: "userId", select: "name email" }
                 ],
                 sort: { _id: -1 },
                 page,
