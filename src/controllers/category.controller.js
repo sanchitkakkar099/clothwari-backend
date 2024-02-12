@@ -124,3 +124,26 @@ exports.categoryDropDown = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.checkcategory = async (req, res) => {
+    try {
+        //check already avail
+        let category = await dbMethods.findOne({
+            collection: dbModels.Category,
+            query: { "name": { $regex: new RegExp("^" + req.body.name + "$", "i") } }
+        })
+        if (category) {
+            return res.status(HttpStatus.BAD_REQUEST)
+                .send(helperUtils.errorRes("Already uploaded"))
+        } else {
+            return res.status(HttpStatus.OK)
+                .send(helperUtils.successRes("Allow", {}))
+
+        }
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully get list", result));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}

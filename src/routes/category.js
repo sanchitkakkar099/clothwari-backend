@@ -99,4 +99,23 @@ router.get("/drop/dwon/list",
     categoryController.categoryDropDown
 
 )
+
+/**
+ * @typedef categoryCreateModel
+ * @property {string} name
+ */
+/**
+* get category list with 
+* @route GET /category/check
+* @param {categoryCreateModel.model} data.body.required
+* @group Category - Operations
+* @returns {object} 200
+*      Return JSON object
+*
+* @security User 
+* @returns {Error}  Error - Unexpected error
+*/
+router.post("/check",
+    auth,
+    categoryController.checkcategory)
 module.exports = router;

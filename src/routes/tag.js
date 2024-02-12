@@ -26,7 +26,7 @@ const { adminAuth } = require("../middlewares").adminAuth
  * @returns {Error}  Error - Unexpected error
  */
 router.post("/create",
-    adminAuth,
+    auth,
     tagController.tagCreateEdit
 );
 
