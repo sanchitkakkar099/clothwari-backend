@@ -117,7 +117,7 @@ router.get("/drop/dwon/list",
  * @returns {Error}  Error - Unexpected error
  */
 router.post("/search",
-    adminAuth,
+    auth,
     tagController.tagsearch
 );
 module.exports = router;
