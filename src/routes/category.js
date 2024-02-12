@@ -106,7 +106,7 @@ router.get("/drop/dwon/list",
  */
 /**
 * get category list with 
-* @route GET /category/check
+* @route POST /category/check
 * @param {categoryCreateModel.model} data.body.required
 * @group Category - Operations
 * @returns {object} 200
