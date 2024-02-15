@@ -379,17 +379,13 @@ exports.designuploadCreateBulk = async (req, res) => {
 
 exports.designuploadListwithpagination = async (req, res) => {
     try {
-        let query = {}
+        let query = { $and: [] }
         // if (req?.user?.role == UserRoleConstant.Designer) {
         //     query.uploadedBy = req.user._id;
         // }
         if (req.body.name) {
-            if (query.$and)
-                query.$and.push({ name: new RegExp(req.body.name, "i") })
-            else {
-                query.$and = [];
-                query.$and.push({ name: new RegExp(req.body.name, "i") })
-            }
+            query.$and.push({ name: new RegExp(req.body.name, "i") })
+
         }
 
         if (req.body.uploadedBy) {
@@ -399,12 +395,8 @@ exports.designuploadListwithpagination = async (req, res) => {
                 query: { name: new RegExp(req.body.uploadedBy, "i") }
             })
             if (userIds.length) {
-                if (query.$and)
-                    query.$and.push({ uploadedBy: { $in: userIds } })
-                else {
-                    query.$and = [];
-                    query.$and.push({ uploadedBy: { $in: userIds } })
-                }
+                query.$and.push({ uploadedBy: { $in: userIds } })
+
             } else {
                 return res.send(helperUtils.successRes("successfully get list", {
                     docs: [],
@@ -432,13 +424,7 @@ exports.designuploadListwithpagination = async (req, res) => {
                 query: { name: new RegExp(req.body.category, "i") }
             })
             if (categoryIds.length) {
-
-                if (query.$and)
-                    query.$and.push({ category: { $in: categoryIds } })
-                else {
-                    query.$and = [];
-                    query.$and.push({ category: { $in: categoryIds } })
-                }
+                query.$and.push({ category: { $in: categoryIds } });
             } else {
                 return res.send(helperUtils.successRes("successfully get list", {
                     docs: [],
@@ -459,13 +445,22 @@ exports.designuploadListwithpagination = async (req, res) => {
         if (req.body.page) page = req.body.page;
         if (req.body.limit) limit = req.body.limit;
 
+        if (req.body.date_filter) {
+            query.$and.push({
+                createdAt: {
+                    $gte: new Date(req.body.date_filter).setHours(0, 0, 0, 0),
+                    $lte: new Date(req.body.date_filter).setHours(23, 59, 59, 0)
+                }
+            })
+        }
 
+        if (query.$and.length == 0) delete query.$and
 
         let result = await dbMethods.paginate({
             collection: dbModels.DesignUpload,
             query: query,
             options: {
-                select: { category: 1, uploadedBy: 1, name: 1 },
+                select: { category: 1, uploadedBy: 1, name: 1, createdAt: 1 },
                 populate: [
                     { path: "category", select: "name" },
                     { path: "uploadedBy", select: "name email" },
