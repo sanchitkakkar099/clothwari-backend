@@ -128,7 +128,7 @@ exports.clientaddTocart = async (req, res) => {
         await dbMethods.insertOne({
             collection: dbModels.Cart,
             document: {
-                designId: req.body.designId,
+                design: req.body.design,
                 userId: req.user._id
             }
         })
@@ -147,25 +147,25 @@ exports.getmyagdesignlist = async (req, res) => {
             {
                 $lookup: {
                     from: "designuploads",
-                    localField: "designId",
+                    localField: "design.designId",
                     foreignField: "_id",
                     as: "designId"
                 }
             },
-            { $unwind: "$designId" },
+            { $unwind: "$design.designId" },
             {
                 $lookup: {
                     from: "fileuploads",
-                    localField: "designId.thumbnail",
+                    localField: "design.designId.thumbnail",
                     foreignField: "_id",
-                    as: "designId.thumbnail"
+                    as: "design.designId.thumbnail"
                 }
             },
             {
                 $project: {
                     userId: 1,
-                    'designId.name': "$designId.name",
-                    "designId.thumbnail": "$designId.thumbnail"
+                    'designId.name': "$design.designId.name",
+                    "designId.thumbnail": "$design.designId.thumbnail"
                 }
             }
         ]

@@ -2,9 +2,12 @@ const mongoose = require("mongoose");
 const mongoosepaginate = require("mongoose-paginate-v2");
 
 const CartSchema = new mongoose.Schema({
-    designId: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "DesignUpload"
+    design: [{
+        designId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "DesignUpload"
+        },
+        meter: { type: String }
     }],
     userId: {
         type: mongoose.Schema.Types.ObjectId,

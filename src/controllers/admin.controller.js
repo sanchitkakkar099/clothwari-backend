@@ -191,7 +191,7 @@ exports.getDashboardData = async (req, res) => {
         })
 
         let bagCountpipeline = [
-            { $unwind: "$designId" },
+            { $unwind: "$design" },
             {
                 $group: {
                     _id: "",
@@ -331,7 +331,7 @@ exports.getclientcartdata = async (req, res) => {
             query: {},
             options: {
                 populate: [
-                    { path: "designId", select: "name thumbnail", populate: { path: "thumbnail", select: "pdf_extract_img" } },
+                    { path: "design.designId", select: "name thumbnail", populate: { path: "thumbnail", select: "pdf_extract_img" } },
                     { path: "userId", select: "name email" }
                 ],
                 sort: { _id: -1 },
