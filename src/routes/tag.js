@@ -120,4 +120,24 @@ router.post("/search",
     auth,
     tagController.tagsearch
 );
+
+/**
+ * @typedef tagcheckavailmodel
+ * @property {string} label
+ */
+/**
+ * get tag list with pagination and searching
+ * @route post /tag/already/avail
+ * @param {tagcheckavailmodel.model} data.body.required
+ * @group Tag - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/already/avail",
+    // auth,
+    tagController.check_tag_avail_already
+);
 module.exports = router;

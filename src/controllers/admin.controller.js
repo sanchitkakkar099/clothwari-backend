@@ -125,7 +125,7 @@ exports.adminList = async (req, res) => {
             collection: dbModels.User,
             query: query,
             populate: [{ path: "permissions", select: "title module code" }],
-            project: { name: 1, email: 1, phone: 1 },
+            project: { name: 1, email: 1, phone: 1, isDel: 1 },
             sort: { _id: -1 },
         })
 
@@ -331,7 +331,7 @@ exports.getclientcartdata = async (req, res) => {
             query: {},
             options: {
                 populate: [
-                    { path: "design.designId", select: "name thumbnail", populate: { path: "thumbnail", select: "pdf_extract_img" } },
+                    { path: "design.designId", select: "name tag thumbnail", populate: { path: "thumbnail", select: "pdf_extract_img" } },
                     { path: "userId", select: "name email" }
                 ],
                 sort: { _id: -1 },
@@ -342,6 +342,80 @@ exports.getclientcartdata = async (req, res) => {
 
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get carts notifications", result));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+
+exports.user_deactivate = async (req, res) => {
+    try {
+        let user = await dbMethods.findOne({
+            collection: dbModels.User,
+            query: { _id: req.body.userId }
+        })
+        if (!user)
+            return res.send(helperUtils.errorRes("User Not Found", {}, HttpStatus.BAD_REQUEST));
+
+        await dbMethods.updateOne({
+            collection: dbModels.User,
+            query: { _id: req.body.userId },
+            update: { isDel: req.body.isDel }
+        })
+        return res.send(helperUtils.successRes(`Successfully Deactivate ${user.role}`))
+    } catch (error) {
+        console.log(error)
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.errorRes("Bad Request", error, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.readnotification = async (req, res) => {
+    try {
+        let cart = await dbMethods.findOne({
+            collection: dbModels.Cart,
+            query: { _id: req.body.notificationId }
+        })
+        if (!cart) {
+            return res.status(HttpStatus.BAD_REQUEST)
+                .send(helperUtils.errorRes("Not FOund", {}, HttpStatus.NOT_FOUND))
+        }
+        await dbMethods.updateOne({
+            collection: dbModels.Cart,
+            query: { _id: req.body.notificationId },
+            update: { adminView: true }
+        })
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully ready notification", {}))
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.adminLogin = async (req, res) => {
+    try {
+        let designer = await dbMethods.findOne({
+            collection: dbModels.User,
+            query: { _id: req.body.adminId },
+            populate: [{ path: "permissions" }],
+        })
+
+        let payload = {
+            _id: designer._id,
+            email: designer.email,
+            name: designer.name,
+            phone: designer.phone,
+            role: designer.role,
+            onlyUpload: designer.onlyUpload,
+            permissions: designer?.permissions?.map(e => e.title),
+        }
+        let token = await helperUtils.jwtSign(payload)
+
+        payload.token = token;
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully login", payload));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));

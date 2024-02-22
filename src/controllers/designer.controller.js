@@ -119,7 +119,7 @@ exports.designerList = async (req, res) => {
             collection: dbModels.User,
             query: query,
             populate: [{ path: "permissions" }],
-            project: { name: 1, email: 1, phone: 1, onlyUpload: 1 },
+            project: { name: 1, email: 1, phone: 1, onlyUpload: 1, isDel: 1 },
             sort: { _id: -1 },
         })
         result.totalDocs = result.docs.length

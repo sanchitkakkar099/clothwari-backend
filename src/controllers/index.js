@@ -5,5 +5,6 @@ exports.clientController = require("./client.controller");
 exports.DesignUploadController = require("./designupload.controller");
 exports.designerController = require("./designer.controller");
 exports.fileuploadController = require("./fileupload.controller");
+exports.marketingController = require("./marketing.controller");
 exports.tagController = require("./tag.controller");
 exports.userController = require("./user.controllers");

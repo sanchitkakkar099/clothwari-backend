@@ -193,5 +193,63 @@ router.post("/client/cart/data",
     auth,
     adminController.getclientcartdata
 );
+/**
+ * @typedef userdeactivatemodel
+ * @property {string} userId
+ * @property {boolean} isDel
+ */
+/**
+ * deactiavte user account
+ * @route POST /admin/user/deactivate
+ * @param {userdeactivatemodel.model} data.body.required
+ * @group Admin - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/user/deactivate",
+    auth,
+    adminController.user_deactivate
+)
+/**
+ * @typedef notimodel
+ * @property {string} notificationId
+ */
+/**
+ * deactiavte user account
+ * @route POST /admin/read/notification
+ * @param {notimodel.model} data.body.required
+ * @group Admin - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/read/notification",
+    auth,
+    adminController.readnotification
+);
+
+/**
+ * @typedef adminLoginModel
+ * @property {string} adminId
+ */
+/**
+ * admin login credentails by admin request
+ * @route post /admin/login/byadmin
+ * @param {adminLoginModel.model} data.body.required
+ * @group Admin - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ * @security User
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/login/byadmin",
+    auth,
+    adminController.adminLogin
+);
 
 module.exports = router;

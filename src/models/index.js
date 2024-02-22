@@ -9,6 +9,7 @@ const { DesignUploadSchema } = require("./designupload.model");
 const { PermissionSchema } = require("./permission.model");
 const { VariationSchema } = require("./variation.model");
 const { CartSchema } = require("./cart.model")
+const { MarketingSchema } = require("./marketing.model")
 
 
 const db = {
@@ -19,6 +20,7 @@ const db = {
     Color: mongoose.model(dbModels.Color, ColorSchema),
     DesignUpload: mongoose.model(dbModels.DesignUpload, DesignUploadSchema),
     FileUpload: mongoose.model(dbModels.FileUpload, FileuploadSchema),
+    Marketing: mongoose.model(dbModels.Marketing, MarketingSchema),
     Permission: mongoose.model(dbModels.Permission, PermissionSchema),
     Tag: mongoose.model(dbModels.Tag, TagSchema),
     User: mongoose.model(dbModels.User, userSchema),

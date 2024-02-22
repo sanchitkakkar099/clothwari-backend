@@ -218,6 +218,15 @@ exports.designuploadList = async (req, res) => {
             })
 
         }
+        if (req.body.tags?.length) {
+            query['tag.label'] = { $in: req.body.tags }
+        }
+        if (req.body.date_filter) {
+            query.createdAt = {
+                $gte: new Date(req.body.date_filter).setHours(0, 0, 0, 0),
+                $lte: new Date(req.body.date_filter).setHours(23, 59, 59, 0)
+            }
+        }
         let page = 1, limit = 10;
         if (req.body.page) page = req.body.page;
         if (req.body.limit) limit = req.body.limit;

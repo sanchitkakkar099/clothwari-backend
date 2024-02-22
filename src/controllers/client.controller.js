@@ -111,8 +111,9 @@ exports.clientList = async (req, res) => {
         result.docs = await dbMethods.find({
             collection: dbModels.User,
             query: query,
-            project: { name: 1, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1 },
+            project: { name: 1, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1, isDel: 1 },
             sort: { _id: -1 },
+            populate: [{ path: "permissions" }]
         })
 
         return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));
@@ -184,6 +185,34 @@ exports.getmyagdesignlist = async (req, res) => {
             total: data.length
         }
         return res.send(helperUtils.successRes("Successfully get my cart design list", result))
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.clientLogin = async (req, res) => {
+    try {
+        let designer = await dbMethods.findOne({
+            collection: dbModels.User,
+            query: { _id: req.body.clientId },
+            populate: [{ path: "permissions" }],
+        })
+
+        let payload = {
+            _id: designer._id,
+            email: designer.email,
+            name: designer.name,
+            phone: designer.phone,
+            role: designer.role,
+            onlyUpload: designer.onlyUpload,
+            permissions: designer?.permissions?.map(e => e.title),
+        }
+        let token = await helperUtils.jwtSign(payload)
+
+        payload.token = token;
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully login", payload));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));

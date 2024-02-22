@@ -20,6 +20,23 @@ exports.tagCreateEdit = async (req, res) => {
                 document: req.body
             })
         } else {
+            let tag = await dbMethods.findOne({ _id: req.body._id })
+            //check already avail
+            if (tag.label != req.body.label) {
+                let check_already_exists = await dbMethods.findOne({
+                    collection: dbModels.Tag,
+                    query: { "label": { $regex: new RegExp("^" + req.body.label + "$", "i") }, _id: { $ne: req.body._id } }
+                })
+                if (check_already_exists) {
+                    return res.status(HttpStatus.BAD_REQUEST)
+                        .send(helperUtils.errorRes("Already uploaded"))
+                }
+                await dbMethods.updateMany({
+                    collection: dbModels.Tag,
+                    query: { 'tag.label': req.body.label },
+                    update: { 'tag.$.label': req.body.label }
+                })
+            }
             await dbMethods.updateOne({
                 collection: dbModels.Tag,
                 query: { _id: req.body._id },
@@ -146,6 +163,28 @@ exports.tagsearch = async (req, res) => {
             .send(helperUtils.successRes("Successfully get list", result));
     } catch (error) {
         console.log(error)
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+
+exports.check_tag_avail_already = async (req, res) => {
+    try {
+        //check already avail
+        let tag = await dbMethods.findOne({
+            collection: dbModels.Tag,
+            query: { "label": { $regex: new RegExp("^" + req.body.label + "$", "i") } }
+        })
+        if (tag) {
+            return res.status(HttpStatus.BAD_REQUEST)
+                .send(helperUtils.errorRes("Already uploaded"))
+        } else {
+            return res.status(HttpStatus.OK)
+                .send(helperUtils.successRes("Allow", {}))
+
+        }
+    } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }

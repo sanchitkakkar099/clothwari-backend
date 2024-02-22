@@ -112,4 +112,24 @@ router.post("/add/cart",
 router.post("/my/design",
     auth,
     clientController.getmyagdesignlist)
+
+/**
+ * @typedef clientLoginModel
+ * @property {string} clientId
+ */
+/**
+ * client login credentails by admin request
+ * @route post /client/login/byadmin
+ * @param {clientLoginModel.model} data.body.required
+ * @group Client - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/login/byadmin",
+    auth,
+    clientController.clientLogin
+);
 module.exports = router;
