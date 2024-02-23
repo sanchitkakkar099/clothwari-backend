@@ -56,7 +56,7 @@ exports.adminlogin = async (req, res) => {
                     .send(helperUtils.errorRes("Invalid Password"))
             }
         }
-        if (user.isDel) {
+        if (userCheck.isDel) {
             return res.send(helperUtils.errorRes("User Not Active", {}, HttpStatus.BAD_REQUEST))
         }
         if (userCheck.role == UserRoleConstant.Designer && userCheck.status == 0) {
