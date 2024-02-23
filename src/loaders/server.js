@@ -11,6 +11,8 @@ module.exports = (express, app) => {
     app.use(cors({ origin: "*" }))
     app.use(express.urlencoded({ extended: false }))
     app.use(express.json())
+    // Use the helmet middleware
+    app.use(helmet());
 
     const fileAttachment = (req, res, next) => {
         next()

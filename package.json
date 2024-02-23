@@ -18,6 +18,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-swagger-generator": "^1.1.17",
+    "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.6.3",
     "mongoose-paginate-v2": "^1.7.4",
