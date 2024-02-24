@@ -57,7 +57,7 @@ exports.adminlogin = async (req, res) => {
             }
         }
         if (userCheck.isDel) {
-            return res.send(helperUtils.errorRes("User Not Active", {}, HttpStatus.BAD_REQUEST))
+            return res.status(HttpStatus.BAD_REQUEST).send(helperUtils.errorRes("User Not Active", {}, HttpStatus.BAD_REQUEST))
         }
         if (userCheck.role == UserRoleConstant.Designer && userCheck.status == 0) {
             return res.status(HttpStatus.BAD_REQUEST)
