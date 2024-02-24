@@ -43,7 +43,11 @@ exports.tagCreateEdit = async (req, res) => {
             await dbMethods.updateOne({
                 collection: dbModels.Tag,
                 query: { _id: req.body.tagId },
-                update: { id, customOption, label }
+                update: {
+                    id: req.body.id,
+                    customOption: req.body.customOption,
+                    label: req.body.label
+                }
             })
         }
         return res.status(HttpStatus.OK)
