@@ -129,7 +129,7 @@ router.post("/my/design",
  * @returns {Error}  Error - Unexpected error
  */
 router.post("/login/byadmin",
-    auth,
+    // auth,
     clientController.clientLogin
 );
 module.exports = router;

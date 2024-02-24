@@ -248,7 +248,7 @@ router.post("/read/notification",
  * @returns {Error}  Error - Unexpected error
  */
 router.post("/login/byadmin",
-    auth,
+    // auth,
     adminController.adminLogin
 );
 
