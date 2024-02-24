@@ -6,7 +6,7 @@ const { HttpStatus } = require("../utils/constant");
 
 exports.tagCreateEdit = async (req, res) => {
     try {
-        if (!req.body._id) {
+        if (!req.body.tagId) {
             let checkAlreadyAvail = await dbMethods.findOne({
                 collection: dbModels.Tag,
                 query: { "label": { $regex: new RegExp("^" + req.body.label + "$", "i") } }
@@ -22,13 +22,13 @@ exports.tagCreateEdit = async (req, res) => {
         } else {
             let tag = await dbMethods.findOne({
                 collection: dbModels.Tag,
-                query: { _id: req.body._id }
+                query: { _id: req.body.tagId }
             })
             //check already avail
             if (tag.label != req.body.label) {
                 let check_already_exists = await dbMethods.findOne({
                     collection: dbModels.Tag,
-                    query: { "label": { $regex: new RegExp("^" + req.body.label + "$", "i") }, _id: { $ne: req.body._id } }
+                    query: { "label": { $regex: new RegExp("^" + req.body.label + "$", "i") }, _id: { $ne: req.body.tagId } }
                 })
                 if (check_already_exists) {
                     return res.status(HttpStatus.BAD_REQUEST)
@@ -36,14 +36,14 @@ exports.tagCreateEdit = async (req, res) => {
                 }
                 await dbMethods.updateMany({
                     collection: dbModels.DesignUpload,
-                    query: { 'tag.label': req.body.label },
+                    query: { 'tag.label': tag.label },
                     update: { 'tag.$.label': req.body.label }
                 })
             }
             await dbMethods.updateOne({
                 collection: dbModels.Tag,
-                query: { _id: req.body._id },
-                update: req.body
+                query: { _id: req.body.tagId },
+                update: { id, customOption, label }
             })
         }
         return res.status(HttpStatus.OK)
