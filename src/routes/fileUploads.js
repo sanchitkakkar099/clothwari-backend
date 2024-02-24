@@ -256,10 +256,10 @@ router.post("/multiple/pdf", uploadad.array('file', 10), async (req, res) => {
                 console.log("-------------", pdfPath)
                 let outputpath = path.join(__dirname + '../../../uploads/pdf_img')
                 let outputFileName = path.basename(pdfPath, path.extname(pdfPath))
-                await fileuploadController.extractimage_from_pdf_python(
+                fileuploadController.extractimage_from_pdf_python(
                     pdfPath, outputpath, file._id, outputFileName
                 )
-                // console.log(extracted)
+                console.log("extracted successfully")
             }
         }
         res.status(200).send(helperUtils.successRes("Successfully upload file", files));
