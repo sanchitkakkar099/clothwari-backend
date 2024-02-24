@@ -81,7 +81,7 @@ router.delete("/byId/:id",
  * @returns {Error}  Error - Unexpected error
  */
 router.post("/list",
-    adminAuth,
+    auth,
     tagController.tagList
 );
 
