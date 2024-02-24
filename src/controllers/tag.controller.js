@@ -20,7 +20,10 @@ exports.tagCreateEdit = async (req, res) => {
                 document: req.body
             })
         } else {
-            let tag = await dbMethods.findOne({ _id: req.body._id })
+            let tag = await dbMethods.findOne({
+                collection: dbModels.Tag,
+                query: { _id: req.body._id }
+            })
             //check already avail
             if (tag.label != req.body.label) {
                 let check_already_exists = await dbMethods.findOne({
@@ -32,7 +35,7 @@ exports.tagCreateEdit = async (req, res) => {
                         .send(helperUtils.errorRes("Already uploaded"))
                 }
                 await dbMethods.updateMany({
-                    collection: dbModels.Tag,
+                    collection: dbModels.DesignUpload,
                     query: { 'tag.label': req.body.label },
                     update: { 'tag.$.label': req.body.label }
                 })
@@ -47,7 +50,7 @@ exports.tagCreateEdit = async (req, res) => {
             .send(helperUtils.successRes("Suucessfullu Created", {}));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
-            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+            .send(helperUtils.errorRes("Bad Request", error, HttpStatus.BAD_REQUEST));
     }
 }
 
