@@ -210,7 +210,7 @@ exports.getDashboardData = async (req, res) => {
             .send(helperUtils.successRes("Successfully get data", {
                 staff, uploaddesign, newStaff, client, admin,
                 uploaddesignwithvariant,
-                clientBagCount: bagdata[0].count
+                clientBagCount: bagdata && bagdata[0] ? bagdata[0].count : 0
             }));
     } catch (error) {
         console.log(error)
