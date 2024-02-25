@@ -13,7 +13,7 @@ module.exports = (express, app) => {
     app.use(express.urlencoded({ extended: false }))
     app.use(express.json())
     // Use the helmet middleware
-    app.use(helmet());
+    // app.use(helmet());
 
     const fileAttachment = (req, res, next) => {
         next()
@@ -38,7 +38,7 @@ module.exports = (express, app) => {
     app.use("/api", require("../routes"))
 
     //called the cron service
-    require("../services").cronService()
+    // require("../services").cronService()
 
 
     // intializeUploadFolders
