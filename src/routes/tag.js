@@ -43,7 +43,7 @@ router.post("/create",
  * @returns {Error}  Error - Unexpected error
  */
 router.get("/byId/:id",
-    adminAuth,
+    auth,
     tagController.tagById
 );
 
@@ -59,7 +59,7 @@ router.get("/byId/:id",
  * @returns {Error}  Error - Unexpected error
  */
 router.delete("/byId/:id",
-    adminAuth,
+    auth,
     tagController.tagdelete
 );
 
