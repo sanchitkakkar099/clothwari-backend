@@ -36,7 +36,7 @@ exports.colorCreateEdit = async (req, res) => {
             })
         }
         return res.status(HttpStatus.OK)
-            .send(helperUtils.successRes("Suucessfullu Created", {}));
+            .send(helperUtils.successRes("Successfully Created", {}));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
