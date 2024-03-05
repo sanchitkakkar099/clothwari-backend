@@ -211,3 +211,19 @@ exports.designerLogin = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.designerlistdropdown = async (req, res) => {
+    try {
+        let query = { role: UserRoleConstant.Designer, isDel: false }
+        let result = await dbMethods.find({
+            collection: dbModels.User,
+            query: query,
+            project: { name: 1, isDel: 1 },
+            sort: { _id: -1 },
+        })
+        return res.send(helperUtils.successRes("Successfully get staff list", result));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}

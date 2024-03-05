@@ -218,6 +218,7 @@ exports.designuploadList = async (req, res) => {
             })
 
         }
+        if (req.body.uploadedBy) query.uploadedBy = req.body.uploadedBy;
         if (req.body.tags?.length) {
             query['tag.label'] = { $in: req.body.tags }
         }

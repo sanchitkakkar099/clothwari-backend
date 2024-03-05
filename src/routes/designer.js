@@ -114,5 +114,19 @@ router.get("/permissions/list",
     designerController.designerPermissionslist
 );
 
+/**
+ * get designer list with pagination and searching
+ * @route GET /designer/list/drop/down
+ * @group Designer - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.get("/list/drop/down",
+    auth,
+    designerController.designerlistdropdown
+);
 
 module.exports = router;
