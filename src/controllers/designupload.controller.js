@@ -225,9 +225,12 @@ exports.designuploadList = async (req, res) => {
         }
         if (req.body.date_filter) {
             query.createdAt = {
-                $gte: new Date(req.body.date_filter).setHours(0, 0, 0, 0),
-                $lte: new Date(req.body.date_filter).setHours(23, 59, 59, 0)
+                $gte: new Date(moment().clone().startOf("day").toISOString()),
+                $lte: new Date(moment().clone().endOf("day").toISOString())
             }
+        }
+        if (req.body.category?.length) {
+            query['category'] = { $in: req.body.category }
         }
         let page = 1, limit = 10;
         if (req.body.page) page = req.body.page;

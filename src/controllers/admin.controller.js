@@ -421,3 +421,26 @@ exports.adminLogin = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.userpasswordchanges = async (req, res) => {
+    try {
+        let user = await dbMethods.findOne({
+            collection: dbModels.User,
+            query: { _id: req.body.userId }
+        })
+        if (!user) {
+            return res.status(400)
+                .send(helperUtils.errorRes("User Not Found", {}))
+        }
+        let password = await helperUtils.bcryptHash(req.body.password);
+        await dbMethods.updateOne({
+            collection: dbModels.User,
+            query: { _id: user._id },
+            update: { password: password }
+        })
+        return res.send(helperUtils.successRes("successfully changes password"))
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}

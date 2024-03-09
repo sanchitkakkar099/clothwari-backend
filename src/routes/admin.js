@@ -252,4 +252,24 @@ router.post("/login/byadmin",
     adminController.adminLogin
 );
 
+/**
+ * @typedef userpasswordchanges
+ * @property {string} userId
+ * @property {string} password
+ */
+/**
+ * admin login credentails by admin request
+ * @route post /admin/user/password/changes
+ * @param {userpasswordchanges.model} data.body.required
+ * @group Admin - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ * @security User
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/user/password/changes",
+    auth,
+    adminController.userpasswordchanges
+);
+
 module.exports = router;
