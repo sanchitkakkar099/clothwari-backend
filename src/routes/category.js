@@ -118,4 +118,25 @@ router.get("/drop/dwon/list",
 router.post("/check",
     auth,
     categoryController.checkcategory)
+
+/**
+* @typedef categorymergemodel
+* @property {string} merge_from
+* @property {string} merge_to
+*/
+/**
+* get category list with 
+* @route POST /category/merge
+* @param {categorymergemodel.model} data.body.required
+* @group Category - Operations
+* @returns {object} 200
+*      Return JSON object
+*
+* @security User 
+* @returns {Error}  Error - Unexpected error
+*/
+router.post("/merge",
+    auth,
+    categoryController.categorymerge
+)
 module.exports = router;

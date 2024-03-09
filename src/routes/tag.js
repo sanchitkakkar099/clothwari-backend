@@ -140,4 +140,26 @@ router.post("/already/avail",
     // auth,
     tagController.check_tag_avail_already
 );
+/**
+ * @typedef tagmergemodel
+ * @property {string} merge_from
+ * @property {string} merge_to
+ * @property {string} merge_from_tagId
+ * @property {string} merge_to_tagId
+ */
+/**
+* get tag list with 
+* @route POST /tag/merge
+* @param {tagmergemodel.model} data.body.required
+* @group Category - Operations
+* @returns {object} 200
+*      Return JSON object
+*
+* @security User 
+* @returns {Error}  Error - Unexpected error
+*/
+router.post("/merge",
+    auth,
+    tagController.tagmerge
+)
 module.exports = router;

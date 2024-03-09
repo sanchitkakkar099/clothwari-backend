@@ -196,3 +196,47 @@ exports.check_tag_avail_already = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.tagmerge = async (req, res) => {
+    try {
+        let { merge_to, merge_from, merge_to_tagId, merge_from_tagId } = req.body;
+        let tagObj = await dbMethods.findOne({
+            collection: dbModels.Tag,
+            query: { _id: merge_to_tagId, label: merge_to }
+        })
+        if (!tagObj) {
+            return res.status(400)
+                .send(helperUtils.errorRes("Tag Not Found", {}));
+        }
+
+        let mergeFrom_tabObj = await dbMethods.findOne({
+            collection: dbModels.Tag,
+            query: { _id: merge_from_tagId, label: merge_from }
+        })
+        if (!mergeFrom_tabObj) {
+            return res.status(400)
+                .send(helperUtils.errorRes("Tag Not Found", {}));
+        }
+        let tag_disignIds = await dbMethods.distinct({
+            collection: dbModels.Tag,
+            field: "_id",
+            query: { 'tag.label': merge_from }
+        })
+        if (tag_disignIds.length) {
+            await dbMethods.updateMany({
+                collection: dbModels.DesignUpload,
+                query: { _id: { $in: tag_disignIds }, 'tag.label': merge_from },
+                update: { $set: { 'tag.$.label': merge_to } }
+            })
+
+            await dbMethods.deleteOne({
+                collection: dbModels.Tag,
+                query: { _id: merge_from_tagId, label: merge_from }
+            })
+        }
+
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}

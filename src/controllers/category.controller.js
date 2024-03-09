@@ -147,3 +147,38 @@ exports.checkcategory = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.categorymerge = async (req, res) => {
+    try {
+        let { merge_from, merge_to } = req.body;
+        let merge_to_ctegory = await dbMethods.findOne({
+            collection: dbModels.Category,
+            query: { _id: merge_to }
+        })
+        if (!merge_to_ctegory) {
+            return res.status(400)
+                .send(helperUtils.errorRes("Not Found", {}));
+        }
+        let category_disignIds = await dbMethods.distinct({
+            collection: dbModels.DesignUpload,
+            query: { category: merge_from },
+            field: "_id"
+        })
+        if (category_disignIds.length) {
+            await dbMethods.updateMany({
+                collection: dbModels.DesignUpload,
+                query: { _id: { $in: category_disignIds } },
+                update: { $set: { category: merge_to } }
+            })
+
+            await dbMethods.deleteOne({
+                collection: dbModels.Category,
+                query: { _id: merge_from }
+            })
+        }
+        return res.send(helperUtils.successRes("Successfully Merge Category", {}));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
