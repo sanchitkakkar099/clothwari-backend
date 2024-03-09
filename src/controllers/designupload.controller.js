@@ -224,9 +224,10 @@ exports.designuploadList = async (req, res) => {
             query['tag.label'] = { $in: req.body.tags }
         }
         if (req.body.date_filter) {
+            let date = req.body.date_filter.replace("+05:30", 'Z')
             query.createdAt = {
-                $gte: new Date(moment().clone().startOf("day").toISOString()),
-                $lte: new Date(moment().clone().endOf("day").toISOString())
+                $gte: new Date(moment(date).clone().startOf("day").toISOString()),
+                $lte: new Date(moment(date).clone().endOf("day").toISOString())
             }
         }
         if (req.body.category?.length) {
@@ -460,14 +461,15 @@ exports.designuploadListwithpagination = async (req, res) => {
         if (req.body.limit) limit = req.body.limit;
 
         if (req.body.date_filter) {
+            let date = req.body.date_filter.replace("+05:30", 'Z')
             query.$and.push({
                 // createdAt: {
                 //     $gte: new Date(req.body.date_filter).setHours(0, 0, 0, 0),
                 //     $lte: new Date(req.body.date_filter).setHours(23, 59, 59, 0)
                 // }
                 createdAt: {
-                    $gte: new Date(moment().clone().startOf("day").toISOString()),
-                    $lte: new Date(moment().clone().endOf("day").toISOString())
+                    $gte: new Date(moment(date).clone().startOf("day").toISOString()),
+                    $lte: new Date(moment(date).clone().endOf("day").toISOString())
                 }
             })
         }
