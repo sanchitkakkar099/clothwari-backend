@@ -20,6 +20,7 @@
     "express-swagger-generator": "^1.1.17",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
     "mongoose": "^7.6.3",
     "mongoose-paginate-v2": "^1.7.4",
     "morgan-body": "^2.6.9",

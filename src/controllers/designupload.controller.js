@@ -1,4 +1,5 @@
 //import helper utils
+const moment = require("moment");
 const { dbMethods, dbModels, helperUtils } = require("../utils");
 const { HttpStatus, UserRoleConstant } = require("../utils/constant");
 
@@ -457,9 +458,13 @@ exports.designuploadListwithpagination = async (req, res) => {
 
         if (req.body.date_filter) {
             query.$and.push({
+                // createdAt: {
+                //     $gte: new Date(req.body.date_filter).setHours(0, 0, 0, 0),
+                //     $lte: new Date(req.body.date_filter).setHours(23, 59, 59, 0)
+                // }
                 createdAt: {
-                    $gte: new Date(req.body.date_filter).setHours(0, 0, 0, 0),
-                    $lte: new Date(req.body.date_filter).setHours(23, 59, 59, 0)
+                    $gte: new Date(moment().clone().startOf("day").toISOString()),
+                    $lte: new Date(moment().clone().endOf("day").toISOString())
                 }
             })
         }
