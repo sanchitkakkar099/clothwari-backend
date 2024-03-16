@@ -233,6 +233,9 @@ exports.designuploadList = async (req, res) => {
         if (req.body.category?.length) {
             query['category'] = { $in: req.body.category }
         }
+        if (req.body.color?.length) {
+            query['color'] = { $in: req.body.color }
+        }
         let page = 1, limit = 10;
         if (req.body.page) page = req.body.page;
         if (req.body.limit) limit = req.body.limit;
