@@ -228,13 +228,17 @@ exports.tagmerge = async (req, res) => {
                 query: { _id: { $in: tag_disignIds }, 'tag.label': merge_from },
                 update: { $set: { 'tag.$.label': merge_to } }
             })
-
-            await dbMethods.deleteOne({
-                collection: dbModels.Tag,
-                query: { _id: merge_from_tagId, label: merge_from }
-            })
         }
-
+        await dbMethods.updateOne({
+            collection: dbModels.Tag,
+            query: { _id: merge_to_tagId },
+            update: { label: merge_from }
+        })
+        await dbMethods.deleteOne({
+            collection: dbModels.Tag,
+            query: { _id: merge_from_tagId, label: merge_from }
+        })
+        res.send(helperUtils.successRes("Successfully Merge", {}, HttpStatus.OK));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
