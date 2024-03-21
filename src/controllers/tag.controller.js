@@ -229,11 +229,6 @@ exports.tagmerge = async (req, res) => {
                 update: { $set: { 'tag.$.label': merge_to } }
             })
         }
-        await dbMethods.updateOne({
-            collection: dbModels.Tag,
-            query: { _id: merge_to_tagId },
-            update: { label: merge_from }
-        })
         await dbMethods.deleteOne({
             collection: dbModels.Tag,
             query: { _id: merge_from_tagId, label: merge_from }
