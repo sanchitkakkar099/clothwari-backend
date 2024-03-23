@@ -218,7 +218,7 @@ exports.tagmerge = async (req, res) => {
                 .send(helperUtils.errorRes("Tag Not Found", {}));
         }
         let tag_disignIds = await dbMethods.distinct({
-            collection: dbModels.Tag,
+            collection: dbModels.DesignUpload,
             field: "_id",
             query: { 'tag.label': merge_from }
         })
