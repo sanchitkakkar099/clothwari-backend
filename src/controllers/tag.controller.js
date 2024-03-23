@@ -75,7 +75,10 @@ exports.tagById = async (req, res) => {
 
 exports.tagdelete = async (req, res) => {
     try {
-        let tag = await dbMethods.findOne({ _id: req.params.id })
+        let tag = await dbMethods.findOne({
+            collection: dbModels.Tag,
+            query: { _id: req.params.id }
+        })
 
         await dbMethods.updateMany({
             collection: dbModels.DesignUpload,
