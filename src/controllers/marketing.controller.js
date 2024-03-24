@@ -137,7 +137,7 @@ exports.salespersonCreateEdit = async (req, res) => {
                 update: req.body
             })
         }
-        return helperUtils.successRes("Successfully created")
+        return res.send(helperUtils.successRes("Successfully created"))
     } catch (error) {
         return res.send(helperUtils.errorRes("Bad Request", error.message, HttpStatus.BAD_REQUEST));
     }
