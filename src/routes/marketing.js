@@ -1,5 +1,5 @@
 const { marketingController } = require("../controllers");
-const { auth } = require("../middlewares");
+const { auth } = require("../middlewares").auth;
 
 const router = require("express").Router()
 
