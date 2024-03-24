@@ -15,7 +15,8 @@ const UserRoleConstant = Object.freeze({
     Client: "Client",
     Designer: "Designer",
     User: "User",
-    SuperAdmin: "Super Admin"
+    SuperAdmin: "Super Admin",
+    SalesPerson: "SalesPerson",
 })
 
 const FileDirectoryType = Object.freeze({

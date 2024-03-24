@@ -75,4 +75,74 @@ router.post("/list",
     marketingController.marketingList
 );
 
+
+/**
+ * @typedef salespersonmodel
+ * @property {string} name
+ * @property {string} email
+ * @property {string} password
+ * @property {string} phone
+ */
+/**
+ * create admin role user
+ * @route POST /market/salesperson/create
+ * @param {salespersonmodel.model} data.body.required
+ * @group Client - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ * @security User
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/salesperson/create",
+    auth,
+    marketingController.salespersonCreateEdit
+);
+
+/**
+* get client by id
+* @route GET /market/salesperson/byId/{id}
+* @param {string} id.path.required
+* @group Client - Operations
+* @returns {object} 200
+*      Return JSON object
+*
+* @security User 
+* @returns {Error}  Error - Unexpected error
+*/
+router.get("/salesperson/byId/:id",
+    auth,
+    marketingController.slaespersonById
+);
+
+/**
+ * delete client by id
+ * @route DELETE /market/salesperson/byId/{id}
+ * @param {string} id.path.required
+ * @group Client - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.delete("/salesperson/byId/:id",
+    auth,
+    marketingController.slaespersondelete
+);
+
+/**
+ * get client list with pagination and searching
+ * @route post /market/salesperson/list
+ * @param {categoryListmodel.model} data.body.required
+ * @group Client - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/salesperson/list",
+    auth,
+    marketingController.salespersonList
+);
 module.exports = router;
