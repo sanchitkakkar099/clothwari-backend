@@ -100,11 +100,8 @@ exports.salespersonCreateEdit = async (req, res) => {
                 query: { email: req.body.email.toLowerCase() }
             })
             if (chekAlreadyAvail) {
-                return res.send(helperUtils.errorRes(
-                    "Already Available",
-                    {},
-                    HttpStatus.BAD_REQUEST
-                ))
+                return res.status(HttpStatus.BAD_REQUEST)
+                    .send(helperUtils.errorRes("Email Already Exists", {}));
             }
             let createsalesperson = await dbMethods.insertOne({
                 collection: dbModels.User,
