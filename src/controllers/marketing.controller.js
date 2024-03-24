@@ -109,9 +109,8 @@ exports.salespersonCreateEdit = async (req, res) => {
             let createsalesperson = await dbMethods.insertOne({
                 collection: dbModels.User,
                 document: {
-                    firstName: req.body.firstName,
-                    lastName: req.body.lastName,
-                    email: req.body.eamil.toLowerCase(),
+                    name: req.body.name,
+                    email: req.body.email.toLowerCase(),
                     password: await helperUtils.bcryptHash(req.body.password),
                     role: UserRoleConstant.SalesPerson,
                     phone: req.body.phone,
