@@ -86,7 +86,7 @@ exports.categoryList = async (req, res) => {
         result.docs = await dbMethods.find({
             collection: dbModels.Category,
             query: query,
-            sort: { _id: -1 },
+            sort: { _id: (req.body.sortBy == 'desc') ? -1 : 1 },
         })
 
         result.totalDocs = result.docs.length;
