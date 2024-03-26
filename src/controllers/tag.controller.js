@@ -121,7 +121,7 @@ exports.tagList = async (req, res) => {
         result.docs = await dbMethods.find({
             collection: dbModels.Tag,
             query: query,
-            sort: { _id: (req.body.sortBy == 'desc') ? -1 : 1 },
+            sort: { label: (req.body.sortBy == 'desc') ? -1 : 1 },
         })
         result.totalDocs = result.docs.length
 
