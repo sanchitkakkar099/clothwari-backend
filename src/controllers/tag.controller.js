@@ -118,15 +118,39 @@ exports.tagList = async (req, res) => {
             totalDocs: 0,
             totalPages: 1,
         };
-        result.docs = await dbMethods.find({
+        result.docs = await dbMethods.aggregate({
             collection: dbModels.Tag,
-            query: query,
-            sort: { label: (req.body.sortBy == 'desc') ? -1 : 1 },
+            pipeline: [
+                {
+                    $project: {
+                        _id: 1,
+                        label: { $trim: { input: "$label" } },
+                        id: 1,
+                        customOption: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+
+                    }
+                },
+                {
+                    $sort: { label: (req.body.sortBy == 'asc') ? 1 : -1 }
+                },
+
+            ],
+            options: {
+
+                collation: {
+                    locale: "en",
+                    caseLevel: true
+                }
+
+            }
         })
         result.totalDocs = result.docs.length
 
         return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));
     } catch (error) {
+        console.log(error)
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }

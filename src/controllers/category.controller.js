@@ -87,6 +87,12 @@ exports.categoryList = async (req, res) => {
             collection: dbModels.Category,
             query: query,
             sort: { name: (req.body.sortBy == 'desc') ? -1 : 1 },
+            options: {
+                collation: {
+                    locale: "en",
+                    caseLevel: true
+                }
+            }
         })
 
         result.totalDocs = result.docs.length;
