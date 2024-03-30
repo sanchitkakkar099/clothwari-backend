@@ -11,6 +11,7 @@ const FileuploadSchema = new mongoose.Schema({
     size: { type: String },
     filepath: { type: String },
     pdf_extract_img: { type: String },
+    tif_extract_img: { type: String },
     thumbnail: { type: String },
     oldpath: { type: String },
     odls3: { type: String },

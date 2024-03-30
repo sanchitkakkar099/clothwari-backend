@@ -3,6 +3,7 @@ const path = require("path");
 const uploadad = require("../middlewares").uploadad;
 const { uploadS3 } = require("../middlewares")
 const sharp = require('sharp');
+const Jimp = require('jimp');
 // const pdfPoppler = require('pdf-poppler');
 const fs = require("fs");
 // const pdf = require('pdf-poppler');
@@ -178,15 +179,15 @@ async function createThumbnail(filepath) {
  * @returns {object} 200 - file path object
  * @returns {Error}  Error - Unexpected error
  */
-router.post("/multiple", uploadS3.array('file', 10), async (req, res) => {
+router.post("/multiple", uploadad.array('file', 10), async (req, res) => {
     try {
         let files = [];
         for (let i = 0; i < req.files.length; i++) {
             const element = req.files[i];
-            // element.filepath = element.path.replace(/\\/g, '/')
-            // let filepath = element.filepath
-            // element.filepath = 'http://' + process.env.HOST + "/" + element.filepath
-            element.filepath = element.location
+            element.filepath = element.path.replace(/\\/g, '/')
+            let filepath = element.filepath
+            element.filepath = 'http://' + process.env.HOST + "/" + element.filepath
+            // element.filepath = element.location
             element.originalname = element.originalname
             element.mimetype = element.mimetype
             element.size = element.size
@@ -196,12 +197,12 @@ router.post("/multiple", uploadS3.array('file', 10), async (req, res) => {
                 document: element
             })
             files.push(file);
-            // if (element.mimetype == 'application/pdf') {
-            //     const pdfPath = path.join(__dirname, "../../" + filepath);
-            //     console.log("-------------")
-            //     let extracted = await extractImagesFromPDF(pdfPath, file._id)
-            //     console.log(extracted)
-            // }
+            if (element.mimetype == 'image/tiff') {
+                const tifpath = path.join(__dirname, "../../" + filepath);
+                console.log("-------------")
+                let extracted = await this.extractimgfromtiff(tifpath, file._id);
+                console.log(extracted)
+            }
         }
         res.status(200).send(helperUtils.successRes("Successfully upload file", files));
         return;
@@ -210,6 +211,28 @@ router.post("/multiple", uploadS3.array('file', 10), async (req, res) => {
         return;
     }
 })
+
+exports.extractimgfromtiff = async (filepath, fileId) => {
+    try {
+        let outputFileName = path.basename(filepath, path.extname(filepath)) + ".png";
+        let imagepath = path.join(__dirname, '../../uploads/tif_img', outputFileName);
+        // Read the TIFF image
+        const image = await Jimp.read(filepath);
+
+        // Convert the image to JPEG format
+        await image.quality(100).write(imagepath)
+        let img = 'http://' + process.env.HOST + `/uploads/tif_img/${outputFileName}`
+        await dbMethods.updateOne({
+            collection: dbModels.FileUpload,
+            query: { _id: fileId },
+            update: { tif_extract_img: img }
+        })
+        return true
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+}
 
 
 /**

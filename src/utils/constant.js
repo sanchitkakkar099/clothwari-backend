@@ -27,6 +27,8 @@ const FileDirectoryType = Object.freeze({
     3: '/pdf_img',
     4: "/server_pdf",
     5: "/design_pdf",
+    6: "/tif_img",
+    7: "/server_tiff"
 })
 
 const DefaultConstantType = Object.freeze({

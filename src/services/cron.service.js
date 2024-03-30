@@ -12,6 +12,9 @@ module.exports = async () => {
     //check pdf those have successfully extracted images
     let removepdffromserver = new cronJob('*/2 * * * *', extractedpdf)
     removepdffromserver.start()
+
+    let uploadtifpngtos3 = new cronJob('*/3 * * * *', extracttiffuploads3)
+    uploadtifpngtos3.start()
 }
 
 const extractedpdf = async () => {
@@ -70,5 +73,73 @@ const extractedpdf = async () => {
     } catch (error) {
         console.log(error)
         return false
+    }
+}
+
+
+const extracttiffuploads3 = async () => {
+    try {
+
+        let tiffs = await dbMethods.find({
+            collection: dbModels.FileUpload,
+            query: {
+                mimetype: "image/tiff", tif_extract_img: {
+                    $regex: "http://localhost:3300/uploads/tif_img",
+                    $options: "i"
+                }
+            },
+            limit: 10,
+            sort: { _id: -1 }
+        })
+
+        for (let i = 0; i < tiffs.length; i++) {
+            const element = tiffs[i];
+            let path1 = element.tif_extract_img.replace("http://localhost:3300", "")
+            path1 = path.join(__dirname, "../../", path1);
+            let s3 = ""
+            if (fs.existsSync(path1)) {
+                console.log("exists")
+                s3 = await helperUtils.uploadfileToS3(
+                    path1,
+                    path.basename(path1),
+                    "image/png",
+                    "pdf_img"
+                )
+                console.log(s3)
+            }
+            let tiff_path = path.join(__dirname, "../../", element.path);
+            let tiffs3 = ""
+            if (fs.existsSync(tiff_path)) {
+                //upload to s3
+                tiffs3 = await helperUtils.uploadfileToS3(
+                    tiff_path,
+                    path.basename(tiff_path),
+                    element.mimetype,
+                    'design'
+                )
+            }
+            if (s3 && tiffs3) {
+                await dbMethods.updateOne({
+                    collection: dbModels.FileUpload,
+                    query: { _id: element._id },
+                    update: { filepath: tiffs3, tif_extract_img: s3 }
+                })
+            }
+            if (fs.existsSync(path1) && fs.existsSync(tiff_path)) {
+                fs.unlink(path1, (err) => {
+                    if (err) throw err;
+                    console.log(path1, ' was deleted');
+                });
+                fs.unlink(tiff_path, (err) => {
+                    if (err) throw err;
+                    console.log(tiff_path, ' was deleted');
+                });
+            }
+        }
+
+        return true
+    } catch (error) {
+        console.log(error)
+        return false;
     }
 }
