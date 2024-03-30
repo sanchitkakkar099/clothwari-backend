@@ -247,7 +247,7 @@ exports.designuploadList = async (req, res) => {
             query: query,
             options: {
                 populate: [
-                    // { path: "image" },
+                    { path: "image", tif_extract_img },
                     { path: "thumbnail", select: "pdf_extract_img" },
                     { path: "category", select: "name" },
                     { path: "uploadedBy", select: "name email" },
@@ -326,9 +326,10 @@ exports.designuploadList = async (req, res) => {
                 collection: dbModels.Variation,
                 query: { designId: result.docs[i]._id },
                 populate: [
-                    // {
-                    //     path: "variation_image",
-                    // },
+                    {
+                        path: "variation_image",
+                        select: "tif_extract_img",
+                    },
                     {
                         path: "variation_thumbnail",
                         select: "pdf_extract_img"
