@@ -65,3 +65,61 @@ exports.uploadfileToS3 = async (filepath, filename, mimetype, key = 28) => {
         return false
     }
 }
+exports.htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>
+        .pdf-title {
+            text-align: center;
+        }
+
+        .pdf-images-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            justify-items: center;
+            padding-top: 10px;
+        }
+        .pdf-title+.pdf-images-container {
+            border-top: 25px solid rgb(206, 86, 42);
+            padding-top: 10px;
+        }
+
+        .pdf-image-wrapper {
+            position: relative;
+            border: 1.5px black solid;
+            margin:5px;
+        }
+
+        .pdf-image-wrapper img {
+            width: 300px;
+            height: auto;
+        }
+
+        .pdf-image-caption {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            font-size: 12px;
+            background-color: white;
+            padding: 2px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="my-pdf">
+        <div class="pdf-title">
+            <h1>PDF Title</h1>
+        </div>
+        <div class="pdf-images-container">
+        {{content}}
+       </div>
+    </div>
+</body>
+</html>
+`;

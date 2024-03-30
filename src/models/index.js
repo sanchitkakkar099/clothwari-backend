@@ -10,6 +10,7 @@ const { PermissionSchema } = require("./permission.model");
 const { VariationSchema } = require("./variation.model");
 const { CartSchema } = require("./cart.model")
 const { MarketingSchema } = require("./marketing.model")
+const { DriveSchema } = require("./drive.model");
 
 
 const db = {
@@ -19,6 +20,7 @@ const db = {
     Category: mongoose.model(dbModels.Category, CategorySchema),
     Color: mongoose.model(dbModels.Color, ColorSchema),
     DesignUpload: mongoose.model(dbModels.DesignUpload, DesignUploadSchema),
+    Drive: mongoose.model(dbModels.Drive, DriveSchema),
     FileUpload: mongoose.model(dbModels.FileUpload, FileuploadSchema),
     Marketing: mongoose.model(dbModels.Marketing, MarketingSchema),
     Permission: mongoose.model(dbModels.Permission, PermissionSchema),

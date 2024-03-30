@@ -145,4 +145,20 @@ router.post("/salesperson/list",
     auth,
     marketingController.salespersonList
 );
+
+/**
+ * get client list with pagination and searching
+ * @route post /market/drive/create
+ * @param {categoryListmodel.model} data.body.required
+ * @group Client - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/drive/create",
+    auth,
+    marketingController.createmergepdf
+);
 module.exports = router;

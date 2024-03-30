@@ -3,6 +3,12 @@ const db = require("../models");
 const { dbMethods, dbModels, helperUtils } = require("../utils");
 const { HttpStatus, UserRoleConstant } = require("../utils/constant");
 
+//puppeter
+const { launch } = require('puppeteer');
+const path = require("path");
+const fs = require("fs");
+
+
 exports.marketingAdding = async (req, res) => {
     try {
         if (!req.body._id) {
@@ -204,6 +210,69 @@ exports.salespersonList = async (req, res) => {
         })
 
         return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.createmergepdf = async (req, res) => {
+    try {
+        let data = req.body.data
+        let div = ``;
+        for (let i = 0; i < data.length; i++) {
+            const element = data[i];
+            div += `
+             <div class="pdf-image-wrapper">
+             <img src="${element.imgUrl}"
+                 alt="Image ${i + 1}" />
+             <div class="pdf-image-caption">${element.designNo}</div>
+             </div>
+             `
+        }
+        let drive = await dbMethods.insertOne({
+            collection: dbModels.Drive,
+            document: {
+                userId: req.user._id,
+                isgen: false,
+                data: data
+            }
+        })
+        let htmlContent = helperUtils.htmlContent;
+        htmlContent = htmlContent.replace('{{content}}', div);
+        let pdfdir = path.join(__dirname, "../../uploads/drivepdf/", drive._id + '.pdf')
+
+
+        const browser = await launch();
+        const page = await browser.newPage();
+        await page.setContent(htmlContent);
+        const pdfBuffer = await page.pdf();
+        await browser.close();
+
+        // Save the PDF to a file    
+        fs.writeFileSync(pdfdir, pdfBuffer);
+        let url = "http://43.204.194.160:3300/uploads/drivepdf/" + drive._id + '.pdf'
+        await dbMethods.updateOne({
+            collection: dbModels.Drive,
+            query: { _id: drive._id },
+            update: { pdfurl: url, isgen: true }
+        })
+
+        res.send(helperUtils.successRes("Successfully", drive))
+    } catch (error) {
+        console.log(error)
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.drivelist = async (req, res) => {
+    try {
+        let drives = await dbMethods.find({
+            collection: dbModels.Drive,
+            query: {}
+        })
+        return res.send(helperUtils.successRes("Successfully get drive list", drive));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
