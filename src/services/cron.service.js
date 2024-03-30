@@ -24,7 +24,7 @@ const extractedpdf = async () => {
             collection: dbModels.FileUpload,
             query: {
                 mimetype: "application/pdf", pdf_extract_img: {
-                    $regex: "http://13.127.195.53:3300/uploads/pdf_img",
+                    $regex: "http://43.204.194.160:3300/uploads/pdf_img",
                     $options: "i"
                 }
             },
