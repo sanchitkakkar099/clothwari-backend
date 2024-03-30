@@ -84,7 +84,7 @@ const extracttiffuploads3 = async () => {
             collection: dbModels.FileUpload,
             query: {
                 mimetype: "image/tiff", tif_extract_img: {
-                    $regex: "http://localhost:3300/uploads/tif_img",
+                    $regex: "http://43.204.194.160:3300/uploads/tif_img",
                     $options: "i"
                 }
             },
@@ -94,7 +94,7 @@ const extracttiffuploads3 = async () => {
 
         for (let i = 0; i < tiffs.length; i++) {
             const element = tiffs[i];
-            let path1 = element.tif_extract_img.replace("http://localhost:3300", "")
+            let path1 = element.tif_extract_img.replace("http://43.204.194.160:3300", "")
             path1 = path.join(__dirname, "../../", path1);
             let s3 = ""
             if (fs.existsSync(path1)) {
