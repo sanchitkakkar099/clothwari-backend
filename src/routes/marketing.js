@@ -161,4 +161,7 @@ router.post("/drive/create",
     auth,
     marketingController.createmergepdf
 );
+router.post("/drive/list",
+    auth,
+    marketingController.drivelist)
 module.exports = router;

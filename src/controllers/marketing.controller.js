@@ -242,37 +242,62 @@ exports.createmergepdf = async (req, res) => {
         htmlContent = htmlContent.replace('{{content}}', div);
         let pdfdir = path.join(__dirname, "../../uploads/drivepdf/", drive._id + '.pdf')
 
-
-        const browser = await launch();
-        const page = await browser.newPage();
-        await page.setContent(htmlContent);
-        const pdfBuffer = await page.pdf();
-        await browser.close();
-
-        // Save the PDF to a file    
-        fs.writeFileSync(pdfdir, pdfBuffer);
-        let url = "http://43.204.194.160:3300/uploads/drivepdf/" + drive._id + '.pdf'
-        await dbMethods.updateOne({
-            collection: dbModels.Drive,
-            query: { _id: drive._id },
-            update: { pdfurl: url, isgen: true }
-        })
-
-        res.send(helperUtils.successRes("Successfully", drive))
+        generatePDF(htmlContent, pdfdir, drive)
+            .then((url) => {
+                drive.pdfurl = url
+                return res.send(helperUtils.successRes("Successfully", drive))
+            })
+            .catch((error) => {
+                return res.send(helperUtils.errorRes("Error", error.message))
+            })
     } catch (error) {
         console.log(error)
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+function generatePDF(htmlContent, pdfdir, drive) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const browser = await launch();
+            const page = await browser.newPage();
+            await page.setContent(htmlContent);
+            const pdfBuffer = await page.pdf();
+            await browser.close();
+
+            let url = "http://43.204.194.160:3300/uploads/drivepdf/" + drive._id + '.pdf';
+
+            // Write the PDF to the file system
+            fs.writeFile(pdfdir, pdfBuffer, (error) => {
+                if (error) {
+                    reject(error); // Reject the promise if an error occurs during file writing
+                } else {
+                    // Update the database with the PDF URL after successful file writing
+                    dbMethods.updateOne({
+                        collection: dbModels.Drive,
+                        query: { _id: drive._id },
+                        update: { pdfurl: url, isgen: true }
+                    }).then(() => {
+                        resolve(url); // Resolve the promise with the PDF URL
+                    }).catch((dbError) => {
+                        reject(dbError); // Reject the promise if an error occurs during database update
+                    });
+                }
+            });
+        } catch (error) {
+            reject(error); // Reject the promise if an error occurs during PDF generation
+        }
+    });
+}
 
 exports.drivelist = async (req, res) => {
     try {
         let drives = await dbMethods.find({
             collection: dbModels.Drive,
-            query: {}
+            query: {},
+            sort: { _id: -1 }
         })
-        return res.send(helperUtils.successRes("Successfully get drive list", drive));
+        return res.send(helperUtils.successRes("Successfully get drive list", drives));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
