@@ -247,7 +247,7 @@ exports.designuploadList = async (req, res) => {
             query: query,
             options: {
                 populate: [
-                    { path: "image", tif_extract_img },
+                    { path: "image", select: 'tif_extract_img' },
                     { path: "thumbnail", select: "pdf_extract_img" },
                     { path: "category", select: "name" },
                     { path: "uploadedBy", select: "name email" },
