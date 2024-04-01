@@ -7,6 +7,7 @@ const { HttpStatus, UserRoleConstant } = require("../utils/constant");
 const { launch } = require('puppeteer');
 const path = require("path");
 const fs = require("fs");
+const puppeteer = require('puppeteer');
 
 
 exports.marketingAdding = async (req, res) => {
@@ -259,7 +260,8 @@ exports.createmergepdf = async (req, res) => {
 function generatePDF(htmlContent, pdfdir, drive) {
     return new Promise(async (resolve, reject) => {
         try {
-            const browser = await launch();
+            // const browser = await launch();
+            let browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox"] });
             const page = await browser.newPage();
             await page.setContent(htmlContent);
             const pdfBuffer = await page.pdf();
@@ -295,6 +297,7 @@ exports.drivelist = async (req, res) => {
         let drives = await dbMethods.find({
             collection: dbModels.Drive,
             query: {},
+            populate: [{ path: 'userId' }],
             sort: { _id: -1 }
         })
         return res.send(helperUtils.successRes("Successfully get drive list", drives));
