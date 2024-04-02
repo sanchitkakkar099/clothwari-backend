@@ -92,7 +92,7 @@ async def main(pdf_path, output_folder, filename):
     except Exception as e:
         return str(e)
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     if len(sys.argv) != 4:
         print("Usage: python extract_images.py <pdf_path> <output_folder> <filename>")
         sys.exit(1)
