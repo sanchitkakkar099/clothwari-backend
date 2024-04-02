@@ -8,6 +8,7 @@ const DriveSchema = new mongoose.Schema({
         ref: 'User'
     },
     pdfurl: { type: String },
+    pdfName: { type: String },
     data: mongoose.Schema.Types.Mixed,
     isgen: { type: Boolean, default: false },
 }, { timestamps: true });

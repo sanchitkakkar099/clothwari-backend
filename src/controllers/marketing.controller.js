@@ -234,6 +234,7 @@ exports.createmergepdf = async (req, res) => {
         let drive = await dbMethods.insertOne({
             collection: dbModels.Drive,
             document: {
+                pdfName: req.body.pdfName,
                 userId: req.user._id,
                 isgen: false,
                 data: data
@@ -294,13 +295,42 @@ function generatePDF(htmlContent, pdfdir, drive) {
 
 exports.drivelist = async (req, res) => {
     try {
-        let drives = await dbMethods.find({
+        let { page, limit, pdfName, uploadedBy } = req.body
+        let query = { $match: {} };
+        if (pdfName) {
+            query.$match['pdfName'] = new RegExp(pdfName, "i");
+        }
+        if (uploadedBy) {
+            query.$match['userId.name'] = new RegExp(uploadedBy, "i")
+        }
+        let pipeline = [
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "userId"
+                }
+            },
+            { $unwind: "$userId" },
+
+        ]
+        if (query && query.$match) pipeline.push(query);
+        let data = await dbMethods.aggregate({
             collection: dbModels.Drive,
-            query: {},
-            populate: [{ path: 'userId' }],
-            sort: { _id: -1 }
+            pipeline: pipeline,
+            options: {
+                $sort: { _id: -1 }
+            }
         })
-        return res.send(helperUtils.successRes("Successfully get drive list", drives));
+        let result = {
+            docs: data.slice((page - 1) * limit, page * limit),
+            page: page,
+            limit: limit,
+            pages: Math.ceil(data.length / limit),
+            total: data.length
+        }
+        return res.send(helperUtils.successRes("Successfully get drive list", result));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
