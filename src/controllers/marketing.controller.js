@@ -313,15 +313,13 @@ exports.drivelist = async (req, res) => {
                 }
             },
             { $unwind: "$userId" },
+            { $sort: { _id: -1 } }
 
         ]
         if (query && query.$match) pipeline.push(query);
         let data = await dbMethods.aggregate({
             collection: dbModels.Drive,
             pipeline: pipeline,
-            options: {
-                $sort: { _id: -1 }
-            }
         })
         let result = {
             docs: data.slice((page - 1) * limit, page * limit),

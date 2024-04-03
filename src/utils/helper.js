@@ -114,7 +114,7 @@ exports.htmlContent = `
 <body>
     <div id="my-pdf">
         <div class="pdf-title">
-            <h1>PDF Title</h1>
+            <h1>Textile Design</h1>
         </div>
         <div class="pdf-images-container">
         {{content}}
