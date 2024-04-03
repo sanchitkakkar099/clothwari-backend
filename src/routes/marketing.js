@@ -164,4 +164,7 @@ router.post("/drive/create",
 router.post("/drive/list",
     auth,
     marketingController.drivelist)
+
+router.get("/salesperson/permission/list",
+    marketingController.salespersonpermissionlist)
 module.exports = router;

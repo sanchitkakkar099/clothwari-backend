@@ -334,3 +334,35 @@ exports.drivelist = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.salespersonpermissionlist = async (req, res) => {
+
+    try {
+
+        let pipeline = []
+        pipeline.push({
+            $match: {
+                module: { $in: ["SalesPerson"] }
+            }
+        })
+        pipeline.push({
+            $project: {
+                _id: 1,
+                label: "$title",
+                module: 1,
+                value: "$code"
+            }
+        })
+
+        let permissions = await dbMethods.aggregate({
+            collection: dbModels.Permission,
+            pipeline: pipeline,
+            options: { lean: true }
+        })
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully get permissions", permissions));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
