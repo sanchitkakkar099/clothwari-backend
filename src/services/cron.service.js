@@ -84,6 +84,7 @@ const extractedpdf = async () => {
                     });
                 }
                 let pdf = path.join(__dirname, "../../", pdfs[i].path)
+                console.log(pdf)
                 if (fs.existsSync(pdf)) {
                     fs.unlink(pdf, (err) => {
                         if (err) throw err;
