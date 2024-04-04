@@ -62,11 +62,11 @@ const extractedpdf = async () => {
                         update: { pdf_extract_img: s3 }
                     })
                 } else if (fs.existsSync(imagejpeg)) {
-                    console.log("----", image)
+                    console.log("----", imagejpeg)
                     let s3 = await helperUtils.uploadfileToS3(
-                        image,
+                        imagejpeg,
                         path.basename(image),
-                        "image/png",
+                        "image/jpeg",
                         "pdf_img"
                     )
                     await dbMethods.updateOne({
