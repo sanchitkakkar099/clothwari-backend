@@ -88,7 +88,7 @@ const extractedpdf = async () => {
                 if (fs.existsSync(pdf)) {
                     fs.unlink(pdf, (err) => {
                         if (err) throw err;
-                        console.log(image, ' was deleted');
+                        console.log(pdf, ' was deleted');
                     });
                 }
             }
