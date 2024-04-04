@@ -42,6 +42,12 @@ const extractedpdf = async () => {
                 const desiredString = url.substring(uploadsIndex);
                 console.log(desiredString);
                 let image = path.join(__dirname, "../../" + desiredString)
+                let imagejpeg = desiredString.split(".")
+                if (imagejpeg.length == 2) {
+                    imagejpeg = imagejpeg[0] + "1001.jpeg"
+                    imagejpeg = path.join(__dirname, "../../" + imagejpeg)
+                    console.log("jpeg image try", imagejpeg)
+                }
                 if (fs.existsSync(image)) {
                     console.log("----", image)
                     let s3 = await helperUtils.uploadfileToS3(
@@ -55,7 +61,22 @@ const extractedpdf = async () => {
                         query: { _id: pdfs[i]._id },
                         update: { pdf_extract_img: s3 }
                     })
-                } else notfound_ids.push(element._id)
+                } else if (fs.existsSync(imagejpeg)) {
+                    console.log("----", image)
+                    let s3 = await helperUtils.uploadfileToS3(
+                        image,
+                        path.basename(image),
+                        "image/png",
+                        "pdf_img"
+                    )
+                    await dbMethods.updateOne({
+                        collection: dbModels.FileUpload,
+                        query: { _id: pdfs[i]._id },
+                        update: { pdf_extract_img: s3 }
+                    })
+                    image = imagejpeg;
+                }
+                else notfound_ids.push(element._id)
                 if (fs.existsSync(image)) {
                     fs.unlink(image, (err) => {
                         if (err) throw err;
