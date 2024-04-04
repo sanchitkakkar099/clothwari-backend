@@ -26,12 +26,14 @@ const extractedpdf = async () => {
                 mimetype: "application/pdf", pdf_extract_img: {
                     $regex: "http://43.204.194.160:3300/uploads/pdf_img",
                     $options: "i"
-                }
+                },
+                pdf_img_not_found: { $exists: false }
             },
             limit: 10,
             sort: { _id: -1 }
         })
 
+        let notfound_ids = []
         for (let i = 0; i < pdfs.length; i++) {
             const element = pdfs[i];
             const url = pdfs[i].pdf_extract_img
@@ -53,7 +55,7 @@ const extractedpdf = async () => {
                         query: { _id: pdfs[i]._id },
                         update: { pdf_extract_img: s3 }
                     })
-                }
+                } else notfound_ids.push(element._id)
                 if (fs.existsSync(image)) {
                     fs.unlink(image, (err) => {
                         if (err) throw err;
@@ -69,6 +71,11 @@ const extractedpdf = async () => {
                 }
             }
         }
+        await dbMethods.updateMany({
+            collection: dbModels.FileUpload,
+            query: { _id: { $in: notfound_ids } },
+            update: { pdf_img_not_found: true }
+        })
         return true
     } catch (error) {
         console.log(error)
