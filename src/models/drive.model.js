@@ -11,7 +11,7 @@ const DriveSchema = new mongoose.Schema({
     pdfName: { type: String },
     data: mongoose.Schema.Types.Mixed,
     isgen: { type: Boolean, default: false },
-}, { timestamps: true });
+}, { timestamps: true, strict: false });
 
 DriveSchema.plugin(mongoosePaginate);
 

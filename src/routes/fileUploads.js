@@ -370,4 +370,17 @@ router.post("/multiple/tiff", uploadS3.array('file', 10), async (req, res) => {
         return;
     }
 })
+
+router.post("/drive/pdf", uploadS3.single('file'), async (req, res) => {
+    try {
+        let files = [];
+        console.log(req.file)
+
+        res.status(200).send(helperUtils.successRes("Successfully upload file", req.file.location));
+        return;
+    } catch (error) {
+        res.send(helperUtils.errorRes("Bad Request", error.message));
+        return;
+    }
+})
 module.exports = router;
