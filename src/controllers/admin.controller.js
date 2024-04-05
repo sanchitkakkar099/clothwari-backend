@@ -206,11 +206,20 @@ exports.getDashboardData = async (req, res) => {
             collection: dbModels.Cart,
             pipeline: bagCountpipeline
         })
+        let driveQ = {}
+        if (req.user.role != UserRoleConstant.SuperAdmin) {
+            driveQ.userId = req.user._id
+        }
+        let drive = await dbMethods.countDocuments({
+            collection: dbModels.Drive,
+            query: driveQ
+        })
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get data", {
                 staff, uploaddesign, newStaff, client, admin,
                 uploaddesignwithvariant,
-                clientBagCount: bagdata && bagdata[0] ? bagdata[0].count : 0
+                clientBagCount: bagdata && bagdata[0] ? bagdata[0].count : 0,
+                drive: drive,
             }));
     } catch (error) {
         console.log(error)
