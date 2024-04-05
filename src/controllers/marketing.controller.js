@@ -366,3 +366,23 @@ exports.salespersonpermissionlist = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.drivepdfcreate = async (req, res) => {
+    try {
+        let drive = await dbMethods.insertOne({
+            collection: dbModels.Drive,
+            document: {
+                data: req.body.data,
+                pdfName: req.body.pdfName,
+                userId: req.user._id,
+                pdfurl: req.body.pdfurl,
+                uploaded: true,
+                isgen: true
+            }
+        })
+        return res.send(helperUtils.successRes("Successfully uploaded", drive))
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
