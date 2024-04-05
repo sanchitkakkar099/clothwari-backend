@@ -338,4 +338,36 @@ router.get("/pdf_s3", async (req, res) => {
     }
 })
 
+router.post("/multiple/tiff", uploadS3.array('file', 10), async (req, res) => {
+    try {
+        let files = [];
+        for (let i = 0; i < req.files.length; i++) {
+            const element = req.files[i];
+            // element.filepath = element.path.replace(/\\/g, '/')
+            // let filepath = element.filepath
+            // element.filepath = 'http://' + process.env.HOST + "/" + element.filepath
+            element.filepath = element.location
+            element.originalname = element.originalname
+            element.mimetype = element.mimetype
+            element.size = element.size
+
+            let file = await dbMethods.insertOne({
+                collection: dbModels.FileUpload,
+                document: element
+            })
+            files.push(file);
+            // if (element.mimetype == 'image/tiff') {
+            //     const tifpath = path.join(__dirname, "../../" + filepath);
+            //     console.log("-------------")
+            //     let extracted = await this.extractimgfromtiff(tifpath, file._id);
+            //     console.log(extracted)
+            // }
+        }
+        res.status(200).send(helperUtils.successRes("Successfully upload file", files));
+        return;
+    } catch (error) {
+        res.send(helperUtils.errorRes("Bad Request", error.message));
+        return;
+    }
+})
 module.exports = router;
