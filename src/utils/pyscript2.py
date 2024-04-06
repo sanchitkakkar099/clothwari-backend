@@ -34,10 +34,12 @@ async def extract_images_from_pdf(pdf_path, output_folder, filename):
                 image = image.convert('CMYK')
 
             # Save the image
-            image_filename = f"{output_folder}/{filename}_{page_number}_{img_index}.png"
+            image_filename = f"{output_folder}/{filename}.png"
             image_list.append({"name": os.path.basename(image_filename), "path": os.path.abspath(image_filename)})
 
-            image.save(image_filename)
+            with open(image_filename, "wb") as image_file:
+                # Save the image data to the file
+                image.save(image_file)
 
     doc.close()
     return image_list
