@@ -38,10 +38,10 @@ async def extract_images_from_pdf(pdf_path, output_folder, filename):
             image_list.append({"name": os.path.basename(image_filename), "path": os.path.abspath(image_filename)})
 
             with open(image_filename, "wb") as image_file:
-            with io.BytesIO() as buffer:
-            image.save(buffer, format="PNG")  # Specify the desired image format
-            buffer.seek(0)
-            image_file.write(buffer.read())
+                with io.BytesIO() as buffer:
+                    image.save(buffer, format="PNG")  # Specify the desired image format
+                    buffer.seek(0)
+                    image_file.write(buffer.read())
 
     doc.close()
     return image_list
