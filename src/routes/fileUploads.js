@@ -383,4 +383,48 @@ router.post("/drive/pdf", uploadS3.single('file'), async (req, res) => {
         return;
     }
 })
+
+router.post("/multiple/pdf/v2", uploadad.array('file', 10), async (req, res) => {
+    try {
+        let files = [];
+        let filestodeleted = [];
+        for (let i = 0; i < req.files.length; i++) {
+            const element = req.files[i];
+            element.filepath = element.path.replace(/\\/g, '/')
+            let filepath = element.filepath
+            // element.filepath = 'http://' + process.env.HOST + "/" + element.filepath
+            element.filepath = await helperUtils.uploadfileToS3(
+                path.join(__dirname, "../../" + filepath),
+                element.filename,
+                element.mimetype
+            )
+            element.originalname = element.originalname
+            element.mimetype = element.mimetype
+            element.size = element.size
+
+            let file = await dbMethods.insertOne({
+                collection: dbModels.FileUpload,
+                document: element
+            })
+            files.push(file);
+            if (element.mimetype == 'application/pdf') {
+                const pdfPath = path.join(__dirname, "../../" + filepath);
+                filestodeleted.push(pdfPath);
+                console.log("-------------", pdfPath)
+                let outputpath = path.join(__dirname + '../../../uploads/pdf_img')
+                let outputFileName = path.basename(pdfPath, path.extname(pdfPath))
+                fileuploadController.extractimage_from_pdf_pythonv2(
+                    pdfPath, outputpath, file._id, outputFileName
+                )
+                console.log("extracted successfully")
+            }
+        }
+        res.status(200).send(helperUtils.successRes("Successfully upload file", files));
+        return;
+    } catch (error) {
+        console.log(error);
+        res.send(helperUtils.errorRes("Bad Request", error.message));
+        return;
+    }
+})
 module.exports = router;
