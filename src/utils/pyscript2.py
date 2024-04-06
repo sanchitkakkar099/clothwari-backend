@@ -3,6 +3,7 @@ import io
 from PIL import Image
 import fitz
 import sys
+import asyncio
 
 async def extract_images_from_pdf(pdf_path, output_folder, filename):
     doc = fitz.open(pdf_path)
