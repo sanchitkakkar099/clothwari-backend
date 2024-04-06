@@ -2,7 +2,7 @@ import os
 import io
 from PIL import Image
 import fitz
-import fitz  # PyMuPDF
+import sys
 
 async def extract_images_from_pdf(pdf_path, output_folder, filename):
     doc = fitz.open(pdf_path)
