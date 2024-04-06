@@ -427,4 +427,14 @@ router.post("/multiple/pdf/v2", uploadad.array('file', 10), async (req, res) => 
         return;
     }
 })
+
+router.post("/design/image", uploadS3.single("file"), async (req, res) => {
+    try {
+        res.status(200).send(helperUtils.successRes("Successfully upload file", req.file.location));
+        return;
+    } catch (error) {
+        res.send(helperUtils.errorRes("Bad Request", error.message));
+        return;
+    }
+})
 module.exports = router;

@@ -17,6 +17,6 @@ const FileuploadSchema = new mongoose.Schema({
     odls3: { type: String },
     pdf_img_not_found: { type: Boolean },
     tiff_imgnot_found: { type: Boolean }
-}, { timestamps: true })
+}, { timestamps: true, strict: false })
 
 exports.FileuploadSchema = FileuploadSchema;

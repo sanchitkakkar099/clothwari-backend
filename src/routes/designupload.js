@@ -180,4 +180,9 @@ router.post("/variant/check",
     auth,
     DesignUploadController.checkdesginalreadyavailvariant
 );
+
+router.post("/design/image",
+    auth,
+    DesignUploadController.setdesignimage
+);
 module.exports = router;
