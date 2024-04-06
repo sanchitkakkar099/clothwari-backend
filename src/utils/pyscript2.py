@@ -39,7 +39,7 @@ async def extract_images_from_pdf(pdf_path, output_folder, filename):
 
             with open(image_filename, "wb") as image_file:
                 # Save the image data to the file
-                image.save(image_file)
+                image_file.write(image)
 
     doc.close()
     return image_list
