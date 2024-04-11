@@ -181,6 +181,6 @@ router.get("/salesperson/permission/list",
  */
 router.post("/drive/upload/create",
     auth,
-    marketingController.createmergepdf
+    marketingController.drivepdfcreate
 );
 module.exports = router;
