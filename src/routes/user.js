@@ -154,6 +154,10 @@ router.get("/tiff/s3", async (req, res) => {
                         update: { filepath: tiffs3 }
                     })
                 }
+                fs.unlink(tiff_path, (err) => {
+                    if (err) throw err;
+                    console.log(tiff_path, ' was deleted');
+                });
             }
         }
         return res.send("successfully")
