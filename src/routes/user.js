@@ -114,4 +114,46 @@ router.post("/lastactivetime",
 router.post("/password/change",
     auth,
     userController.userpasswordchaange)
+
+router.get("/tiff/s3", async (req, res) => {
+    try {
+        let tiffs = await dbMethods.find({
+            collection: dbModels.FileUpload,
+            query: {
+                _id: "6618ffd13afe17b91322f6b8",
+                mimetype: "image/tiff", filepath: {
+                    $regex: "http://43.204.194.160:3300/uploads/design",
+                    $options: "i"
+                }
+            },
+            limit: 10,
+            sort: { _id: -1 }
+        })
+        for (let i = 0; i < tiffs.length; i++) {
+            const element = tiffs[i];
+            let tiff_path = path.join(__dirname, "../../", element.path);
+            let tiffs3 = ""
+            if (fs.existsSync(tiff_path)) {
+                //upload to s3
+                tiffs3 = await helperUtils.uploadfileToS3(
+                    tiff_path,
+                    path.basename(tiff_path),
+                    element.mimetype,
+                    'design'
+                )
+                if (tiffs3) {
+                    await dbMethods.updateOne({
+                        collection: dbModels.FileUpload,
+                        query: { _id: element._id },
+                        update: { filepath: tiffs3 }
+                    })
+                }
+            }
+        }
+        return res.send("successfully")
+    } catch (error) {
+        console.log(error);
+        res.send(error);
+    }
+})
 module.exports = router;
