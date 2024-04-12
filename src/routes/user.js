@@ -11,6 +11,9 @@ const { adminAuth } = require("../middlewares").adminAuth
 const db = require("../models");
 const { dbMethods, dbModels, helperUtils } = require("../utils")
 
+const fs = require("fs");
+const path = require("path");
+
 /**
  * @typedef usermodel
  * @property {string} firstName
