@@ -8,6 +8,9 @@ const userController = require("../controllers").userController
 //import auth
 const { adminAuth } = require("../middlewares").adminAuth
 
+const db = require("../models");
+const { dbMethods, dbModels, helperUtils } = require("../utils")
+
 /**
  * @typedef usermodel
  * @property {string} firstName
