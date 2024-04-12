@@ -2,7 +2,12 @@
 const db = require("../models");
 const { dbMethods, dbModels, helperUtils } = require("../utils");
 const { HttpStatus, UserRoleConstant } = require("../utils/constant");
+const aws = require('aws-sdk')
 
+const s3 = new aws.S3({
+    accessKeyId: process.env.AWS_ACCESSKEY,
+    secretAccessKey: process.env.AWS_SECRETKEY,
+})
 //puppeter
 const { launch } = require('puppeteer');
 const path = require("path");
@@ -381,6 +386,43 @@ exports.drivepdfcreate = async (req, res) => {
             }
         })
         return res.send(helperUtils.successRes("Successfully uploaded", drive))
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.drivedelete = async (req, res) => {
+    try {
+        let drive = await dbMethods.findOne({
+            collection: dbModels.Drive,
+            query: { _id: req.query.id }
+        })
+        if (drive.pdfurl.includes("https")) {
+            const deleteParams = {
+                Bucket: process.env.AWS_BUCKET,
+                Key: drive.pdfurl
+            };
+            s3.deleteObject(deleteParams, (err, data) => {
+                if (err) {
+                    console.error("Error:", err);
+                } else {
+                    console.log("Original file deleted successfully");
+                }
+            });
+        } else {
+            let upload_index = drive.pdfurl.indexOf("/uploads");
+            if (upload_index != -1) {
+                const desiredString = url.substring(uploadsIndex);
+                let pdf_path = path.join(__dirname, "../../" + desiredString);
+                if (fs.existsSync(pdf_path)) {
+                    fs.unlink(pdf_path, (err) => {
+                        if (err) throw err;
+                        console.log(pdf, ' was deleted');
+                    });
+                }
+            }
+        }
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));

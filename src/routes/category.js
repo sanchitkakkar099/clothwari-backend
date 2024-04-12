@@ -139,4 +139,20 @@ router.post("/merge",
     auth,
     categoryController.categorymerge
 )
+
+/**
+ * get category list with pagination and searching
+ * @route post /category/list/v2
+ * @param {categoryListmodel.model} data.body.required
+ * @group Category - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/list/v2",
+    auth,
+    categoryController.categoryListv2
+);
 module.exports = router;

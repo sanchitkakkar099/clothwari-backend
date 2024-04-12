@@ -230,6 +230,16 @@ exports.designuploadList = async (req, res) => {
                 $lte: new Date(moment(date).clone().endOf("day").toISOString())
             }
         }
+        if (req.body.start_date && req.body.end_date) {
+            req.body.start_date = req.body.start_date.replace("+05:30", 'Z')
+            req.body.end_date = req.body.end_date.replace("+05:30", 'Z')
+            query.$and.push({
+                createdAt: {
+                    $gte: new Date(moment(req.body.start_date).clone().startOf("day").toISOString()),
+                    $lte: new Date(moment(req.body.end_date).clone().endOf("day").toISOString())
+                }
+            })
+        }
         if (req.body.category?.length) {
             query['category'] = { $in: req.body.category }
         }
@@ -477,6 +487,16 @@ exports.designuploadListwithpagination = async (req, res) => {
                 }
             })
         }
+        if (req.body.start_date && req.body.end_date) {
+            req.body.start_date = req.body.start_date.replace("+05:30", 'Z')
+            req.body.end_date = req.body.end_date.replace("+05:30", 'Z')
+            query.$and.push({
+                createdAt: {
+                    $gte: new Date(moment(req.body.start_date).clone().startOf("day").toISOString()),
+                    $lte: new Date(moment(req.body.end_date).clone().endOf("day").toISOString())
+                }
+            })
+        }
 
         if (query.$and.length == 0) delete query.$and
 
@@ -572,7 +592,6 @@ exports.setdesignimage = async (req, res) => {
     try {
         await dbMethods.updateOne({
             collection: dbModels.FileUpload,
-            query: { _id: req.body.thumbnailId },
             update: { pdf_extract_img: req.body.pdf_extract_img, isdirect_upload: true }
         })
         return res.send(helperUtils.successRes("Successfully uplaod the Design Image", {}));

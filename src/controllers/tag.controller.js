@@ -266,3 +266,63 @@ exports.tagmerge = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+exports.tagListv2 = async (req, res) => {
+    try {
+        let query = {}
+        if (req.body.search) query['label'] = new RegExp(req.body.search, "i");
+        let page = 1, limit = 10;
+        if (req.body.page) page = req.body.page;
+        if (req.body.limit) limit = req.body.limit;
+
+
+        let result = {
+            docs: [],
+            hasNextPage: true,
+            hasPrevPage: false,
+            limit: 10,
+            nextPage: 2,
+            page: 1,
+            pagingCounter: 1,
+            prevPage: null,
+            totalDocs: 0,
+            totalPages: 1,
+        };
+        result.docs = await dbMethods.aggregate({
+            collection: dbModels.Tag,
+            pipeline: [
+                {
+                    $project: {
+                        _id: 1,
+                        label: { $trim: { input: "$label" } },
+                        id: 1,
+                        customOption: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+
+                    }
+                },
+                {
+                    $sort: { label: (req.body.sortBy == 'asc') ? 1 : -1 }
+                },
+
+            ],
+            options: {
+
+                collation: {
+                    locale: "en",
+                    caseLevel: true
+                }
+
+            }
+        })
+        result.totalDocs = result.docs.length
+        result.docs = result.docs.slice((page - 1) * limit, page * limit)
+
+
+        return res.status(HttpStatus.OK).send(helperUtils.successRes("Successfully get list", result));
+    } catch (error) {
+        console.log(error)
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}

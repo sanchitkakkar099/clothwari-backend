@@ -162,4 +162,27 @@ router.post("/merge",
     auth,
     tagController.tagmerge
 )
+
+/**
+ * @typedef tagListmodel
+ * @property {string} search
+ * @property {number} page
+ * @property {number} limit
+ */
+/**
+ * get tag list with pagination and searching
+ * @route post /tag/list/v2
+ * @param {tagListmodel.model} data.body.required
+ * @group Tag - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/list/v2",
+    // auth,
+    tagController.tagListv2
+);
+
 module.exports = router;
