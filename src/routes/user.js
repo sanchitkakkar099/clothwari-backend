@@ -126,7 +126,7 @@ router.get("/tiff/s3", async (req, res) => {
         let tiffs = await dbMethods.find({
             collection: dbModels.FileUpload,
             query: {
-                _id: "6618ffd13afe17b91322f6b8",
+                _id: "6618ffd83afe17b91322f70a",
                 mimetype: "image/tiff", filepath: {
                     $regex: "http://43.204.194.160:3300/uploads/design",
                     $options: "i"
