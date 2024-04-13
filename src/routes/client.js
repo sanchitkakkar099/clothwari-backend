@@ -132,4 +132,9 @@ router.post("/login/byadmin",
     // auth,
     clientController.clientLogin
 );
+
+router.post("/cart/save",
+    auth,
+    clientController.clientcartsave)
+
 module.exports = router;

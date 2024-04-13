@@ -218,3 +218,26 @@ exports.clientLogin = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.clientcartsave = async (req, res) => {
+    try {
+        let { cartItem } = req.body;
+        itemIds = await dbMethods.insertMany({
+            collection: dbModels.CartItem,
+            documents: cartItem
+        })
+        itemIds = itemIds.map(e => e._id);
+        delete req.body.cartItem
+        req.body.cartItem = itemIds;
+        let cart = await dbMethods.insertOne({
+            collection: dbModels.Cart,
+            document: req.body
+        })
+        return res.send(helper.successRes("Successfully create cart", cart))
+
+    } catch (error) {
+        console.log(error);
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
