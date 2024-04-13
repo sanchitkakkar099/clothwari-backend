@@ -233,12 +233,10 @@ exports.designuploadList = async (req, res) => {
         if (req.body.start_date && req.body.end_date) {
             req.body.start_date = req.body.start_date.replace("+05:30", 'Z')
             req.body.end_date = req.body.end_date.replace("+05:30", 'Z')
-            query.$and.push({
-                createdAt: {
-                    $gte: new Date(moment(req.body.start_date).clone().startOf("day").toISOString()),
-                    $lte: new Date(moment(req.body.end_date).clone().endOf("day").toISOString())
-                }
-            })
+            query.createdAt = {
+                $gte: new Date(moment(req.body.start_date).clone().startOf("day").toISOString()),
+                $lte: new Date(moment(req.body.end_date).clone().endOf("day").toISOString())
+            }
         }
         if (req.body.category?.length) {
             query['category'] = { $in: req.body.category }
