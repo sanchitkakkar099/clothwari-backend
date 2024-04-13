@@ -439,11 +439,11 @@ exports.designuploadListwithpagination = async (req, res) => {
 
                 }))
             }
-        } else {
-            if (req?.user?.role == UserRoleConstant.Designer) {
-                query.uploadedBy = req.user._id;
-            }
         }
+        if (req?.user?.role == UserRoleConstant.Designer) {
+            query.uploadedBy = req.user._id;
+        }
+
         if (req.body.category) {
             let categoryIds = await dbMethods.distinct({
                 collection: dbModels.Category,
