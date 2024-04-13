@@ -210,7 +210,7 @@ router.post("/drive/delete",
 * @security User 
 * @returns {Error}  Error - Unexpected error
 */
-router.post("/drive/eedit",
+router.post("/drive/edit",
     auth,
     marketingController.driveedit)
 module.exports = router;
