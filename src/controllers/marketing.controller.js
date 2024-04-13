@@ -398,7 +398,7 @@ exports.drivedelete = async (req, res) => {
             collection: dbModels.Drive,
             query: { _id: req.body.id }
         })
-        if (drive.pdfurl.includes("https")) {
+        if (drive?.pdfurl.includes("https")) {
             const deleteParams = {
                 Bucket: process.env.AWS_BUCKET,
                 Key: drive.pdfurl
