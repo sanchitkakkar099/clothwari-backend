@@ -241,3 +241,18 @@ exports.clientcartsave = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.clientdropdown = async (req, res) => {
+    try {
+        let query = { role: UserRoleConstant.Client }
+        let clientlist = await dbMethods.find({
+            collection: dbModels.User,
+            query
+        })
+        return res.send(helperUtils.successRes("get list", clientlist))
+    } catch (error) {
+        console.log(error);
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST)); F
+    }
+}

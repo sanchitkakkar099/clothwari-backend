@@ -87,7 +87,7 @@ router.post("/list",
  * create admin role user
  * @route POST /market/salesperson/create
  * @param {salespersonmodel.model} data.body.required
- * @group Client - Operations
+ * @group Market - Operations
  * @returns {object} 200
  *      Return JSON object
  * @security User
@@ -102,7 +102,7 @@ router.post("/salesperson/create",
 * get client by id
 * @route GET /market/salesperson/byId/{id}
 * @param {string} id.path.required
-* @group Client - Operations
+* @group Market - Operations
 * @returns {object} 200
 *      Return JSON object
 *
@@ -118,7 +118,7 @@ router.get("/salesperson/byId/:id",
  * delete client by id
  * @route DELETE /market/salesperson/byId/{id}
  * @param {string} id.path.required
- * @group Client - Operations
+ * @group Market - Operations
  * @returns {object} 200
  *      Return JSON object
  *
@@ -134,7 +134,7 @@ router.delete("/salesperson/byId/:id",
  * get client list with pagination and searching
  * @route post /market/salesperson/list
  * @param {categoryListmodel.model} data.body.required
- * @group Client - Operations
+ * @group Market - Operations
  * @returns {object} 200
  *      Return JSON object
  *
@@ -150,7 +150,7 @@ router.post("/salesperson/list",
  * get client list with pagination and searching
  * @route post /market/drive/create
  * @param {categoryListmodel.model} data.body.required
- * @group Client - Operations
+ * @group Market - Operations
  * @returns {object} 200
  *      Return JSON object
  *
@@ -172,7 +172,7 @@ router.get("/salesperson/permission/list",
  * get client list with pagination and searching
  * @route post /market/drive/upload/create
  * @param {categoryListmodel.model} data.body.required
- * @group Client - Operations
+ * @group Market - Operations
  * @returns {object} 200
  *      Return JSON object
  *
@@ -188,7 +188,7 @@ router.post("/drive/upload/create",
  * get client list with pagination and searching
  * @route post /market/drive/delete
  * @param {categoryListmodel.model} data.body.required
- * @group Client - Operations
+ * @group Market - Operations
  * @returns {object} 200
  *      Return JSON object
  *
@@ -203,7 +203,7 @@ router.post("/drive/delete",
 * get client list with pagination and searching
 * @route post /market/drive/edit
 * @param {categoryListmodel.model} data.body.required
-* @group Client - Operations
+* @group Market - Operations
 * @returns {object} 200
 *      Return JSON object
 *
@@ -213,4 +213,20 @@ router.post("/drive/delete",
 router.post("/drive/edit",
     auth,
     marketingController.driveedit)
+
+
+/**
+* get tag drop down list 
+* @route GET /market/salesperson/drop/down/list
+* @group Market - Operations
+* @returns {object} 200
+*      Return JSON object
+*
+* @security User 
+* @returns {Error}  Error - Unexpected error
+*/
+router.get("/salesperson/drop/down/list",
+    auth,
+    marketingController.salespersondropdown
+)
 module.exports = router;

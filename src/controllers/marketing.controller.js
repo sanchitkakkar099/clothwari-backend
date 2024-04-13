@@ -449,3 +449,18 @@ exports.driveedit = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.salespersondropdown = async (req, res) => {
+    try {
+        let query = { role: UserRoleConstant.SalesPerson }
+        let salesperson = await dbMethods.find({
+            collection: dbModels.User,
+            query
+        })
+        return res.send(helperUtils.successRes("get list", salesperson))
+    } catch (error) {
+        console.log(error);
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST)); F
+    }
+}

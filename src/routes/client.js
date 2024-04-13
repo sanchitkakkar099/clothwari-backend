@@ -137,4 +137,8 @@ router.post("/cart/save",
     auth,
     clientController.clientcartsave)
 
+router.post("/drop/down/list",
+    auth,
+    clientController.clientdropdown)
+
 module.exports = router;
