@@ -183,4 +183,34 @@ router.post("/drive/upload/create",
     auth,
     marketingController.drivepdfcreate
 );
+
+/**
+ * get client list with pagination and searching
+ * @route post /market/drive/delete
+ * @param {categoryListmodel.model} data.body.required
+ * @group Client - Operations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/drive/delete",
+    auth,
+    marketingController.drivedelete)
+
+/**
+* get client list with pagination and searching
+* @route post /market/drive/edit
+* @param {categoryListmodel.model} data.body.required
+* @group Client - Operations
+* @returns {object} 200
+*      Return JSON object
+*
+* @security User 
+* @returns {Error}  Error - Unexpected error
+*/
+router.post("/drive/eedit",
+    auth,
+    marketingController.driveedit)
 module.exports = router;

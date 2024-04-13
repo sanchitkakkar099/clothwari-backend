@@ -396,7 +396,7 @@ exports.drivedelete = async (req, res) => {
     try {
         let drive = await dbMethods.findOne({
             collection: dbModels.Drive,
-            query: { _id: req.query.id }
+            query: { _id: req.body.id }
         })
         if (drive.pdfurl.includes("https")) {
             const deleteParams = {
@@ -423,7 +423,28 @@ exports.drivedelete = async (req, res) => {
                 }
             }
         }
+        await dbMethods.deleteOne({
+            collection: dbModels.Drive,
+            query: { _id: drive._id }
+        })
+        return res.send(helperUtils.successRes("Successfully delete", {}))
     } catch (error) {
+        console.log(error);
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.driveedit = async (req, res) => {
+    try {
+        await dbMethods.updateOne({
+            collection: dbModels.Drive,
+            query: { _id: req.body._id },
+            update: { pdfName: req.body.pdfName }
+        })
+        return res.send(helperUtils.successRes("successfully updated", {}));
+    } catch (error) {
+        console.log(error);
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
