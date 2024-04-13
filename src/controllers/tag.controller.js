@@ -268,8 +268,6 @@ exports.tagmerge = async (req, res) => {
 }
 exports.tagListv2 = async (req, res) => {
     try {
-        let query = {}
-        if (req.body.search) query['label'] = new RegExp(req.body.search, "i");
         let page = 1, limit = 10;
         if (req.body.page) page = req.body.page;
         if (req.body.limit) limit = req.body.limit;
@@ -287,25 +285,29 @@ exports.tagListv2 = async (req, res) => {
             totalDocs: 0,
             totalPages: 1,
         };
+        let pipeline = [
+            {
+                $project: {
+                    _id: 1,
+                    label: { $trim: { input: "$label" } },
+                    id: 1,
+                    customOption: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+
+                }
+            },
+            {
+                $sort: { label: (req.body.sortBy == 'asc') ? 1 : -1 }
+            },
+
+        ]
+        if (req.body.search) {
+            pipeline.unshift({ $match: { label: new RegExp(req.body.search, "i") } })
+        };
         result.docs = await dbMethods.aggregate({
             collection: dbModels.Tag,
-            pipeline: [
-                {
-                    $project: {
-                        _id: 1,
-                        label: { $trim: { input: "$label" } },
-                        id: 1,
-                        customOption: 1,
-                        createdAt: 1,
-                        updatedAt: 1,
-
-                    }
-                },
-                {
-                    $sort: { label: (req.body.sortBy == 'asc') ? 1 : -1 }
-                },
-
-            ],
+            pipeline: pipeline,
             options: {
 
                 collation: {
