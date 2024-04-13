@@ -398,22 +398,22 @@ exports.drivedelete = async (req, res) => {
             collection: dbModels.Drive,
             query: { _id: req.body.id }
         })
-        if (drive?.pdfurl.includes("https")) {
+        if (drive?.pdfurl?.includes("https")) {
             const deleteParams = {
                 Bucket: process.env.AWS_BUCKET,
                 Key: drive.pdfurl
             };
-            s3.deleteObject(deleteParams, (err, data) => {
-                if (err) {
-                    console.error("Error:", err);
-                } else {
-                    console.log("Original file deleted successfully");
-                }
-            });
-        } else {
-            let upload_index = drive.pdfurl.indexOf("/uploads");
+            // s3.deleteObject(deleteParams, (err, data) => {
+            //     if (err) {
+            //         console.error("Error:", err);
+            //     } else {
+            //         console.log("Original file deleted successfully");
+            //     }
+            // });
+        } else if (drive.pdfurl) {
+            let upload_index = drive?.pdfurl?.indexOf("/uploads");
             if (upload_index != -1) {
-                const desiredString = url.substring(uploadsIndex);
+                const desiredString = drive?.pdfurl.substring(upload_index);
                 let pdf_path = path.join(__dirname, "../../" + desiredString);
                 if (fs.existsSync(pdf_path)) {
                     fs.unlink(pdf_path, (err) => {
