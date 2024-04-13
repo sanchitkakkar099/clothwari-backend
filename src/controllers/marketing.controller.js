@@ -455,7 +455,8 @@ exports.salespersondropdown = async (req, res) => {
         let query = { role: UserRoleConstant.SalesPerson }
         let salesperson = await dbMethods.find({
             collection: dbModels.User,
-            query
+            query,
+            project: { _id: 1, name: 1 }
         })
         return res.send(helperUtils.successRes("get list", salesperson))
     } catch (error) {
