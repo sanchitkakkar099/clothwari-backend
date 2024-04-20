@@ -3,6 +3,7 @@
 const db = require("../models");
 const { dbMethods, dbModels, helperUtils } = require("../utils");
 const { HttpStatus } = require("../utils/constant");
+const ObjectId = require('mongoose').Types.ObjectId;
 
 exports.tagCreateEdit = async (req, res) => {
     try {
@@ -227,23 +228,70 @@ exports.check_tag_avail_already = async (req, res) => {
 exports.tagmerge = async (req, res) => {
     try {
         let { merge_to, merge_from, merge_to_tagId, merge_from_tagId } = req.body;
-        let tagObj = await dbMethods.findOne({
+        let to_pipeline = [
+            {
+                $match: {
+                    "_id": new ObjectId(merge_to_tagId)
+                }
+            },
+            {
+                $project: {
+                    original_label: '$label',
+                    label: { $trim: { input: "$label" } },
+                    id: 1
+                }
+            },
+            {
+                $match: { label: merge_to }
+            }
+        ]
+        // let tagObj = await dbMethods.findOne({
+        //     collection: dbModels.Tag,
+        //     query: { _id: merge_to_tagId, label: merge_to }
+        // })
+        let tagObj = await dbMethods.aggregate({
             collection: dbModels.Tag,
-            query: { _id: merge_to_tagId, label: merge_to }
+            pipeline: to_pipeline
         })
-        if (!tagObj) {
+        if (!tagObj.length) {
             return res.status(400)
                 .send(helperUtils.errorRes("Tag Not Found", {}));
         }
+        tagObj = tagObj[0]
+        merge_to = tagObj.original_label
 
-        let mergeFrom_tabObj = await dbMethods.findOne({
+        let from_pipeline = [
+            {
+                $match: {
+                    "_id": new ObjectId(merge_from_tagId)
+                }
+            },
+            {
+                $project: {
+                    original_label: '$label',
+                    label: { $trim: { input: "$label" } },
+                    id: 1
+                }
+            },
+            {
+                $match: { label: merge_from }
+            }
+        ]
+
+        // let mergeFrom_tabObj = await dbMethods.findOne({
+        //     collection: dbModels.Tag,
+        //     query: { _id: merge_from_tagId, label: merge_from }
+        // })
+        let mergeFrom_tabObj = await dbMethods.aggregate({
             collection: dbModels.Tag,
-            query: { _id: merge_from_tagId, label: merge_from }
+            pipeline: from_pipeline
         })
         if (!mergeFrom_tabObj) {
             return res.status(400)
                 .send(helperUtils.errorRes("Tag Not Found", {}));
         }
+        mergeFrom_tabObj = mergeFrom_tabObj[0]
+        merge_from = mergeFrom_tabObj.original_label
         let tag_disignIds = await dbMethods.distinct({
             collection: dbModels.DesignUpload,
             field: "_id",
