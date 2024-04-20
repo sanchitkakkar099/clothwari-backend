@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const path = require("path");
 const uploadad = require("../middlewares").uploadad;
-const { uploadS3 } = require("../middlewares")
+const { uploadS3, auth } = require("../middlewares")
 const sharp = require('sharp');
 const Jimp = require('jimp');
 // const pdfPoppler = require('pdf-poppler');
@@ -437,4 +437,7 @@ router.post("/design/image", uploadS3.single("file"), async (req, res) => {
         return;
     }
 })
+
+router.post("/save",
+    fileuploadController.filesave)
 module.exports = router;

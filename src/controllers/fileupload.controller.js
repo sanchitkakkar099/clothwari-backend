@@ -148,3 +148,28 @@ async function runPythonScriptv2(filepath, outputpath, fileId, filename) {
         throw error;
     }
 }
+
+exports.filesave = async (req, res) => {
+    try {
+        let files = req.body.file
+        let saveFiles = []; F
+        for (let i = 0; i < files.length; i++) {
+            const element = files[i];
+            element.filepath = element.filepath
+            element.originalname = element.originalname
+            element.mimetype = element.mimetype
+            element.size = element.size
+            element.front_sideUpload = true;
+            element.isoriginalname = true
+            let file = await dbMethods.insertOne({
+                collection: dbModels.FileUpload,
+                document: element
+            })
+            saveFiles.push(file);
+        }
+        res.status(200).send(helperUtils.successRes("Successfully upload file", saveFiles));
+        return;
+    } catch (error) {
+        return res.send(helperUtils.errorRes("Bad Request", error));
+    }
+}
