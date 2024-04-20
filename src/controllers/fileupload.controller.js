@@ -152,7 +152,7 @@ async function runPythonScriptv2(filepath, outputpath, fileId, filename) {
 exports.filesave = async (req, res) => {
     try {
         let files = req.body.file
-        let saveFiles = []; F
+        let saveFiles = [];
         for (let i = 0; i < files.length; i++) {
             const element = files[i];
             element.filepath = element.filepath
