@@ -111,7 +111,26 @@ router.post("/add/cart",
  */
 router.post("/my/design",
     auth,
-    clientController.getmyagdesignlist)
+    clientController.getmyagdesignlist
+);
+
+
+/**
+* get client my design by id
+* @route GET /client/my/design/byId/{id}
+* @param {string} id.path.required
+* @group Client - Operations
+* @returns {object} 200
+*      Return JSON object
+*
+* @security User 
+* @returns {Error}  Error - Unexpected error
+*/
+router.get("/my/design/byId/:id",
+    auth,
+    clientController.clientDesignById
+);
+
 
 /**
  * @typedef clientLoginModel
