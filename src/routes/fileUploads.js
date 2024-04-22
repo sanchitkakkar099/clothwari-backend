@@ -440,4 +440,52 @@ router.post("/design/image", uploadS3.single("file"), async (req, res) => {
 
 router.post("/save",
     fileuploadController.filesave)
+
+
+router.get("/extract/s3", async (req, res) => {
+    try {
+        const directoryPath = path.join(__dirname, "../../uploads/design/");
+        let files = await new Promise((resolve, reject) => {
+            fs.readdir(directoryPath, async (err, files) => {
+                if (err) {
+                    console.error('Error reading directory:', err);
+                    reject(err);
+                }
+                resolve(files);
+            })
+        })
+        let images = []
+        for (let i = 0; i < files.length; i++) {
+            const element = files[i];
+            let filepath = path.join(directoryPath, element)
+            let filename = path.basename(filepath, path.extname(filepath))
+            let fileexists = await dbMethods.findOne({
+                collection: dbModels.FileUpload,
+                query: { mimetype: "image/tiff", filepath: new RegExp(filename), filepath: new RegExp("http://", "i") }
+            })
+            if (fileexists) {
+                images.push(filename)
+                let filetos3 = await helperUtils.uploadfileToS3(
+                    filepath,
+                    element.originalname,
+                    "image/tiff",
+                    "design"
+                )
+                await dbMethods.updateOne({
+                    collection: dbModels.FileUpload,
+                    query: { _id: fileexists._id },
+                    update: { tif_extract_img: filetos3, isoriginalname: true }
+                })
+                fs.unlink(filepath, (err) => {
+                    if (err) throw err;
+                    console.log(filepath, ' was deleted');
+                });
+            }
+        }
+        return res.status(200).send(images)
+    } catch (error) {
+        console.log(error);
+        res.send(error.message);
+    }
+})
 module.exports = router;
