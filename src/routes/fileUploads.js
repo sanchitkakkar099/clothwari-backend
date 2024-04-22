@@ -267,6 +267,7 @@ router.post("/multiple/pdf", uploadad.array('file', 10), async (req, res) => {
             element.originalname = element.originalname
             element.mimetype = element.mimetype
             element.size = element.size
+            element.isoriginalname = true
 
             let file = await dbMethods.insertOne({
                 collection: dbModels.FileUpload,
@@ -350,6 +351,7 @@ router.post("/multiple/tiff", uploadS3original.array('file', 10), async (req, re
             element.originalname = element.originalname
             element.mimetype = element.mimetype
             element.size = element.size
+            element.isoriginalname = true
 
             let file = await dbMethods.insertOne({
                 collection: dbModels.FileUpload,
