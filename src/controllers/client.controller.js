@@ -171,12 +171,12 @@ exports.getmyagdesignlist = async (req, res) => {
             {
                 $project: {
                     userId: "clientId",
-                    customerName:1,
-                    customerCode:1,
-                    marketerId:1,
-                    marketingPersonName:1,
-                    salesOrderNumber:1,
-                    cartItem:1
+                    customerName: 1,
+                    customerCode: 1,
+                    marketerId: 1,
+                    marketingPersonName: 1,
+                    salesOrderNumber: 1,
+                    cartItem: 1
                 }
             }
         ]
@@ -196,6 +196,30 @@ exports.getmyagdesignlist = async (req, res) => {
         }
         return res.send(helperUtils.successRes("Successfully get my cart design list", result))
     } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.clientDesignById = async (req, res) => {
+    try {
+        let client = await dbMethods.findOne({
+            collection: dbModels.Cart,
+            query: { _id: req.params.id },
+            project: {
+                userId: "clientId",
+                customerName: 1,
+                customerCode: 1,
+                marketerId: 1,
+                marketingPersonName: 1,
+                salesOrderNumber: 1,
+                cartItem: 1
+            }
+        })
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully get client design", client));
+    } catch (error) {
+        console.log(error)
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
