@@ -52,7 +52,7 @@ const extractedpdf = async () => {
                     console.log("----", image)
                     let s3 = await helperUtils.uploadfileToS3(
                         image,
-                        path.basename(image),
+                        path.basename(pdfs[i].originalname),
                         "image/png",
                         "pdf_img"
                     )

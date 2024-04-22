@@ -261,7 +261,7 @@ router.post("/multiple/pdf", uploadad.array('file', 10), async (req, res) => {
             // element.filepath = 'http://' + process.env.HOST + "/" + element.filepath
             element.filepath = await helperUtils.uploadfileToS3(
                 path.join(__dirname, "../../" + filepath),
-                element.filename,
+                element.originalname,
                 element.mimetype
             )
             element.originalname = element.originalname
