@@ -455,7 +455,7 @@ router.get("/extract/s3", async (req, res) => {
             })
         })
         let images = []
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < files.length; i++) {
             const element = files[i];
             let filepath = path.join(directoryPath, element)
             let filename = path.basename(filepath, path.extname(filepath))
