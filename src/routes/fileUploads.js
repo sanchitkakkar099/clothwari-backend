@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const path = require("path");
 const uploadad = require("../middlewares").uploadad;
-const { uploadS3, auth } = require("../middlewares")
+const { uploadS3, auth, uploadS3original } = require("../middlewares")
 const sharp = require('sharp');
 const Jimp = require('jimp');
 // const pdfPoppler = require('pdf-poppler');
@@ -338,7 +338,7 @@ router.get("/pdf_s3", async (req, res) => {
     }
 })
 
-router.post("/multiple/tiff", uploadS3.array('file', 10), async (req, res) => {
+router.post("/multiple/tiff", uploadS3original.array('file', 10), async (req, res) => {
     try {
         let files = [];
         for (let i = 0; i < req.files.length; i++) {
@@ -461,7 +461,7 @@ router.get("/extract/s3", async (req, res) => {
             let filename = path.basename(filepath, path.extname(filepath))
             let fileexists = await dbMethods.findOne({
                 collection: dbModels.FileUpload,
-                query: { mimetype: "image/tiff", filepath: new RegExp(filename), filepath: new RegExp("http://", "i") }
+                query: { mimetype: "image/tiff", $and: [{ filepath: new RegExp(filename), filepath: new RegExp("http://", "i") }] }
             })
             if (fileexists) {
                 images.push(filename)
