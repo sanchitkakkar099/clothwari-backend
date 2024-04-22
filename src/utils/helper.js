@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const aws = require('aws-sdk');
 const fs = require("fs");
+const { dbMethods, dbModels } = require('./index');
 
 exports.successRes = (msg, data, code = 200) => {
     return {
@@ -43,6 +44,33 @@ exports.bcryptCompare = (password, hash) => {
     return bcrypt.compareSync(password, hash)
 }
 
+exports.generateRandomCN = () => {
+    var cn = "CN";
+    for (var i = 0; i < 6; i++) {
+        cn += Math.floor(Math.random() * 10); // Generate a random number between 0 and 9
+    }
+    return cn;
+}
+
+exports.generateUniqueCustomerCode = async () => {
+    try {
+        let customerCode = this.generateRandomCN();
+        let checkAlreadyAvail = await dbMethods.findOne({
+            collection: dbModels.User,
+            query: { createCustomerCode: customerCode }
+        });
+        if (checkAlreadyAvail) {
+            // If the customer code already exists, generate a new one recursively
+            return generateUniqueCustomerCode();
+        } else {
+            // If the customer code is unique, return it
+            return customerCode;
+        }
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+}
 
 
 

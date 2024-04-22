@@ -16,9 +16,12 @@ exports.clientCreateEdit = async (req, res) => {
                 return res.status(HttpStatus.BAD_REQUEST)
                     .send(helperUtils.errorRes("Email Already Exists", {}));
             }
+            let createCustomerCode = await helperUtils.generateUniqueCustomerCode();
+
             req.body.password = await helperUtils.bcryptHash(req.body.password);
             req.body.createdBy = req.user._id
             req.body.role = UserRoleConstant.Client
+            req.body.customerCode = createCustomerCode
             await dbMethods.insertOne({
                 collection: dbModels.User,
                 document: req.body
@@ -111,7 +114,7 @@ exports.clientList = async (req, res) => {
         result.docs = await dbMethods.find({
             collection: dbModels.User,
             query: query,
-            project: { name: 1, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1, isDel: 1 },
+            project: { name: 1, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1, isDel: 1, customerCode: 1 },
             sort: { _id: -1 },
             populate: [{ path: "permissions" }]
         })
@@ -144,29 +147,36 @@ exports.clientaddTocart = async (req, res) => {
 exports.getmyagdesignlist = async (req, res) => {
     try {
         let query = [
-            { $match: { "userId": new ObjectId(req.user._id) } },
-            {
-                $lookup: {
-                    from: "designuploads",
-                    localField: "design.designId",
-                    foreignField: "_id",
-                    as: "designId"
-                }
-            },
-            { $unwind: "$design.designId" },
-            {
-                $lookup: {
-                    from: "fileuploads",
-                    localField: "design.designId.thumbnail",
-                    foreignField: "_id",
-                    as: "design.designId.thumbnail"
-                }
-            },
+            { $match: { "clientId": new ObjectId(req.user._id) } },
+            // {
+            //     $unwind: "$cartItem" 
+            // },
+            // {
+            //     $lookup: {
+            //         from: "cartitems",
+            //         localField: "cartItem",
+            //         foreignField: "_id",
+            //         as: "designId"
+            //     }
+            // },
+            // { $unwind: "$design.designId" },
+            // {
+            //     $lookup: {
+            //         from: "fileuploads",
+            //         localField: "design.designId.thumbnail",
+            //         foreignField: "_id",
+            //         as: "design.designId.thumbnail"
+            //    }
+            //},
             {
                 $project: {
-                    userId: 1,
-                    'designId.name': "$design.designId.name",
-                    "designId.thumbnail": "$design.designId.thumbnail"
+                    userId: "clientId",
+                    customerName:1,
+                    customerCode:1,
+                    marketerId:1,
+                    marketingPersonName:1,
+                    salesOrderNumber:1,
+                    cartItem:1
                 }
             }
         ]
@@ -233,7 +243,7 @@ exports.clientcartsave = async (req, res) => {
             collection: dbModels.Cart,
             document: req.body
         })
-        return res.send(helper.successRes("Successfully create cart", cart))
+        return res.send(helperUtils.successRes("Successfully create cart", cart))
 
     } catch (error) {
         console.log(error);

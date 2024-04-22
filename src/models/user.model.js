@@ -21,7 +21,8 @@ const userSchema = new mongoose.Schema({
     }],
     client_allow_time: mongoose.Schema.Types.Mixed,
     lastInActiveTime: { type: String },
-    isDel: { type: Boolean, default: false }
+    isDel: { type: Boolean, default: false },
+    customerCode: { type: String }
 
 }, { timestamps: true })
 userSchema.plugin(mongoosepaginate);
