@@ -203,19 +203,78 @@ exports.getmyagdesignlist = async (req, res) => {
 
 exports.clientDesignById = async (req, res) => {
     try {
-        let client = await dbMethods.findOne({
-            collection: dbModels.Cart,
-            query: { _id: req.params.id },
-            project: {
-                userId: "clientId",
-                customerName: 1,
-                customerCode: 1,
-                marketerId: 1,
-                marketingPersonName: 1,
-                salesOrderNumber: 1,
-                cartItem: 1
+        let query = [];
+
+        // Check if req.params.id is not an empty string
+        if (req.params.id !== "") {
+            query.push({
+                $match: { "_id": new ObjectId(req.params.id) }
+            });
+        }
+
+        query.push(
+            {
+                $unwind: "$cartItem"
+            },
+            {
+                $lookup: {
+                    from: "cartitems",
+                    localField: "cartItem",
+                    foreignField: "_id",
+                    as: "cartItem"
+                }
+            },
+            { $unwind: "$cartItem" },
+            {
+                $lookup: {
+                    from: "fileuploads",
+                    localField: "cartItem.thumbnail",
+                    foreignField: "_id",
+                    as: "cartItem.thumbnail"
+                }
+            },
+            { $unwind: "$cartItem.thumbnail" },
+            {
+                $project: {
+                    "cartItem._id": 1,
+                    "cartItem.name": 1,
+                    "cartItem.designNo": 1,
+                    "cartItem.designId": 1,
+                    "cartItem.variation": 1,
+                    "cartItem.quantityPerCombo": 1,
+                    "cartItem.yardage": 1,
+                    "cartItem.fabricDetails": 1,
+                    "cartItem.strikeRequired": 1,
+                    "cartItem.sampleDeliveryDate": 1,
+                    "cartItem.pricePerMeter": 1,
+                    "cartItem.bulkOrderDeliveryDate": 1,
+                    "cartItem.shipmentSampleDate": 1,
+                    "cartItem.thumbnail": "$cartItem.thumbnail.pdf_extract_img",
+                    userId: "$clientId",
+                    customerName: 1,
+                    customerCode: 1,
+                    marketerId: 1,
+                    marketingPersonName: 1,
+                    salesOrderNumber: 1
+                }
             }
-        })
+        );
+
+        let data = await dbMethods.aggregate({
+            collection: dbModels.Cart,
+            pipeline: query
+        });
+
+
+        let page = (req.body.page) ? req.body.page : 1;
+        let limit = (req.body.limit) ? (req.body.limit) : 10
+        let client = {
+            docs: data.slice((page - 1) * limit, page * limit),
+            page: page,
+            limit: limit,
+            pages: Math.ceil(data.length / limit),
+            total: data.length
+        }
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get client design", client));
     } catch (error) {
