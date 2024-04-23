@@ -314,6 +314,65 @@ exports.tagmerge = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.tagmergev2 = async (req, res) => {
+    try {
+        let { merge_to, merge_from, merge_to_tagId, merge_from_tagId } = req.body;
+        let tagObj = await dbMethods.findOne({
+            collection: dbModels.Tag,
+            query: { _id: merge_to_tagId }
+        })
+
+        if (!tagObj.length) {
+            return res.status(400)
+                .send(helperUtils.errorRes("Tag Not Found", {}));
+        }
+
+        let mergeFrom_tabObj = await dbMethods.findOne({
+            collection: dbModels.Tag,
+            query: { _id: merge_from_tagId }
+        })
+
+        if (!mergeFrom_tabObj) {
+            return res.status(400)
+                .send(helperUtils.errorRes("Tag Not Found", {}));
+        }
+
+        let tag_disignIds = await dbMethods.distinct({
+            collection: dbModels.DesignUpload,
+            field: "_id",
+            query: { 'tag._id': mergeFrom_tabObj._id }
+        })
+        if (tag_disignIds.length) {
+
+            await dbMethods.updateMany({
+                collection: dbModels.DesignUpload,
+                query: { _id: { $in: tag_disignIds }, 'tag.label': merge_from },
+                update: { $set: { 'tag.$.label': merge_to } }
+            })
+            await dbMethods.updateMany({
+                collection: dbModels.DesignUpload,
+                query: { _id: { $in: tag_disignIds } },
+                update: { $pull: { tag: { _id: ObjectId(mergeFrom_tabObj._id) } } }
+            })
+
+            await dbMethods.updateMany({
+                collection: dbModels.DesignUpload,
+                query: { _id: { $in: tag_disignIds } },
+                update: { $push: { tag: { _id: ObjectId(tagObj._id), label: tagObj.label }, customOption: true, id: tagObj.id } }
+            })
+        }
+
+        await dbMethods.deleteOne({
+            collection: dbModels.Tag,
+            query: { _id: merge_from_tagId }
+        })
+        res.send(helperUtils.successRes("Successfully Merge", {}, HttpStatus.OK));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
 exports.tagListv2 = async (req, res) => {
     try {
         let page = 1, limit = 10;

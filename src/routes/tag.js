@@ -160,7 +160,7 @@ router.post("/already/avail",
 */
 router.post("/merge",
     auth,
-    tagController.tagmerge
+    tagController.tagmergev2
 )
 
 /**
