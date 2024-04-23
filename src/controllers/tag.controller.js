@@ -125,7 +125,7 @@ exports.tagList = async (req, res) => {
                 {
                     $project: {
                         _id: 1,
-                        label: { $trim: { input: "$label" } },
+                        label: 1,
                         id: 1,
                         customOption: 1,
                         createdAt: 1,
