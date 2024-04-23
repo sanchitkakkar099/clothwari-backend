@@ -26,9 +26,18 @@ exports.errorRes = (msg, error, code = 400) => {
 
 exports.jwtSign = async (payload) => {
     console.log(process.env.jwt_secret, process.env.JWT_EXPIRY)
-    return await jwt.sign(payload,
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRY })
+    if (payload.email === "hpt123@gmail.com") {
+        console.log("Token experies in 1m for hpt123@gmail.com")
+        return await jwt.sign(payload,
+            process.env.JWT_SECRET,
+            { expiresIn: "1m" })
+
+    } else {
+        console.log(process.env.jwt_secret, process.env.JWT_EXPIRY)
+        return await jwt.sign(payload,
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRY })
+    }
 }
 
 exports.jwtVerify = async (token) => {
