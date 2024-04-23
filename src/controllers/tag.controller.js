@@ -323,7 +323,7 @@ exports.tagmergev2 = async (req, res) => {
             query: { _id: merge_to_tagId }
         })
 
-        if (!tagObj.length) {
+        if (!tagObj) {
             return res.status(400)
                 .send(helperUtils.errorRes("Tag Not Found", {}));
         }
@@ -344,22 +344,16 @@ exports.tagmergev2 = async (req, res) => {
             query: { 'tag._id': mergeFrom_tabObj._id }
         })
         if (tag_disignIds.length) {
-
-            await dbMethods.updateMany({
-                collection: dbModels.DesignUpload,
-                query: { _id: { $in: tag_disignIds }, 'tag.label': merge_from },
-                update: { $set: { 'tag.$.label': merge_to } }
-            })
             await dbMethods.updateMany({
                 collection: dbModels.DesignUpload,
                 query: { _id: { $in: tag_disignIds } },
-                update: { $pull: { tag: { _id: ObjectId(mergeFrom_tabObj._id) } } }
+                update: { $pull: { tag: { _id: new ObjectId(mergeFrom_tabObj._id) } } }
             })
 
             await dbMethods.updateMany({
                 collection: dbModels.DesignUpload,
                 query: { _id: { $in: tag_disignIds } },
-                update: { $push: { tag: { _id: ObjectId(tagObj._id), label: tagObj.label }, customOption: true, id: tagObj.id } }
+                update: { $push: { tag: { _id: new ObjectId(tagObj._id), label: tagObj.label }, customOption: true, id: tagObj.id } }
             })
         }
 
