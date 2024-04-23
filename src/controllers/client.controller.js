@@ -146,31 +146,34 @@ exports.clientaddTocart = async (req, res) => {
 
 exports.getmyagdesignlist = async (req, res) => {
     try {
-        let query = [
-            { $match: { "clientId": new ObjectId(req.user._id) } },
-            // {
-            //     $unwind: "$cartItem" 
-            // },
-            // {
-            //     $lookup: {
-            //         from: "cartitems",
-            //         localField: "cartItem",
-            //         foreignField: "_id",
-            //         as: "designId"
-            //     }
-            // },
-            // { $unwind: "$design.designId" },
-            // {
-            //     $lookup: {
-            //         from: "fileuploads",
-            //         localField: "design.designId.thumbnail",
-            //         foreignField: "_id",
-            //         as: "design.designId.thumbnail"
-            //    }
-            //},
+
+        let query = [];
+
+        if (req.body.search) {
+            query.unshift({
+                $match: {
+                    $or: [
+                        { customerName: new RegExp(req.body.search, "i") },
+                        { marketingPersonName: new RegExp(req.body.search, "i") },
+                        { customerCode: new RegExp(req.body.search, "i") },
+                        { salesOrderNumber: new RegExp(req.body.search, "i") }
+                    ]
+                }
+            });
+        }
+
+        // Check if req.params.id is not an empty string
+        if (req.body.user_id !== "") {
+            query.push({
+                $match: { "clientId": new ObjectId(req.body.user_id) }
+            });
+        }
+
+
+        query.push(
             {
                 $project: {
-                    userId: "clientId",
+                    userId: "$clientId",
                     customerName: 1,
                     customerCode: 1,
                     marketerId: 1,
@@ -179,7 +182,7 @@ exports.getmyagdesignlist = async (req, res) => {
                     cartItem: 1
                 }
             }
-        ]
+        )
         let data = await dbMethods.aggregate({
             collection: dbModels.Cart,
             pipeline: query
@@ -203,16 +206,10 @@ exports.getmyagdesignlist = async (req, res) => {
 
 exports.clientDesignById = async (req, res) => {
     try {
-        let query = [];
-
-        // Check if req.params.id is not an empty string
-        if (req.params.id !== "") {
-            query.push({
+        let query = [
+            {
                 $match: { "_id": new ObjectId(req.params.id) }
-            });
-        }
-
-        query.push(
+            },
             {
                 $unwind: "$cartItem"
             },
@@ -258,7 +255,7 @@ exports.clientDesignById = async (req, res) => {
                     salesOrderNumber: 1
                 }
             }
-        );
+        ];
 
         let data = await dbMethods.aggregate({
             collection: dbModels.Cart,

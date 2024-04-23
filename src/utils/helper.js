@@ -66,7 +66,7 @@ exports.generateUniqueCustomerCode = async () => {
         let customerCode = this.generateRandomCN();
         let checkAlreadyAvail = await dbMethods.findOne({
             collection: dbModels.User,
-            query: { createCustomerCode: customerCode }
+            query: { customerCode: customerCode }
         });
         if (checkAlreadyAvail) {
             // If the customer code already exists, generate a new one recursively
