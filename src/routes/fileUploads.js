@@ -464,9 +464,9 @@ router.get("/extract/s3", async (req, res) => {
             let filename = path.basename(filepath, path.extname(filepath))
             let fileexists = await dbMethods.findOne({
                 collection: dbModels.FileUpload,
-                query: { mimetype: "image/tiff", $and: [{ filepath: new RegExp(filename), filepath: new RegExp("http://", "i") }] }
+                query: { mimetype: "image/tiff", $and: [{ filepath: new RegExp(filename, "i") }] }
             })
-            if (fileexists) {
+            if (fileexists && fileexists.filepath.includes("http://")) {
                 images.push(filename)
                 let filetos3 = await helperUtils.uploadfileToS3(
                     filepath,
