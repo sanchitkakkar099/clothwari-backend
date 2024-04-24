@@ -6,6 +6,7 @@ const path = require("path")
 const db = require("../models");
 const { dbMethods, dbModels, helperUtils } = require("../utils");
 const { HttpStatus, UserRoleConstant } = require("../utils/constant");
+const { thumbanilController } = require("../controllers")
 
 module.exports = async () => {
 
@@ -15,6 +16,9 @@ module.exports = async () => {
 
     let uploadtifpngtos3 = new cronJob('*/3 * * * *', extracttiffuploads3)
     uploadtifpngtos3.start()
+
+    // let uplaodoriginalfilename = new cronJob("*/2 * * * *", thumbanilController)
+    // uplaodoriginalfilename.start()
 }
 
 const extractedpdf = async () => {

@@ -7,4 +7,5 @@ exports.designerController = require("./designer.controller");
 exports.fileuploadController = require("./fileupload.controller");
 exports.marketingController = require("./marketing.controller");
 exports.tagController = require("./tag.controller");
+exports.thumbanilController = require("./thumbnail.controller");
 exports.userController = require("./user.controllers");
