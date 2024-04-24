@@ -477,7 +477,7 @@ router.get("/extract/s3", async (req, res) => {
                 await dbMethods.updateOne({
                     collection: dbModels.FileUpload,
                     query: { _id: fileexists._id },
-                    update: { tif_extract_img: filetos3, isoriginalname: true }
+                    update: { filepath: filetos3, isoriginalname: true }
                 })
                 fs.unlink(filepath, (err) => {
                     if (err) throw err;
