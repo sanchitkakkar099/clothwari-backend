@@ -18,6 +18,9 @@ const CartSchema = new mongoose.Schema({
     }],
     adminView: {
         type: Boolean, default: false
+    },
+    byClient: {
+        type: Boolean, default: false
     }
 }, { timestamps: true, strict: false });
 

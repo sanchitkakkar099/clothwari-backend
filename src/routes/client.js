@@ -154,10 +154,12 @@ router.post("/login/byadmin",
 
 router.post("/cart/save",
     auth,
-    clientController.clientcartsave)
+    clientController.clientcartsave
+);
 
 router.get("/drop/down/list",
     auth,
-    clientController.clientdropdown)
+    clientController.clientdropdown
+);
 
 module.exports = router;

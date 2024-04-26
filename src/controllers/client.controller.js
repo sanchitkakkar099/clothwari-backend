@@ -177,6 +177,7 @@ exports.getmyagdesignlist = async (req, res) => {
                     customerName: 1,
                     customerCode: 1,
                     marketerId: 1,
+                    byClient:1,
                     marketingPersonName: 1,
                     salesOrderNumber: 1,
                     cartItem: 1
@@ -251,6 +252,7 @@ exports.clientDesignById = async (req, res) => {
                     customerName: 1,
                     customerCode: 1,
                     marketerId: 1,
+                    byClient:1,
                     marketingPersonName: 1,
                     salesOrderNumber: 1
                 }

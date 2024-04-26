@@ -333,21 +333,35 @@ exports.client_design_addtocart_notfication = async (req, res) => {
 
 exports.getclientcartdata = async (req, res) => {
     try {
-        let page = (req.body.page) ? req.body.page : 0;
-        let limit = (req.body.limit) ? req.body.limit : 10;
-        let result = await dbMethods.paginate({
-            collection: dbModels.Cart,
-            query: {},
-            options: {
-                populate: [
-                    { path: "design.designId", select: "name tag thumbnail", populate: { path: "thumbnail", select: "pdf_extract_img" } },
-                    { path: "userId", select: "name email" }
-                ],
-                sort: { _id: -1 },
-                page,
-                limit
+        let query = [
+            { $sort: { _id: -1 } },
+            {
+                $project: {
+                    userId: "$clientId",
+                    customerName: 1,
+                    customerCode: 1,
+                    marketerId: 1,
+                    byClient: 1,
+                    marketingPersonName: 1,
+                    salesOrderNumber: 1,
+                    cartItem: 1
+                }
             }
+        ]
+        let data = await dbMethods.aggregate({
+            collection: dbModels.Cart,
+            pipeline: query
         })
+
+        let page = (req.body.page) ? req.body.page : 1;
+        let limit = (req.body.limit) ? (req.body.limit) : 10
+        let result = {
+            docs: data.slice((page - 1) * limit, page * limit),
+            page: page,
+            limit: limit,
+            pages: Math.ceil(data.length / limit),
+            total: data.length
+        }
 
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get carts notifications", result));
