@@ -599,3 +599,26 @@ exports.setdesignimage = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+exports.uploadedByUpdate = async (req, res) => {
+    try {
+        let { designs, designerId } = req.body
+        let designsIds = await dbMethods.distinct({
+            collection: dbModels.DesignUpload,
+            field: "_id",
+            query: { _id: { $in: designs } }
+        })
+        if (designsIds) {
+            await dbMethods.updateMany({
+                collection: dbModels.DesignUpload,
+                query: { _id: { $in: designsIds } },
+                update: { $set: { uploadedBy: designerId } }
+            })
+        }
+        return res.send(helperUtils.successRes("Successfully Updated", designsIds, HttpStatus.OK))
+    } catch (error) {
+        console.log(error);
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}

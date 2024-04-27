@@ -185,4 +185,20 @@ router.post("/design/image",
     auth,
     DesignUploadController.setdesignimage
 );
+
+/**
+ *
+ * @route post /designupload/uploadedBy/update
+ * @param {categoryCheckmodel.model} data.body.required
+ * @group DesignUpload - oprations
+ * @returns {object} 200
+ *      Return JSON object
+ *
+ * @security User 
+ * @returns {Error}  Error - Unexpected error
+ */
+router.post("/uploadedBy/update",
+    auth,
+    DesignUploadController.uploadedByUpdate
+);
 module.exports = router;
