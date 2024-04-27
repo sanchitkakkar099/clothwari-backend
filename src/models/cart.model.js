@@ -46,7 +46,7 @@ const CartItemSchema = new mongoose.Schema({
     bulkOrderDeliveryDate: { type: Date },
     shipmentSampleDate: { type: Date },
     editReqId: {
-        type: mongoose.Mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "CartItemEditReq"
     }
 }, { timestamps: true, strict: false });
