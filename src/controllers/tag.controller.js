@@ -357,10 +357,10 @@ exports.tagmergev2 = async (req, res) => {
             })
         }
 
-        await dbMethods.deleteOne({
-            collection: dbModels.Tag,
-            query: { _id: merge_from_tagId }
-        })
+        // await dbMethods.deleteOne({
+        //     collection: dbModels.Tag,
+        //     query: { _id: merge_from_tagId }
+        // })
         res.send(helperUtils.successRes("Successfully Merge", {}, HttpStatus.OK));
     } catch (error) {
         return res.status(HttpStatus.BAD_REQUEST)
