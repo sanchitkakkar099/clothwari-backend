@@ -8,7 +8,7 @@ const { FileuploadSchema } = require("./fileupload");
 const { DesignUploadSchema } = require("./designupload.model");
 const { PermissionSchema } = require("./permission.model");
 const { VariationSchema } = require("./variation.model");
-const { CartSchema, CartItemSchema } = require("./cart.model")
+const { CartSchema, CartItemSchema, CartEditReqStatusSchema, CartItemEditReqSchema } = require("./cart.model")
 const { MarketingSchema } = require("./marketing.model")
 const { DriveSchema } = require("./drive.model");
 
@@ -18,6 +18,8 @@ const db = {
 
     Cart: mongoose.model(dbModels.Cart, CartSchema),
     CartItem: mongoose.model(dbModels.CartItem, CartItemSchema),
+    CartItemEditReq: mongoose.model(dbModels.CartItemEditReq, CartItemEditReqSchema),
+    CartEditReqStatus: mongoose.model(dbModels.CartEditReqStatus, CartEditReqStatusSchema),
     Category: mongoose.model(dbModels.Category, CategorySchema),
     Color: mongoose.model(dbModels.Color, ColorSchema),
     DesignUpload: mongoose.model(dbModels.DesignUpload, DesignUploadSchema),

@@ -1,4 +1,5 @@
 //import helper utils
+const { populate } = require("dotenv");
 const db = require("../models");
 const { dbMethods, dbModels, helperUtils } = require("../utils");
 const { HttpStatus, UserRoleConstant } = require("../utils/constant");
@@ -359,5 +360,160 @@ exports.clientdropdown = async (req, res) => {
         console.log(error);
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST)); F
+    }
+}
+
+exports.orderUpdateByMarketer = async (req, res) => {
+    try {
+        for (let i = 0; i < req.body.cartItem.length; i++) {
+            const element = req.body.cartItem[i];
+            let alreadyAdded = await dbMethods.findOne({
+                collection: dbModels.CartItemEditReq,
+                query: { itemId: element._id }
+            })
+            let obj = {
+                itemId: element._id,
+                quantityPerCombo: element.quantityPerCombo,
+                yardage: element.yardage,
+                fabricDetails: element.fabricDetails,
+                strikeRequired: element.strikeRequired,
+                sampleDeliveryDate: element.sampleDeliveryDate,
+                pricePerMeter: element.pricePerMeter,
+                bulkOrderDeliveryDate: element.bulkOrderDeliveryDate,
+                shipmentSampleDate: element.shipmentSampleDate,
+            }
+            await dbMethods.updateOne({
+                collection: dbModels.CartItemEditReq,
+                query: { itemId },
+                update: obj,
+                options: { new: true, upsert: true }
+            })
+        }
+        await dbMethods.updateOne({
+            collection: dbModels.CartEditReqStatus,
+            query: { cartId: req.body._id },
+            update: { editor: req.user._id, status: "Pending" },
+            options: { new: true, upsert: true }
+        })
+        return res.send(helperUtils.successRes("Successfullly updated", {}));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.ordereditrequestlist = async (req, res) => {
+    try {
+
+        let data = await dbMethods.paginate({
+            collection: dbModels.CartEditReqStatus,
+            query: {},
+            options: {
+                populate: [{ path: "cartId" }],
+                sort: { _id: -1 },
+                page: req.body.page ? req.body.page : 1,
+                limit: req.body.limit ? req.body.limit : 10
+            }
+        })
+        return res.send(helperUtils.successRes("successfully get list", data));
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.clientDesignEditReqById = async (req, res) => {
+    try {
+        let query = [
+            {
+                $match: { "_id": new ObjectId(req.params.id) }
+            },
+            {
+                $unwind: "$cartItem"
+            },
+            {
+                $lookup: {
+                    from: "cartitems",
+                    localField: "cartItem",
+                    foreignField: "_id",
+                    as: "cartItem"
+                }
+            },
+            { $unwind: "$cartItem" },
+            {
+                $lookup: {
+                    from: "fileuploads",
+                    localField: "cartItem.thumbnail",
+                    foreignField: "_id",
+                    as: "cartItem.thumbnail"
+                }
+            },
+            { $unwind: "$cartItem.thumbnail" },
+            {
+                $project: {
+                    "cartItem._id": 1,
+                    "cartItem.name": 1,
+                    "cartItem.designNo": 1,
+                    "cartItem.designId": 1,
+                    "cartItem.variation": 1,
+                    "cartItem.quantityPerCombo": 1,
+                    "cartItem.yardage": 1,
+                    "cartItem.fabricDetails": 1,
+                    "cartItem.strikeRequired": 1,
+                    "cartItem.sampleDeliveryDate": 1,
+                    "cartItem.pricePerMeter": 1,
+                    "cartItem.bulkOrderDeliveryDate": 1,
+                    "cartItem.shipmentSampleDate": 1,
+                    "cartItem.thumbnail": "$cartItem.thumbnail.pdf_extract_img",
+                    userId: "$clientId",
+                    customerName: 1,
+                    customerCode: 1,
+                    marketerId: 1,
+                    byClient: 1,
+                    marketingPersonName: 1,
+                    salesOrderNumber: 1
+                }
+            }
+        ];
+
+        let data = await dbMethods.aggregate({
+            collection: dbModels.Cart,
+            pipeline: query
+        });
+
+        for (let i = 0; i < data.length; i++) {
+            const element = data[i];
+            let edititem = await dbMethods.findOne({
+                collection: dbModels.CartItemEditReq,
+                query: { itemId: element.cartItem._id }
+            })
+            if (edititem) {
+                data[i]["cartItem.quantityPerCombo"] = edititem.quantityPerCombo;
+                data[i]["cartItem.yardage"] = edititem.yardage;
+                data[i]["cartItem.fabricDetails"] = edititem.fabricDetails;
+                data[i]["cartItem.strikeRequired"] = edititem.strikeRequired;
+                data[i]["cartItem.sampleDeliveryDate"] = edititem.sampleDeliveryDate;
+                data[i]["cartItem.pricePerMeter"] = edititem.pricePerMeter;
+                data[i]["cartItem.bulkOrderDeliveryDate"] = edititem.bulkOrderDeliveryDate;
+                data[i]["cartItem.shipmentSampleDate"] = edititem.shipmentSampleDate;
+            }
+        }
+
+
+        let page = (req.body.page) ? req.body.page : 1;
+        let limit = (req.body.limit) ? (req.body.limit) : 10
+        let client = {
+            docs: data.slice((page - 1) * limit, page * limit),
+            page: page,
+            limit: limit,
+            pages: Math.ceil(data.length / limit),
+            total: data.length
+        }
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully get client design", client));
+    } catch (error) {
+        console.log(error)
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }

@@ -162,4 +162,27 @@ router.get("/drop/down/list",
     clientController.clientdropdown
 );
 
+router.post("/order/update/marketer",
+    auth,
+    clientController.orderUpdateByMarketer);
+
+router.post("/order/edit/list",
+    auth,
+    clientController.ordereditrequestlist);
+
+/**
+* get client my design by id
+* @route GET /client/design/edit/byId/{id}
+* @param {string} id.path.required
+* @group Client - Operations
+* @returns {object} 200
+*      Return JSON object
+*
+* @security User 
+* @returns {Error}  Error - Unexpected error
+*/
+router.get("/design/edit/byId/:id",
+    auth,
+    clientController.clientDesignEditReqById
+);
 module.exports = router;
