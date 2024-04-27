@@ -146,27 +146,39 @@ exports.clientaddTocart = async (req, res) => {
 
 exports.getmyagdesignlist = async (req, res) => {
     try {
-
+        let { customerName, marketingPersonName, customerCode, salesOrderNumber } = req.body
         let query = [];
 
-        if (req.body.search) {
+        let search = { $and: [] }
+        if (customerName)
+            search.$and.push({ customerName: new RegExp(customerName, "i") });
+
+        if (marketingPersonName)
+            search.$and.push({ marketingPersonName: new RegExp(marketingPersonName, "i") });
+
+        if (customerCode)
+            search.$and.push({ customerCode: new RegExp(customerCode, "i") });
+
+        if (salesOrderNumber)
+            search.$and.push({ salesOrderNumber: new RegExp(salesOrderNumber, "i") });
+
+        if (search.$and.length) {
             query.unshift({
                 $match: {
-                    $or: [
-                        { customerName: new RegExp(req.body.search, "i") },
-                        { marketingPersonName: new RegExp(req.body.search, "i") },
-                        { customerCode: new RegExp(req.body.search, "i") },
-                        { salesOrderNumber: new RegExp(req.body.search, "i") }
-                    ]
+                    $and: search.$and
                 }
             });
         }
 
         // Check if req.params.id is not an empty string
-        if (req.body.user_id !== "") {
+        if (req.user.role == UserRoleConstant.Client) {
             query.push({
                 $match: { "clientId": new ObjectId(req.body.user_id) }
             });
+        } else if (req.user.role == UserRoleConstant.SalesPerson) {
+            query.push({
+                $match: { "marketerId": new ObjectId(req.user._id) }
+            })
         }
 
 
@@ -177,7 +189,7 @@ exports.getmyagdesignlist = async (req, res) => {
                     customerName: 1,
                     customerCode: 1,
                     marketerId: 1,
-                    byClient:1,
+                    byClient: 1,
                     marketingPersonName: 1,
                     salesOrderNumber: 1,
                     cartItem: 1
@@ -252,7 +264,7 @@ exports.clientDesignById = async (req, res) => {
                     customerName: 1,
                     customerCode: 1,
                     marketerId: 1,
-                    byClient:1,
+                    byClient: 1,
                     marketingPersonName: 1,
                     salesOrderNumber: 1
                 }
