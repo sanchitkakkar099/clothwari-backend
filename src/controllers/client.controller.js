@@ -173,7 +173,7 @@ exports.getmyagdesignlist = async (req, res) => {
         // Check if req.params.id is not an empty string
         if (req.user.role == UserRoleConstant.Client) {
             query.push({
-                $match: { "clientId": new ObjectId(req.body.user_id) }
+                $match: { "clientId": new ObjectId(req.user._id) }
             });
         } else if (req.user.role == UserRoleConstant.SalesPerson) {
             query.push({
