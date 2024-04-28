@@ -202,6 +202,18 @@ exports.getmyagdesignlist = async (req, res) => {
             pipeline: query
         })
 
+        for (let i = 0; i < data.length; i++) {
+            const element = data[i];
+            let orderstaus = await dbMethods.findOne({
+                collection: dbModels.CartEditReqStatus,
+                query: { cartId: element._id }
+            })
+            if (orderstaus) {
+                data[i].status = orderstaus.status
+            } else data[i].status = ""
+
+        }
+
         let page = (req.body.page) ? req.body.page : 1;
         let limit = (req.body.limit) ? (req.body.limit) : 10
         let result = {
