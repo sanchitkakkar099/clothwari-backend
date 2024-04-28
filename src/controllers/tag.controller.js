@@ -344,11 +344,30 @@ exports.tagmergev2 = async (req, res) => {
             query: { 'tag._id': mergeFrom_tabObj._id }
         })
         if (tag_disignIds.length) {
+            // await dbMethods.updateMany({
+            //     collection: dbModels.DesignUpload,
+            //     query: { _id: { $in: tag_disignIds } },
+            //     update: { $pull: { tag: { _id: new ObjectId(mergeFrom_tabObj._id) } } }
+            // })
+
             await dbMethods.updateMany({
                 collection: dbModels.DesignUpload,
                 query: { _id: { $in: tag_disignIds } },
-                update: { $pull: { tag: { _id: new ObjectId(mergeFrom_tabObj._id) } } }
+                update: { $push: { tag: { _id: new ObjectId(tagObj._id), label: tagObj.label }, customOption: true, id: tagObj.id } }
             })
+        }
+
+        let taglabel_designIds = await dbMethods.distinct({
+            collection: dbModels.DesignUpload,
+            field: "_id",
+            query: { 'tag.label': mergeFrom_tabObj.label }
+        })
+        if (taglabel_designIds) {
+            // await dbMethods.updateMany({
+            //     collection: dbModels.DesignUpload,
+            //     query: { _id: { $in: tag_disignIds } },
+            //     update: { $pull: { tag: { label: mergeFrom_tabObj.label } } }
+            // })
 
             await dbMethods.updateMany({
                 collection: dbModels.DesignUpload,

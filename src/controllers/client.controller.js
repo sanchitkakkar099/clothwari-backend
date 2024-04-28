@@ -517,3 +517,52 @@ exports.clientDesignEditReqById = async (req, res) => {
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
 }
+
+
+exports.orderdetailbyidV2 = async (req, res) => {
+    try {
+        let cart = await dbMethods.findOne({
+            collection: dbModels.Cart,
+            query: { _id: req.params.id },
+            populate: [{ path: "cartItem", populate: { path: "thumbnail", select: "pdf_extract_img" } },
+            ],
+            options: { lean: true }
+        })
+        for (let i = 0; i < cart?.cartItem.length; i++) {
+            const element = cart?.cartItem[i];
+            let itemreq = await dbMethods.findOne({
+                collection: dbModels.CartItemEditReq,
+                query: { itemId: element._id }
+            })
+            if (itemreq) {
+                cart.cartItem[i].quantityPerCombo = itemreq.quantityPerCombo;
+                cart.cartItem[i].yardage = itemreq.yardage;
+                cart.cartItem[i].fabricDetails = itemreq.fabricDetails;
+                cart.cartItem[i].strikeRequired = itemreq.strikeRequired;
+                cart.cartItem[i].sampleDeliveryDate = itemreq.sampleDeliveryDate;
+                cart.cartItem[i].pricePerMeter = itemreq.pricePerMeter;
+                cart.cartItem[i].bulkOrderDeliveryDate = itemreq.bulkOrderDeliveryDate;
+                cart.cartItem[i].shipmentSampleDate = itemreq.shipmentSampleDate;
+            }
+        }
+        return res.send(helperUtils.successRes("successfully get order detail", cart))
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.ordereditreqstatusupdate = async (req, res) => {
+    try {
+        await dbMethods.updateOne({
+            collection: dbModels.CartEditReqStatus,
+            query: { cartId: req.body.cartId },
+            update: { status: req.body.status, reviewedBy: req.user._id }
+        })
+        return res.send(helperUtils.successRes(
+            "successfully updated", {}))
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}

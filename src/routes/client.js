@@ -185,4 +185,23 @@ router.get("/design/edit/byId/:id",
     auth,
     clientController.clientDesignEditReqById
 );
+/**
+* get client my design by id
+* @route GET /client/order/deatil/{id}
+* @param {string} id.path.required
+* @group Client - Operations
+* @returns {object} 200
+*      Return JSON object
+*
+* @security User 
+* @returns {Error}  Error - Unexpected error
+*/
+router.get("/order/detail/:id",
+    auth,
+    clientController.orderdetailbyidV2
+);
+
+router.post("/edit/status", auth,
+    clientController.ordereditreqstatusupdate
+)
 module.exports = router;
