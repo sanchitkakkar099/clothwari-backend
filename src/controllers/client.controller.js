@@ -559,6 +559,35 @@ exports.ordereditreqstatusupdate = async (req, res) => {
             query: { cartId: req.body.cartId },
             update: { status: req.body.status, reviewedBy: req.user._id }
         })
+        //update  the requested value in oorder table
+        let cart = await dbMethods.findOne({
+            collection: dbModels.Cart,
+            query: { _id: req.body.cartId }
+        })
+        for (let i = 0; i < cart?.cartItem?.length; i++) {
+            let element = cart?.cartItem[i];
+            let editreqValue = await dbMethods.findOne({
+                collection: dbModels.CartItemEditReq,
+                query: { itemId: element }
+            })
+            if (editreqValue) {
+                let obj = {
+                    quantityPerCombo: editreqValue.quantityPerCombo,
+                    yardage: editreqValue.yardage,
+                    fabricDetails: editreqValue.fabricDetails,
+                    strikeRequired: editreqValue.strikeRequired,
+                    sampleDeliveryDate: editreqValue.sampleDeliveryDate,
+                    pricePerMeter: editreqValue.pricePerMeter,
+                    bulkOrderDeliveryDate: editreqValue.bulkOrderDeliveryDate,
+                    shipmentSampleDate: editreqValue.shipmentSampleDate,
+                }
+                await dbMethods.updateOne({
+                    collection: dbModels.CartItem,
+                    query: { _id: element },
+                    update: obj
+                })
+            }
+        }
         return res.send(helperUtils.successRes(
             "successfully updated", {}))
     } catch (error) {
