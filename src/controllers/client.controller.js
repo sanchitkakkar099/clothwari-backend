@@ -384,15 +384,15 @@ exports.orderUpdateByMarketer = async (req, res) => {
             }
             await dbMethods.updateOne({
                 collection: dbModels.CartItemEditReq,
-                query: { itemId },
+                query: { itemId: element._id },
                 update: obj,
                 options: { new: true, upsert: true }
             })
         }
         await dbMethods.updateOne({
             collection: dbModels.CartEditReqStatus,
-            query: { cartId: req.body._id },
-            update: { editor: req.user._id, status: "Pending" },
+            query: { cartId: req.body.id },
+            update: { editor: req.user._id, status: "Pending", cartId: req.body.id },
             options: { new: true, upsert: true }
         })
         return res.send(helperUtils.successRes("Successfullly updated", {}));
@@ -488,14 +488,14 @@ exports.clientDesignEditReqById = async (req, res) => {
                 query: { itemId: element.cartItem._id }
             })
             if (edititem) {
-                data[i]["cartItem.quantityPerCombo"] = edititem.quantityPerCombo;
-                data[i]["cartItem.yardage"] = edititem.yardage;
-                data[i]["cartItem.fabricDetails"] = edititem.fabricDetails;
-                data[i]["cartItem.strikeRequired"] = edititem.strikeRequired;
-                data[i]["cartItem.sampleDeliveryDate"] = edititem.sampleDeliveryDate;
-                data[i]["cartItem.pricePerMeter"] = edititem.pricePerMeter;
-                data[i]["cartItem.bulkOrderDeliveryDate"] = edititem.bulkOrderDeliveryDate;
-                data[i]["cartItem.shipmentSampleDate"] = edititem.shipmentSampleDate;
+                data[i]["cartItem"]["quantityPerCombo"] = edititem.quantityPerCombo;
+                data[i]["cartItem"]["yardage"] = edititem.yardage;
+                data[i]["cartItem"]["fabricDetails"] = edititem.fabricDetails;
+                data[i]["cartItem"]["strikeRequired"] = edititem.strikeRequired;
+                data[i]["cartItem"]["sampleDeliveryDate"] = edititem.sampleDeliveryDate;
+                data[i]["cartItem"]["pricePerMeter"] = edititem.pricePerMeter;
+                data[i]["cartItem"]["bulkOrderDeliveryDate"] = edititem.bulkOrderDeliveryDate;
+                data[i]["cartItem"]["shipmentSampleDate"] = edititem.shipmentSampleDate;
             }
         }
 
