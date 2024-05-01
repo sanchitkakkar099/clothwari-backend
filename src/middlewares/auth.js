@@ -20,7 +20,7 @@ exports.auth = async (req, res, next) => {
                 let minimum_time = new Date(client.from_time).getTime()
                 let maximum_time = new Date(client.to_time).getTime()
                 let current_time = Date.now()
-                if (current_time >= minimum_time && current_time <= maximum_time) next()
+                if (current_time >= minimum_time && current_time <= maximum_time);
                 else return res.status(HttpStatus.UNAUTHORIZED).send(helperUtils.errorRes("Session Expired Please Contact Administrator", {}, 401));
             }
         }
