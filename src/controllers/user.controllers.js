@@ -65,7 +65,7 @@ exports.adminlogin = async (req, res) => {
         }
         let permissions = userCheck?.permissions?.map(e => e.title)
 
-        if (userCheck) {
+        if (userCheck && userCheck.role == UserRoleConstant.Client) {
             let minimum_time = new Date(userCheck.from_time).getTime()
             let maximum_time = new Date(userCheck.to_time).getTime()
             let current_time = Date.now()
