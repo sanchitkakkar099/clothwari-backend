@@ -12,8 +12,10 @@ const userSchema = new mongoose.Schema({
     createdBy: { type: mongoose.Types.ObjectId, ref: "User" },
     // onlyUpload: { type: Boolean, default: false, },
     isActive: { type: Boolean, default: false },
-    allowLoginTime: { type: Date },   //only for cleint role
-    allowLoginSec: { type: Number },   // only for client uer role
+    // allowLoginTime: { type: Date },   //only for cleint role
+    // allowLoginSec: { type: Number },   // only for client uer role
+    from_time: { type: Date },
+    to_time: { type: Date },
     status: { type: Number, default: 0 },   // used for designer 0:Pending 1:Approved 2:Rejected
     permissions: [{
         type: mongoose.Types.ObjectId,
