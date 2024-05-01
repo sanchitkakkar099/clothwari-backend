@@ -13,6 +13,8 @@ exports.clientCreateEdit = async (req, res) => {
                 collection: dbModels.User,
                 query: { email: req.body.email.toLowerCase() }
             })
+            if (req.body.from_time) req.body.from_time = new Date(req.body.from_time);
+            if (req.body.to_time) req.body.to_time = new Date(req.body.to_time);
             if (checkAlreadyAvail) {
                 return res.status(HttpStatus.BAD_REQUEST)
                     .send(helperUtils.errorRes("Email Already Exists", {}));
@@ -31,6 +33,8 @@ exports.clientCreateEdit = async (req, res) => {
             let _id = req.body._id
             delete req.body._id
 
+            if (req.body.from_time) req.body.from_time = new Date(req.body.from_time);
+            if (req.body.to_time) req.body.to_time = new Date(req.body.to_time);
             //lets check email already  exists
             let emailcheck = await dbMethods.findOne({
                 collection: dbModels.User,
@@ -62,7 +66,7 @@ exports.clientById = async (req, res) => {
         let client = await dbMethods.findOne({
             collection: dbModels.User,
             query: { _id: req.params.id },
-            project: { name: 1, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1, client_allow_time: 1 }
+            project: { name: 1, email: 1, phone: 1, to_time: 1, from_time: 1 }
         })
         return res.status(HttpStatus.OK)
             .send(helperUtils.successRes("Successfully get client", client));
@@ -115,7 +119,7 @@ exports.clientList = async (req, res) => {
         result.docs = await dbMethods.find({
             collection: dbModels.User,
             query: query,
-            project: { name: 1, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1, isDel: 1, customerCode: 1 },
+            project: { name: 1, email: 1, phone: 1, allowLoginTime: 1, allowLoginSec: 1, isDel: 1, customerCode: 1, from_time: 1, to_time: 1 },
             sort: { _id: -1 },
             populate: [{ path: "permissions" }]
         })
