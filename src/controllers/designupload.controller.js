@@ -590,6 +590,7 @@ exports.setdesignimage = async (req, res) => {
     try {
         await dbMethods.updateOne({
             collection: dbModels.FileUpload,
+            query: { _id: req.body.thumbnailId },
             update: { pdf_extract_img: req.body.pdf_extract_img, isdirect_upload: true }
         })
         return res.send(helperUtils.successRes("Successfully uplaod the Design Image", {}));
