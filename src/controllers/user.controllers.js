@@ -70,7 +70,7 @@ exports.adminlogin = async (req, res) => {
             let maximum_time = new Date(userCheck.to_time).getTime()
             let current_time = Date.now()
             if (current_time >= minimum_time && current_time <= maximum_time);
-            else return res.status(HttpStatus.UNAUTHORIZED).send(helperUtils.errorRes("Session Expired Please Contact Administrator", {}, 401));
+            else return res.status(HttpStatus.BAD_REQUEST).send(helperUtils.errorRes("Session Expired Please Contact Administrator", {}, HttpStatus.BAD_REQUEST));
         }
 
         let payload = {
