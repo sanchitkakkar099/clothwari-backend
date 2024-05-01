@@ -206,10 +206,12 @@ exports.getmyagdesignlist = async (req, res) => {
             const element = data[i];
             let orderstaus = await dbMethods.findOne({
                 collection: dbModels.CartEditReqStatus,
-                query: { cartId: element._id }
+                query: { cartId: element._id },
+                populate: [{ path: 'reviewedBy', select: 'name' }]
             })
             if (orderstaus) {
                 data[i].status = orderstaus.status
+                if (req.user.role == UserRoleConstant.SuperAdmin) data[i].reviewedBy = orderstaus?.reviewedBy
             } else data[i].status = ""
 
         }
@@ -350,12 +352,53 @@ exports.clientcartsave = async (req, res) => {
             collection: dbModels.Cart,
             document: req.body
         })
+        if (cart && cart._id && !req.body.byClient) {
+            await createclientorderreq(cart._id, itemIds, req.user._id)
+        }
         return res.send(helperUtils.successRes("Successfully create cart", cart))
 
     } catch (error) {
         console.log(error);
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+async function createclientorderreq(cartId, cartItem, editor) {
+    try {
+        let items = await dbMethods.find({
+            collection: dbModels.CartItem,
+            query: { _id: { $in: cartItem } }
+        })
+        for (let i = 0; i < items.length; i++) {
+            const element = items[i];
+            let obj = {
+                itemId: element._id,
+                quantityPerCombo: element.quantityPerCombo,
+                yardage: element.yardage,
+                fabricDetails: element.fabricDetails,
+                strikeRequired: element.strikeRequired,
+                sampleDeliveryDate: element.sampleDeliveryDate,
+                pricePerMeter: element.pricePerMeter,
+                bulkOrderDeliveryDate: element.bulkOrderDeliveryDate,
+                shipmentSampleDate: element.shipmentSampleDate,
+            }
+            await dbMethods.updateOne({
+                collection: dbModels.CartItemEditReq,
+                query: { itemId: element._id },
+                update: obj,
+                options: { new: true, upsert: true }
+            })
+        }
+        await dbMethods.updateOne({
+            collection: dbModels.CartEditReqStatus,
+            query: { cartId: cartId },
+            update: { editor: editor, status: "Pending", cartId: cartId },
+            options: { new: true, upsert: true }
+        })
+        return true
+    } catch (error) {
+        return false;
     }
 }
 
