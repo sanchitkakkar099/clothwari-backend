@@ -82,7 +82,8 @@ exports.adminlogin = async (req, res) => {
             onlyUpload: userCheck.onlyUpload,
             permissions: permissions,
             lastInActiveTime: userCheck?.lastInActiveTime,
-            client_allow_time: (userCheck.client_allow_time && userCheck.client_allow_time.value) ? userCheck.client_allow_time.value : 0
+            client_allow_time: (userCheck.client_allow_time && userCheck.client_allow_time.value) ? userCheck.client_allow_time.value : 0,
+            to_time: userCheck.to_time
         }
         let token = await helperUtils.jwtSign(payload)
 
