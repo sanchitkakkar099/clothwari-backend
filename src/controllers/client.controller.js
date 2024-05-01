@@ -403,8 +403,8 @@ exports.orderUpdateByMarketer = async (req, res) => {
         }
         await dbMethods.updateOne({
             collection: dbModels.CartEditReqStatus,
-            query: { cartId: req.body.id },
-            update: { editor: req.user._id, status: "Pending", cartId: req.body.id },
+            query: { cartId: req.body._id },
+            update: { editor: req.user._id, status: "Pending", cartId: req.body._id },
             options: { new: true, upsert: true }
         })
         return res.send(helperUtils.successRes("Successfullly updated", {}));
