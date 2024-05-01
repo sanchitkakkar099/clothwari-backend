@@ -190,21 +190,16 @@ exports.getDashboardData = async (req, res) => {
             query: { role: UserRoleConstant.Admin }
         })
 
-        let bagCountpipeline = [
-            { $unwind: "$design" },
-            {
-                $group: {
-                    _id: "",
-                    count: { $sum: 1 }
-                }
-            }
-        ]
+        let bagCountpipeline = {}
         if (req.user.role == UserRoleConstant.Client) {
-            bagCountpipeline.unshift({ $match: { userId: new ObjectId(req.user._id) } },)
+            bagCountpipeline.clientId = new ObjectId(req.user._id)
         }
-        let bagdata = await dbMethods.aggregate({
+        else if (req.user.role == UserRoleConstant.SalesPerson) {
+            bagCountpipeline.marketerId = new ObjectId(req.user._id)
+        }
+        let bagdata = await dbMethods.countDocuments({
             collection: dbModels.Cart,
-            pipeline: bagCountpipeline
+            query: bagCountpipeline
         })
         let driveQ = {}
         if (req.user.role != UserRoleConstant.SuperAdmin) {
@@ -218,7 +213,7 @@ exports.getDashboardData = async (req, res) => {
             .send(helperUtils.successRes("Successfully get data", {
                 staff, uploaddesign, newStaff, client, admin,
                 uploaddesignwithvariant,
-                clientBagCount: bagdata && bagdata[0] ? bagdata[0].count : 0,
+                clientBagCount: bagdata ? bagdata : 0,
                 drive: drive,
             }));
     } catch (error) {
