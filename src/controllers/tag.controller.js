@@ -352,7 +352,7 @@ exports.tagmergev2 = async (req, res) => {
 
             await dbMethods.updateMany({
                 collection: dbModels.DesignUpload,
-                query: { _id: { $in: tag_disignIds } },
+                query: { _id: { $in: tag_disignIds }, 'tag._id': { $ne: new ObjectId(tagObj._id) } },
                 update: { $push: { tag: { _id: new ObjectId(tagObj._id), label: tagObj.label }, customOption: true, id: tagObj.id } }
             })
         }
