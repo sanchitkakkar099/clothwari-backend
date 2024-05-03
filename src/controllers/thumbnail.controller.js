@@ -12,13 +12,16 @@ const fs = require("fs");
 const path = require("path")
 
 exports.renames3filestooriginal = async (req, res) => {
-try {
-        let file = await dbMethods.findOne({
+    try {
+        let files = await dbMethods.find({
             collection: dbModels.FileUpload,
-            query: { filepath: new RegExp("https://clothwaris3.s3.ap-south-1.amazonaws.com", "i"), isoriginalname: { $exists: false } }
+            query: { filepath: new RegExp("https://clothwaris3.s3.ap-south-1.amazonaws.com", "i"), isoriginalname: { $exists: false } },
             // query: { _id: "66266a98aaa2262c7984ee52" }
+            sort: { _id: -1 },
+            limit: 5
         })
-        if (file) {
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i]
             let basename = path.basename(file.filepath)
             if (basename == file.originalname) {
                 console.log("add isoriginalname")
