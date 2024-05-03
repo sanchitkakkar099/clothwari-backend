@@ -80,6 +80,7 @@ const CartEditReqStatusSchema = new mongoose.Schema({
         ref: 'User'
     },
     status: { type: String, default: "Pending" },
+    isClientApproved: { type: String, default: "Pending" },
 }, { timestamps: true, strict: false });
 
 CartSchema.plugin(mongoosepaginate);

@@ -214,9 +214,10 @@ exports.getmyagdesignlist = async (req, res) => {
                 populate: [{ path: 'reviewedBy', select: 'name' }]
             })
             if (orderstaus) {
-                data[i].status = orderstaus.status
+                data[i].status = orderstaus.status;
+                data[i].isClientApproved = orderstaus.isClientApproved;
                 if (req.user.role == UserRoleConstant.SuperAdmin) data[i].reviewedBy = orderstaus?.reviewedBy
-            } else data[i].status = ""
+            } else { data[i].status = ""; data[i].isClientApproved = "" }
 
         }
 
@@ -649,6 +650,21 @@ exports.ordereditreqstatusupdate = async (req, res) => {
                 }
             }
         }
+        return res.send(helperUtils.successRes(
+            "successfully updated", {}))
+    } catch (error) {
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.clientordereditreqstatusupdate = async (req, res) => {
+    try {
+        await dbMethods.updateOne({
+            collection: dbModels.CartEditReqStatus,
+            query: { cartId: req.body.cartId },
+            update: { isClientApproved: req.body.isClientApproved }
+        })
         return res.send(helperUtils.successRes(
             "successfully updated", {}))
     } catch (error) {

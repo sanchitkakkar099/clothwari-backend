@@ -204,4 +204,9 @@ router.get("/order/detail/:id",
 router.post("/edit/status", auth,
     clientController.ordereditreqstatusupdate
 )
+
+router.post("/order/approved/reject",
+    auth,
+    clientController.clientordereditreqstatusupdate
+)
 module.exports = router;
