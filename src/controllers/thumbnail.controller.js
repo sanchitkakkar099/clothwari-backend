@@ -18,7 +18,7 @@ exports.renames3filestooriginal = async (req, res) => {
             query: { filepath: new RegExp("https://clothwaris3.s3.ap-south-1.amazonaws.com", "i"), isoriginalname: { $exists: false } },
             // query: { _id: "66266a98aaa2262c7984ee52" }
             sort: { _id: -1 },
-            limit: 5
+            limit: 10
         })
         for (let i = 0; i < files.length; i++) {
             let file = files[i]
