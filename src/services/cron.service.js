@@ -19,6 +19,9 @@ module.exports = async () => {
 
     // let uplaodoriginalfilename = new cronJob("*/2 * * * *", thumbanilController)
     // uplaodoriginalfilename.start()
+
+    let uploaddrives3 = new cronJob('* * * * *', uploaddrivepdftos3)
+    uploaddrives3.start()
 }
 
 const extractedpdf = async () => {
@@ -174,5 +177,58 @@ const extracttiffuploads3 = async () => {
     } catch (error) {
         console.log(error)
         return false;
+    }
+}
+
+
+const uploaddrivepdftos3 = async () => {
+    try {
+        const directoryPath = path.join(__dirname, "../../uploads/drivepdf/");
+        let files = await new Promise((resolve, reject) => {
+            fs.readdir(directoryPath, async (err, files) => {
+                if (err) {
+                    console.error('Error reading directory:', err);
+                    reject(err);
+                }
+                resolve(files);
+            })
+        })
+        let images = []
+        for (let i = 0; i < files.length; i++) {
+            let element = files[i];
+            let filepath = path.join(directoryPath, element)
+            let filename = path.basename(filepath, path.extname(filepath))
+            let fileexists = await dbMethods.findOne({
+                collection: dbModels.Drive,
+                query: { _id: filename }
+            })
+            if (fileexists && fileexists.pdfurl.includes("http://") && filename == "663c769695b86aee36522ea3") {
+                images.push(filename)
+                let filetos3 = await helperUtils.uploadfileToS3(
+                    filepath,
+                    fileexists.pdfName,
+                    "application/pdf",
+                    "default"
+                )
+                await dbMethods.updateOne({
+                    collection: dbModels.FileUpload,
+                    query: { _id: fileexists._id },
+                    update: { pdfurl: filetos3 }
+                })
+                fs.unlink(filepath, (err) => {
+                    if (err) throw err;
+                    console.log(filepath, ' was deleted');
+                });
+            } else {
+                fs.unlink(filepath, (err) => {
+                    if (err) throw err;
+                    console.log(filepath, ' was deleted');
+                });
+            }
+        }
+        return true
+    } catch (error) {
+        console.log(error);
+        return false
     }
 }
