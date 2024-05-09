@@ -22,6 +22,9 @@ module.exports = async () => {
 
     let uploaddrives3 = new cronJob('* * * * *', uploaddrivepdftos3)
     uploaddrives3.start()
+
+    let uploadpdfs3 = new cronJob('* * * * *', uploaddesignpdftos3)
+    uploaddrives3.start()
 }
 
 const extractedpdf = async () => {
@@ -214,6 +217,58 @@ const uploaddrivepdftos3 = async () => {
                     collection: dbModels.FileUpload,
                     query: { _id: fileexists._id },
                     update: { pdfurl: filetos3 }
+                })
+                fs.unlink(filepath, (err) => {
+                    if (err) throw err;
+                    console.log(filepath, ' was deleted');
+                });
+            } else {
+                fs.unlink(filepath, (err) => {
+                    if (err) throw err;
+                    console.log(filepath, ' was deleted');
+                });
+            }
+        }
+        return true
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+}
+
+const uploaddesignpdftos3 = async () => {
+    try {
+        const directoryPath = path.join(__dirname, "../../uploads/design_pdf/");
+        let files = await new Promise((resolve, reject) => {
+            fs.readdir(directoryPath, async (err, files) => {
+                if (err) {
+                    console.error('Error reading directory:', err);
+                    reject(err);
+                }
+                resolve(files);
+            })
+        })
+        let images = []
+        for (let i = 0; i < files.length; i++) {
+            let element = files[i];
+            let filepath = path.join(directoryPath, element)
+            let filename = path.basename(filepath, path.extname(filepath))
+            let fileexists = await dbMethods.findOne({
+                collection: dbModels.FileUpload,
+                query: { filename: filename, mimetype: "application/pdf" }
+            })
+            if (fileexists && fileexists.pdfurl.includes("http://") && !fileexists.isoriginalname) {
+                images.push(filename)
+                let filetos3 = await helperUtils.uploadfileToS3(
+                    filepath,
+                    fileexists.pdfName,
+                    "application/pdf",
+                    "default"
+                )
+                await dbMethods.updateOne({
+                    collection: dbModels.FileUpload,
+                    query: { _id: fileexists._id },
+                    update: { filepath: filetos3, isoriginalname: true }
                 })
                 fs.unlink(filepath, (err) => {
                     if (err) throw err;
