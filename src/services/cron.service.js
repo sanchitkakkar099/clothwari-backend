@@ -23,8 +23,8 @@ module.exports = async () => {
     let uploaddrives3 = new cronJob('* * * * *', uploaddrivepdftos3)
     uploaddrives3.start()
 
-    let uploadpdfs3 = new cronJob('* * * * *', uploaddesignpdftos3)
-    uploadpdfs3.start()
+    // let uploadpdfs3 = new cronJob('* * * * *', uploaddesignpdftos3)
+    // uploadpdfs3.start()
 }
 
 const extractedpdf = async () => {
