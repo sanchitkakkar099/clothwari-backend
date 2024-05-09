@@ -250,8 +250,25 @@ exports.createmergepdf = async (req, res) => {
         let pdfdir = path.join(__dirname, "../../uploads/drivepdf/", drive._id + '.pdf')
 
         generatePDF(htmlContent, pdfdir, drive)
-            .then((url) => {
+            .then(async (url) => {
                 drive.pdfurl = url
+                let filetos3 = await helperUtils.uploadfileToS3(
+                    pdfdir,
+                    req.body.pdfName,
+                    "application/pdf",
+                    "default"
+                )
+                await dbMethods.updateOne({
+                    collection: dbModels.Drive,
+                    query: {
+                        _id: drive._id,
+                    },
+                    update: { pdfurl: filetos3 }
+                })
+                drive.pdfurl = filetos3
+                if (fs.existsSync(pdfdir)) {
+                    fs.unlinkSync(pdfdir)
+                }
                 return res.send(helperUtils.successRes("Successfully", drive))
             })
             .catch((error) => {
