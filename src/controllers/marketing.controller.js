@@ -226,6 +226,13 @@ exports.createmergepdf = async (req, res) => {
     try {
         let data = req.body.data
         let div = ``;
+        let drivecheck = await dbMethods.findOne({
+            collection: dbModels.Drive,
+            query: { "pdfName": { $regex: new RegExp("^" + req.body.pdfName + "$", "i") } }
+        })
+        if (drivecheck) {
+            return res.status(400).send(helperUtils.errorRes("Already Exists", {}, 400))
+        }
         for (let i = 0; i < data.length; i++) {
             const element = data[i];
             div += `
