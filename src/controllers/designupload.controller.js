@@ -126,6 +126,11 @@ exports.designuploadById = async (req, res) => {
                 }
             },
             {
+                $addFields: {
+                    order: { $indexOfArray: [designupload.color, "$_id"] }
+                }
+            },
+            {
                 $lookup: {
                     from: 'fileuploads',
                     localField: 'image',
@@ -154,10 +159,19 @@ exports.designuploadById = async (req, res) => {
                     value: "$code",
                     thumbnail: '$thumbnail',
                     image: '$image',
-                    designNo: "designNo"
-
+                    designNo: "designNo",
+                    order: 1
+ 
                 }
             },
+            {
+                $sort: { order: 1 }
+            },
+            {
+                $project: {
+                    order: 0
+                }
+            }
             // {
             //     $sort: {
             //         _id: -1
@@ -284,6 +298,11 @@ exports.designuploadList = async (req, res) => {
                         }
                     },
                     {
+                        $addFields: {
+                            order: { $indexOfArray: [element.color, "$_id"] }
+                        }
+                    },
+                    {
                         $lookup: {
                             from: 'fileuploads',
                             localField: 'image',
@@ -312,10 +331,18 @@ exports.designuploadList = async (req, res) => {
                             value: "$code",
                             thumbnail: '$thumbnail',
                             image: '$image',
-                            designNo: "designNo"
-
+                            designNo: "designNo",
+                            order: 1
                         }
                     },
+                    {
+                        $sort: { order: 1 }
+                    },
+                    {
+                        $project: {
+                            order: 0
+                        }
+                    }
                     // {
                     //     $sort: {
                     //         _id: -1
