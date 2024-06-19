@@ -158,11 +158,11 @@ exports.designuploadById = async (req, res) => {
 
                 }
             },
-            {
-                $sort: {
-                    _id: -1
-                }
-            }
+            // {
+            //     $sort: {
+            //         _id: -1
+            //     }
+            // }
         ]
         let result = await dbMethods.aggregate({
             collection: dbModels.Color,
@@ -316,11 +316,11 @@ exports.designuploadList = async (req, res) => {
 
                         }
                     },
-                    {
-                        $sort: {
-                            _id: -1
-                        }
-                    }
+                    // {
+                    //     $sort: {
+                    //         _id: -1
+                    //     }
+                    // }
                 ]
                 let colors = await dbMethods.aggregate({
                     collection: dbModels.Color,
