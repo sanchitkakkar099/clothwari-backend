@@ -13,5 +13,6 @@ router.use("/script", require("./script"));
 router.use("/tag", require("./tag"));
 router.use("/uploads", require("./fileUploads"));
 router.use("/user", require("./user"));
+router.use("/proxy", require("./proxy"));
 
 module.exports = router

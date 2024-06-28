@@ -9,3 +9,5 @@ exports.marketingController = require("./marketing.controller");
 exports.tagController = require("./tag.controller");
 exports.thumbanilController = require("./thumbnail.controller");
 exports.userController = require("./user.controllers");
+exports.proxyController = require("./proxy.controller");
+

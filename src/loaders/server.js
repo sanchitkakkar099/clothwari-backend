@@ -18,9 +18,10 @@ module.exports = (express, app) => {
     app.use(express.urlencoded({ extended: false }))
     app.use(express.json())
     // Use the helmet middleware
-    app.use(helmet({
-        referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
-    }));
+    // app.use(helmet({
+    //     referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
+    // }));
+    app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
     const fileAttachment = (req, res, next) => {
         next()
