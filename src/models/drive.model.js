@@ -9,6 +9,16 @@ const DriveSchema = new mongoose.Schema({
     },
     pdfurl: { type: String },
     pdfName: { type: String },
+    ImagesPreviewsData: {
+        type: Map,
+        of: String
+    },
+    rowBackgroundsData: {
+        type: Map,
+        of: String
+    },
+    title: { type: String},
+    typeOfPdf: { type: String},
     data: mongoose.Schema.Types.Mixed,
     isgen: { type: Boolean, default: false },
 }, { timestamps: true, strict: false });

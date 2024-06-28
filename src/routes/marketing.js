@@ -165,6 +165,10 @@ router.post("/drive/list",
     auth,
     marketingController.drivelist)
 
+router.get("/drive/byId/:id",
+    marketingController.drivepdfById
+)
+
 router.get("/salesperson/permission/list",
     marketingController.salespersonpermissionlist)
 

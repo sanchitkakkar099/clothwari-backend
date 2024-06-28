@@ -249,7 +249,9 @@ exports.createmergepdf = async (req, res) => {
                 pdfName: req.body.pdfName,
                 userId: req.user._id,
                 isgen: false,
-                data: data
+                data: data,
+
+
             }
         })
         let htmlContent = helperUtils.htmlContent;
@@ -398,19 +400,62 @@ exports.salespersonpermissionlist = async (req, res) => {
 
 exports.drivepdfcreate = async (req, res) => {
     try {
-        let drive = await dbMethods.insertOne({
-            collection: dbModels.Drive,
-            document: {
-                data: req.body.data,
-                pdfName: req.body.pdfName,
-                userId: req.user._id,
-                pdfurl: req.body.pdfurl,
-                uploaded: true,
-                isgen: true
+        console.log(req.body)
+        if(req.body._id){
+            let drive = await dbMethods.findOne({
+                collection: dbModels.Drive,
+                query: {_id: req.body._id}
+            })
+            if(!drive){
+                return res.status(HttpStatus.BAD_REQUEST)
+                .send(helperUtils.errorRes("Drive not find", {}));  
             }
-        })
-        return res.send(helperUtils.successRes("Successfully uploaded", drive))
+            await dbMethods.updateOne({
+                collection: dbModels.Drive,
+                query: { _id: req.body._id },
+                update: req.body
+            })
+            return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully updated", {})); 
+
+        }else{
+            let drive = await dbMethods.insertOne({
+                collection: dbModels.Drive,
+                document: {
+                    data: req.body.data,
+                    pdfName: req.body.pdfName,
+                    userId: req.user._id,
+                    pdfurl: req.body.pdfurl,
+                    ImagesPreviewsData: req.body.ImagesPreviewsData,
+                    rowBackgroundsData: req.body.rowBackgroundsData,
+                    title: req.body.title,
+                    typeOfPdf: req.body.typeOfPdf,
+                    uploaded: true,
+                    isgen: true
+                }
+            })
+        return res.send(helperUtils.successRes("Successfully Created", drive))
+        }
     } catch (error) {
+        console.log("error",error);
+        return res.status(HttpStatus.BAD_REQUEST)
+            .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
+    }
+}
+
+exports.drivepdfById = async (req, res) => {
+    try {
+        let drive = await dbMethods.findOne({
+            collection: dbModels.Drive,
+            query: { _id: req.params.id},
+            populate: [
+                { path: "userId", select: "_id name email phone"},
+            ]
+        })
+        return res.status(HttpStatus.OK)
+            .send(helperUtils.successRes("Successfully get Mock Data", drive));
+    } catch (error) {
+        console.log("error",error);
         return res.status(HttpStatus.BAD_REQUEST)
             .send(helperUtils.successRes("Bad Request", {}, HttpStatus.BAD_REQUEST));
     }
